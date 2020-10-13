@@ -5,7 +5,6 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLSchema,
-  GraphQLID,
   GraphQLFloat,
   GraphQLList,
   GraphQLNonNull,
@@ -15,7 +14,7 @@ const makeupType = new GraphQLObjectType({
   name: "makeups",
   fields: () => ({
     id: {
-      type: GraphQLID,
+      type: GraphQLString,
     },
     name: {
       type: GraphQLString,
@@ -39,11 +38,11 @@ const RootQuery = new GraphQLObjectType({
       type: makeupType,
       args: {
         id: {
-          type: GraphQLID,
+          type: GraphQLString,
         },
       },
       resolve(parent, args) {
-        return makeup.findById(args.id);
+        return makeup.findByString(args.id);
       },
     },
     makeups: {
