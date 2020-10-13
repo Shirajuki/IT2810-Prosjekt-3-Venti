@@ -37,11 +37,11 @@ mongo.connection.once("open", () => {
   console.log("connected to database");
 });
 
-//app.use("/graphiql", graphqlHTTP({ schema: require(schema), graphiql: true }));
+//Linjen under trengs ved fetching av data,
+app.use("/graphiql", graphqlHTTP({ schema: require(schema), graphiql: true }));
 app.listen(8080, () => {
   console.log("Server running succefully...");
 });
-("");
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

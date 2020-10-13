@@ -1,12 +1,9 @@
 const graphql = require("graphql");
-
-const Dish = require("../mongo-models/dish");
-const Chef = require("../mongo-models/chef");
+const makeup = require("../mongo-models/makeup");
 
 const {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLBoolean,
   GraphQLSchema,
   GraphQLID,
   GraphQLFloat,
@@ -14,8 +11,8 @@ const {
   GraphQLNonNull,
 } = graphql;
 
-const DishType = new GraphQLObjectType({
-  name: "Dish",
+const makeupType = new GraphQLObjectType({
+  name: "makeups",
   fields: () => ({
     id: {
       type: GraphQLID,
@@ -23,40 +20,14 @@ const DishType = new GraphQLObjectType({
     name: {
       type: GraphQLString,
     },
-    tasty: {
-      type: GraphQLBoolean,
-    },
-    country: {
+    brand: {
       type: GraphQLString,
     },
-    chefs: {
-      type: ChefType,
-      resolve(parent, args) {
-        return Chef.findById(parent.chefsId);
-      },
-    },
-  }),
-});
-
-const ChefType = new GraphQLObjectType({
-  name: "chefs",
-  fields: () => ({
-    id: {
-      type: GraphQLID,
-    },
-    name: {
+    image: {
       type: GraphQLString,
     },
     rating: {
-      type: GraphQLFloat,
-    },
-    dish: {
-      type: new GraphQLList(DishType),
-      resolve(parent, args) {
-        return Dish.find({
-          chefsId: parent.id,
-        });
-      },
+      product_type: GraphQLFloat,
     },
   }),
 });
@@ -64,38 +35,21 @@ const ChefType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    dish: {
-      type: DishType,
+    makeups: {
+      type: makeupType,
       args: {
         id: {
           type: GraphQLID,
         },
       },
       resolve(parent, args) {
-        return Dish.findById(args.id);
+        return makeup.findById(args.id);
       },
     },
-    chefs: {
-      type: ChefType,
-      args: {
-        id: {
-          type: GraphQLID,
-        },
-      },
+    makeups: {
+      type: new GraphQLList(makeupType),
       resolve(parent, args) {
-        return Chef.findById(args.id);
-      },
-    },
-    dishes: {
-      type: new GraphQLList(DishType),
-      resolve(parent, args) {
-        return Dish.find({});
-      },
-    },
-    chefs: {
-      type: new GraphQLList(ChefType),
-      resolve(parent, args) {
-        return Chef.find({});
+        return makeup.find({});
       },
     },
   },
@@ -104,44 +58,30 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    addDish: {
-      type: DishType,
+    addmakeup: {
+      type: makeupType,
       args: {
         name: {
           type: new GraphQLNonNull(GraphQLString),
         },
-        country: {
+        image: {
           type: new GraphQLNonNull(GraphQLString),
         },
-        tasty: {
-          type: new GraphQLNonNull(GraphQLBoolean),
-        },
-      },
-      resolve(parent, args) {
-        let dish = new Dish({
-          name: args.name,
-          country: args.country,
-          tasty: args.tasty,
-        });
-        return dish.save();
-      },
-    },
-    addChef: {
-      type: ChefType,
-      args: {
-        name: {
+        product_type: {
           type: new GraphQLNonNull(GraphQLString),
         },
-        rating: {
+        brand: {
           type: new GraphQLNonNull(GraphQLString),
         },
       },
       resolve(parent, args) {
-        let chef = new Chef({
+        let makeup = new makeup({
           name: args.name,
-          rating: args.rating,
+          image: args.image_link,
+          brand: args.brand,
+          product_type: args.product_type,
         });
-        return chef.save();
+        return makeup.save();
       },
     },
   },
