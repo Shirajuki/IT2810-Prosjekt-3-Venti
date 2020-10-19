@@ -1,21 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Items from './Items';
 //Declares type of title
-interface IProps {
+type slideType = {
 	title: string;
 }
-
-function ItemDisplay() {
+interface IProps {
+	title: string;
+	setModal: (title:string) => void;
+}
+const items: slideType[] = [
+	{
+		title: "newest",
+	},
+	{
+		title: "",
+	},
+	{
+		title: "",
+	},
+	{
+		title: "",
+	},
+	{
+		title: "",
+	},
+	{
+		title: "",
+	},
+	{
+		title: "newest",
+	},
+];
+function ItemDisplay(props: IProps) {
 	return (
 	<>
 		<div className="itemDisplay">
-			<Items title="" />
-			<Items title="" />
-			<Items title="" />
-			<Items title="" />
-			<Items title="" />
-			<Items title="" />
-			<Items title="" />
+			{items.map((item) => {
+				return (<Items title={item.title} onClick={() => props.setModal(item.title)} />);
+			})}
 		</div>
 	</>
 	);

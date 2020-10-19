@@ -58,6 +58,7 @@ main {
 	align-items: center;
 }
 .splashEye {
+	transform: translateY(50px);
 	color: white;
 	width: 70%;
 	margin: 0 auto;
@@ -129,6 +130,7 @@ main .section {
 	height: 450px;
 }
 .carousel .items {
+	cursor: pointer;
 	width: 18%;
 	box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 	display: grid;
@@ -197,12 +199,17 @@ main .section {
 	grid-template-rows: repeat(3,minmax(350px, 1fr));
 }
 .itemDisplay .items {
+	cursor: pointer;
 	position: relative;
 	display: grid;
 	width: 300px;
 	height: 350px;
 	grid-template-rows: 60% 10% 20% 10%;
 	font-size: .9rem;
+	transition-duration: .5s;
+}
+.itemDisplay .items:hover {
+	box-shadow: 0 1px 4px rgba(0,0,0,.5);
 }
 .itemDisplay .items img {
 	width: 100%;
@@ -230,6 +237,11 @@ main .section {
 button, a {
 	cursor: pointer;
 }
+button {
+	background-color: transparent;
+	border: none;
+	color: white;
+}
 /* FOOTER */
 footer {
 	border-top: 1px solid lightgray;
@@ -247,7 +259,9 @@ footer .footerWrapper {
 footer .footerWrapper > div {
 	width: 26%;
 }
-footer .us a {
+footer .us button {
+	text-align: left;
+	color: #3c1361;
 	display: inline-block;
 	width: 48%;
 }
@@ -265,6 +279,52 @@ footer .social div {
 	display: flex;
 	justify-content: space-between;
 }
+footer .info {
+	text-align: right;
+}
 footer .info p {
 	margin-top: 5px;
+}
+
+div.modalContainer {
+	background-color: rgba(0,0,0,.95);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: .5s;
+}
+div.modalContainer.shown {
+	opacity: 1;
+	pointer-events: all;
+}
+div.modalContent {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	background-color: rgba(255,255,255,.5);
+	width: 80%;
+	height: 75%;
+}
+div.modalContent .closeBtn {
+	cursor: pointer;
+	font-size: 3rem;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	transition-duration: .4s;
+}
+div.modalContent .closeBtn:hover {
+	color: #52307c;
+}
+div.modalContent .items {
+	background-color: white;
 }
