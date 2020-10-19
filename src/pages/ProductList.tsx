@@ -1,11 +1,12 @@
 
 import React, {  useState ,useEffect} from 'react'
-import ReactTable from 'react-table'
+import Product from "../models/product"
 import api from '../api'
+
 
 import styled from 'styled-components'
 
-import 'react-table/react-table.css'
+
 
 const Wrapper = styled.div`
     padding: 0 40px 40px 40px;
@@ -18,7 +19,7 @@ interface Column {
 }
 
 function ProductList() {
-        const [products, setProducts] = useState([])
+        const [products, setProducts] = useState<Product[]>([])
         const [columns, setColumns] = useState<Column[]>([])
         const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -73,19 +74,27 @@ function ProductList() {
             showTable = false
         }
 
-        const Table: React.ReactNode = <ReactTable
-        data={products}
-        columns={[]}
-        loading={isLoading}
-        defaultPageSize={10}
-        showPageSizeOptions={true}
-        minRows={0}
-    />
+        
 
         return (
             <Wrapper>
-                {showTable && (
-                    Table
+                {showTable && !isLoading && (
+                    <table>
+                        <thead>
+                            <th>Name</th>
+                            <th></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            {products.map((product, i) => (
+                                <tr key={i}>
+                                    <td>{product?.name}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>)
+                            )}
+                        </tbody>
+                    </table>
                 )}
             </Wrapper>
         )
