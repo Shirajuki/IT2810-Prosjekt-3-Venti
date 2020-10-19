@@ -1,13 +1,16 @@
 const { GraphQLID } = require("graphql");
-const mongo = require("mongoose");
-const Schema = mongo.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const makeupSchema = new Schema({
-  id: String,
   name: String,
   brand: String,
   image: String,
   product_type: String,
-});
+  description: String,
+  product_colors: Array
+},
+{ timestamps: true },
+);
 
-module.exports = mongo.model("makeup", makeupSchema);
+module.exports = mongoose.model("makeup", makeupSchema);

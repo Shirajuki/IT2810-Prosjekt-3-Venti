@@ -1,31 +1,14 @@
 var createError = require("http-errors");
 var express = require("express");
-const graphqlHTTP = require("express-graphql");
 const mongo = require("mongoose");
-
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-const schema = require("./schema/schema");
-
+var schema = require("./mongo-models/makeup");
+var cors = require("cors");
+const bodyParser = require("body-parser");
 var app = express();
+//const MakeupRouter = require("./routes/makeup-router")
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+const db = require('./db')
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-
-mongo.connect("mongodb://user:user@it2810-07.idi.ntnu.no:27017/project3db");
 
 mongo.connection.on("open", function (err, doc) {
   console.log("connection established");
@@ -43,6 +26,18 @@ mongo.connection.on("open", function (err, doc) {
   });
 });
 
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(cors())
+app.use(bodyParser.json())
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
+//app.use('/api', MakeupRouter)
+
 //Linjen under trengs ved fetching av data,
 app.listen(8080, () => {
   console.log("Server running succefully...");
@@ -54,6 +49,9 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
+app.use('*', cors());
+
+
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
@@ -64,5 +62,16 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+const MakeUpModel = mongo.model("product", {
+  name: String,
+  brand: String,
+  image: String,
+  product_type: String,
+  description: String,
+  product_colors: Array
+})
+
+
 
 module.exports = app;

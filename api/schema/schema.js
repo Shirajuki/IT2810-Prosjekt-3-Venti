@@ -1,5 +1,5 @@
 const graphql = require("graphql");
-const makeup = require("../mongo-models/makeup");
+const MakeupModel = require("../mongo-models/makeup")
 
 const {
   GraphQLObjectType,
@@ -10,83 +10,50 @@ const {
   GraphQLNonNull,
 } = graphql;
 
-const makeupType = new GraphQLObjectType({
-  name: "makeups",
-  fields: () => ({
-    id: {
-      type: GraphQLString,
-    },
-    name: {
-      type: GraphQLString,
-    },
-    brand: {
-      type: GraphQLString,
-    },
-    image: {
-      type: GraphQLString,
-    },
-    rating: {
-      product_type: GraphQLFloat,
-    },
-  }),
+var makeupType = new GraphQLObjectType({
+  name: "makeup",
+  fields: function () {
+    return {
+      id: {
+        type: GraphQLString
+      },
+      name: {
+        type: GraphQLString
+      },
+      brand: {
+        type: GraphQLString
+      },
+      image: {
+        type: GraphQLString
+      },
+      description: {
+        type: GraphQLString
+      },
+      product_colors: {
+        type: GraphQLList
+      },
+    }
+  }
 });
 
-const RootQuery = new GraphQLObjectType({
-  name: "RootQueryType",
-  fields: {
-    makeups: {
-      type: makeupType,
-      args: {
-        id: {
-          type: GraphQLString,
-        },
-      },
-      resolve(parent, args) {
-        return makeup.findByString(args.id);
-      },
-    },
-    makeups: {
-      type: new GraphQLList(makeupType),
-      resolve(parent, args) {
-        return makeup.find({});
-      },
-    },
-  },
-});
+var queryType = new GraphQLObjectType({
+  name: "Query",
+  fields: function () {
+    return {
+      makeup: {
+        type: new GraphQLList(makeupType),
+        resolve: function () {
+          const products = MakeupModel.find().exec()
+          if (!products) {
+            throw new Error('Error')
+          }
+          console.log(products);
+          return products
+        }
+      }
+    }
+  }
+})
 
-const Mutation = new GraphQLObjectType({
-  name: "Mutation",
-  fields: {
-    addmakeup: {
-      type: makeupType,
-      args: {
-        name: {
-          type: new GraphQLNonNull(GraphQLString),
-        },
-        image: {
-          type: new GraphQLNonNull(GraphQLString),
-        },
-        product_type: {
-          type: new GraphQLNonNull(GraphQLString),
-        },
-        brand: {
-          type: new GraphQLNonNull(GraphQLString),
-        },
-      },
-      resolve(parent, args) {
-        let makeup = new makeup({
-          name: args.name,
-          image: args.image_link,
-          brand: args.brand,
-          product_type: args.product_type,
-        });
-        return makeup.save();
-      },
-    },
-  },
-});
+module.exports = new GraphQLSchema({query: queryType});
 
-module.exports = new GraphQLSchema({
-  query: RootQuery,
-  mutation: Mutation,
-});
