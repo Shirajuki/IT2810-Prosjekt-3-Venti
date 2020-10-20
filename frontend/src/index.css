@@ -268,6 +268,9 @@ footer .us button {
 footer .social {
 	text-align: center;
 }
+footer .social button {
+	color: #3c1361;
+}
 footer h2 {
 	color: #3c1361;
 	font-size: 1.1em;

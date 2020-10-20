@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { Fragment, useEffect, useState } from 'react';
+import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
-function App() {
+
+const App = () => {
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
 		title: "none",
@@ -12,6 +13,25 @@ function App() {
 	const itemModal = (title: string) => {
 		setModal({ title: title });
 	};
+    useEffect(() => {
+        const getAPI = async () => {
+            const response = await fetch('http://localhost:8080/');
+            const data = await response.json();
+
+            try {
+                console.log(data);
+                setLoading(false);
+                setProduct(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAPI();
+    }, []);
+
+    const [product, setProduct] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
 	return (
 		<>
 			<div className="divWrapper">
@@ -20,9 +40,8 @@ function App() {
 						<h3>logo</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
-							<button>O</button>
-							<button>R</button>
-							<button>X</button>
+							<button>🔎</button>
+							<button>🛒</button>
 						</div>
 					</nav>
 				</header>
@@ -79,10 +98,10 @@ function App() {
 						<div className="social">
 							<h2>TECHNIQUE</h2>
 							<div>
-								<button>O</button>
-								<button>N</button>
-								<button>Y</button>
-								<button>X</button>
+								<button>FB</button>
+								<button>SP</button>
+								<button>IG</button>
+								<button>TW</button>
 							</div>
 						</div>
 						<div className="info">
@@ -95,5 +114,6 @@ function App() {
 			</div>
 		</>
 	);
-}
+};
+
 export default App;

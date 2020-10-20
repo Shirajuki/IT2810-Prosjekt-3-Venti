@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home</title>
+    </head>
+    <body>
+        <h1>Home Page</h1>
+
+        <main>
+            <% product.forEach(data => { %>
+                <ul>
+                    <li><h1><a href="/<%= data.id %>"><%= data.name %></a></h1></li>
+                    <li><img src="<%= data.image_link %>" alt="<%= data.name %>" /></h1></li>
+                    <li><p><%= data.description %></p></li>
+                    <li><h3><%= data.price %></h3></li>
+                </ul>
+            <% }) %>
+        </main>
+
+    </body>
+</html>
