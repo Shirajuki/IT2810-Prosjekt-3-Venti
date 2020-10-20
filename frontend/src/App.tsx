@@ -44,6 +44,9 @@ const App = () => {
                                     <li>
                                         <p>{data.description}</p>
                                     </li>
+                                    <li>
+                                        <h3>{data.price}</h3>
+                                    </li>
                                 </ul>
                             </div>
                         ))}
@@ -60,6 +63,10 @@ const App = () => {
                     <div>
                         <label>Image Link</label>
                         <input type="text" name="image_link" required />
+                    </div>
+                    <div>
+                        <label>Price</label>
+                        <input type="text" name="price" required />
                     </div>
                     <div>
                         <label>Description</label>

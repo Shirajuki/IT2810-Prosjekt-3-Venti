@@ -5,5 +5,6 @@ export default interface Product {
     image_link: string
     product_type: string
     description: string
+    price: string
     product_colors: string[]
 }

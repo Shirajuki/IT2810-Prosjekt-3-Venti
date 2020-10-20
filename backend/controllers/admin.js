@@ -51,9 +51,9 @@ exports.getEditProduct = async (req, res) => {
 };
 
 exports.postProduct = (req, res) => {
-    const { name, brand, image_link, product_type, description } = req.body;
+    const { name, brand, image_link, product_type, description, price } = req.body;
 
-    const product = new Product({ name: name, brand: brand, image_link: image_link, product_type: product_type, description: description });
+    const product = new Product({ name: name, brand: brand, image_link: image_link, product_type: product_type, description: description, price: price });
     product.save();
     console.log('Product Added to the database');
     res.status(201).redirect('http://localhost:3000/');
@@ -61,7 +61,7 @@ exports.postProduct = (req, res) => {
 
 exports.postEditProduct = (req, res) => {
     const productId = req.body.productId;
-    const { name, brand, image_link, product_type, description } = req.body;
+    const { name, brand, image_link, product_type, description, price } = req.body;
 
     Product.findById(productId)
         .then((product) => {
@@ -70,6 +70,7 @@ exports.postEditProduct = (req, res) => {
             product.image_link = image_link;
             product.description = description;
             product.product_type = product_type;
+            product.price = price;
             return product.save();
         })
         .then(() => {
