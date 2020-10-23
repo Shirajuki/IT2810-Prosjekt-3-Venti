@@ -12,6 +12,7 @@ function Modal( props: IProps ) {
 	const [loading, setLoading] = useState(true);
 	
 	useEffect(() => {
+		if(props.modal.id !== "none") {}
         const getAPI = async () => {
             const response = await fetch(`http://localhost:8080/${props.modal.id}`);
             const data = await response.json();
@@ -24,7 +25,8 @@ function Modal( props: IProps ) {
                 console.log(error);
             }
         };
-        getAPI();
+		getAPI();
+	}
 	}, []);
 	
 	return (
