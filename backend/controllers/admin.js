@@ -1,24 +1,65 @@
 const Product = require('../models/product');
+const Session = require('../models/session');
 
 exports.getIndex = async (req, res) => {
-    const product = await Product.find((data) => data);
-
+	const product = await Product.find((data) => data);
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	if (session.length > 0) {
+		console.log("Welcome back",req.sessionID);
+		console.log(session[0]._doc.cart);
+		if (session[0]._doc?.cart == undefined) {
+			product.push('[]');
+			const update = await Session.updateOne(
+			    { _id: req.sessionID },
+				{ cart: "[]" },
+				{ multi: true },
+			);
+			console.log(update);
+			//const update = await Session.update({ '_id': req.sessionID }, { $set: { 'cart': '[]' }}, {multi: true});
+		} else {
+			product.push(session[0]._doc.cart);
+		}
+	}
     try {
-        //console.log(product);
+		//console.log(product);
         res.json(product);
     } catch (error) {
         console.log(error);
     }
 };
 
+exports.postEditCart = async (req, res) => {
+    const productId = req.params.productId;
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	console.log(444,productId);
+    try {
+        if (!productId) {
+			return res.status(200);
+		}
+		console.log(123,session,`[${productId}]`)
+		if (session.length > 0) {
+			const update = await Session.findOneAndUpdate(
+				{ _id: req.sessionID },
+				{ cart: `[${productId}]` },
+				{ new: true },
+			);
+			console.log(update);
+		}
+        res.status(200);
+    } catch (error) {
+        console.log(error);
+    }
+};
 exports.getProduct = async (req, res) => {
     const productId = req.params.productId;
 
-    const product = await Product.findById(productId, (product) => product);
+	const product = await Product.find({id: productId}, (product) => product);
 
     try {
         console.log(product);
-        res.status(200).render('product', { product: product });
+        res.status(200).json(product);
     } catch (error) {
         console.log(error);
     }

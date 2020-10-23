@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
+import Cookies from "js-cookie";
 
 const App = () => {
 	//Declares a modal used for displaying the art
@@ -15,33 +16,64 @@ const App = () => {
 	};
     useEffect(() => {
         const getAPI = async () => {
-            const response = await fetch('http://localhost:8080/');
+            const response = await fetch('http://localhost:8080/',{
+				method: 'GET',
+				mode: 'cors',
+				credentials: 'include', // Don't forget to specify this if you need cookies
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Origin':'http://localhost:3000',
+				},
+			});
             const data = await response.json();
-
             try {
                 console.log(data);
                 setLoading(false);
+				const cart = data.pop();
+				setCart(cart);
                 setProduct(data);
+				let cookie = Cookies.get("connect.sid")||"none";
+				if (cookie !== "none") cookie = cookie.split("\.")[0].substring(2);
+				setSession({sessionID: cookie});
             } catch (error) {
                 console.log(error);
             }
         };
         getAPI();
     }, []);
-
+	const [cart, setCart] = useState<string>("[]");
+	const [session, setSession] = useState({
+		sessionID: "none",
+	});
+	function post() {
+		let nCart = +(JSON.parse(cart)[0]) || 1;
+		fetch('http://localhost:8080/editCart/'+(nCart+1),{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		setCart("["+(nCart+1)+"]");
+	}
     const [product, setProduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-
 	return (
 		<>
 			<div className="divWrapper">
 				<header id="nav">
 					<nav>
-						<h3>logo</h3>
+						<h3>logo {session.sessionID}</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
 							<button>🔎</button>
-							<button>🛒</button>
+							<button onClick={() => console.log(cart)}>🛒</button>
+							<button onClick={() => post()}>Add2Cart</button>
 						</div>
 					</nav>
 				</header>
