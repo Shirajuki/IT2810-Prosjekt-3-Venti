@@ -7,6 +7,8 @@ router.get('/', adminController.getIndex);
 
 router.get('/add-product', adminController.getAddProduct);
 
+router.get('/search-products/:searchTerm', adminController.searchProducts);
+
 router.get('/edit-product/:productId', adminController.getEditProduct);
 
 router.post('/add-product', adminController.postProduct);

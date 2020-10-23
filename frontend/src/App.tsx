@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
@@ -13,6 +13,8 @@ const App = () => {
 	const itemModal = (title: string) => {
 		setModal({ title: title });
 	};
+
+	
     useEffect(() => {
         const getAPI = async () => {
             const response = await fetch('http://localhost:8080/');
@@ -30,7 +32,42 @@ const App = () => {
     }, []);
 
     const [product, setProduct] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [searchResult, setSearchResult] = useState<Product[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [hidden, setHidden] = useState(true);
+	const searchRef = useRef(null);
+
+	var handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if(event.key === 'Enter'){
+			search();
+		  }
+	}
+
+	
+	function search() {
+		if (hidden) {
+			setHidden(false);
+		}
+		else {
+			console.log("opened")
+				const getAPI = async () => {
+					console.log(searchRef.current.value)
+					if(searchRef.current) {
+					const response = await fetch(`http://localhost:8080/search-products/${searchRef.current!.value || ""}`);
+					const data = await response.json();
+					
+					try {
+						console.log(data);
+						setSearchResult(data);
+					} catch (error) {
+						console.log(error);
+					}
+				}
+			};getAPI();
+		}
+	}
+
+
 
 	return (
 		<>
@@ -40,7 +77,12 @@ const App = () => {
 						<h3>logo</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
-							<button>🔎</button>
+						<div style= {{display:(hidden ? "none" : "block")}}>
+                    	
+                        	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+                    	</div>
+						
+							<button onClick={()=>search()}>🔎</button>
 							<button>🛒</button>
 						</div>
 					</nav>

@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors());
 
-app.set('view engine', 'ejs');
+//app.set('view engine', 'ejs');
 app.set('views', './src/pages');
 
 app.use(express.urlencoded({ extended: false }));

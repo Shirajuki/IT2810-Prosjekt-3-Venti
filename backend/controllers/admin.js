@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const mongoose = require('mongoose');
 
 exports.getIndex = async (req, res) => {
     const product = await Product.find((data) => data);
@@ -13,12 +14,28 @@ exports.getIndex = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
     const productId = req.params.productId;
-
+    if(mongoose.Types.ObjectId.isValid(productId)) {
     const product = await Product.findById(productId, (product) => product);
+    
+    try {
+        res.status(200)
+        console.log(product);
+        res.send(JSON.stringify(product));
+    } catch (error) {
+        console.log(error);
+    }
+}
+};
+
+exports.searchProducts = async (req, res) => {
+    const searchTerm = req.params.searchTerm;
+
+    const product = await Product.find( { $text: { $search: searchTerm } } )
 
     try {
         console.log(product);
-        res.status(200).render('product', { product: product });
+        res.status(200)
+        res.send(JSON.stringify(product))
     } catch (error) {
         console.log(error);
     }
