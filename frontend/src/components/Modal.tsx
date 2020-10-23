@@ -1,13 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Product from "../models/product";
 import Items from './Items';
 interface IProps {
-	modal: {title: string},
-	setModal: (title:string) => void;
+	modal: {id: string},
+	setModal: (id:string) => void;
 }
 function Modal( props: IProps ) {
+
+	
+    const [product, setProduct] = useState<Product>();
+	const [loading, setLoading] = useState(true);
+	
+	useEffect(() => {
+        const getAPI = async () => {
+            const response = await fetch(`http://localhost:8080/${props.modal.id}`);
+            const data = await response.json();
+
+            try {
+                console.log(data);
+                setLoading(false);
+                setProduct(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAPI();
+	}, []);
+	
 	return (
 		<div
-			className={`modalContainer ${props.modal.title === "none" ? "hidden" : "shown"}`}
+			className={`modalContainer ${props.modal.id === "none" ? "hidden" : "shown"}`}
 		>
 			<div className="modalContent">
 				<div className="modalHeader">
@@ -15,11 +37,10 @@ function Modal( props: IProps ) {
 						&#10006;
 					</div>
 				</div>
-				<Items title={props.modal.title} onClick={() => void(0)}/>
+				{product._id !== undefined ? <Items id={product._id} img={product.image_link} name={product.name} description={product.description} price={product.price} onClick={() => void(0)}/>	: null}
 			</div>
 		</div>
 	);
 }
-
 export default Modal;
 

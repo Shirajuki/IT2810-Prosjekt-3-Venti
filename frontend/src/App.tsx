@@ -7,11 +7,11 @@ import Modal from './components/Modal';
 const App = () => {
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
-		title: "none",
+		id: "none",
 	});
 
-	const itemModal = (title: string) => {
-		setModal({ title: title });
+	const itemModal = (id: string) => {
+		setModal({ id: id });
 	};
 
 	
@@ -32,8 +32,8 @@ const App = () => {
     }, []);
 
     const [product, setProduct] = useState<Product[]>([]);
-    const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
+    const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
 	const searchRef = useRef(null);
 

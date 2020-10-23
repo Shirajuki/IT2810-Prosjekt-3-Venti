@@ -27,6 +27,28 @@ exports.getProduct = async (req, res) => {
 }
 };
 
+exports.filterProducts = async (req, res) => {
+    const filterTerm = req.params.filterTerm;
+
+    const product = await Product.find((data) => data)
+    
+    function propComparator(prop) {
+        return function(a, b) {
+            return a[prop] - b[prop];
+        }
+    }
+    
+    product.sort(propComparator(filterTerm));
+
+    try {
+        console.log(product);
+        res.status(200)
+        res.send(JSON.stringify(product))
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 exports.searchProducts = async (req, res) => {
     const searchTerm = req.params.searchTerm;
 
@@ -100,7 +122,7 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.postDelete = async (req, res) => {
-    const productId = req.body.productId;
+    const productId = req.params.productId;
 
     const product = await Product.findByIdAndRemove(productId, (data) => data);
 

@@ -7,6 +7,8 @@ router.get('/', adminController.getIndex);
 
 router.get('/add-product', adminController.getAddProduct);
 
+router.get('/filter-product/:filterTerm', adminController.filterProducts);
+s
 router.get('/search-products/:searchTerm', adminController.searchProducts);
 
 router.get('/edit-product/:productId', adminController.getEditProduct);
@@ -17,6 +19,6 @@ router.post('/edit-product', adminController.postEditProduct);
 
 router.get('/:productId', adminController.getProduct);
 
-router.post('/delete', adminController.postDelete);
+router.post('/delete/:productId', adminController.postDelete);
 
 module.exports = router;
