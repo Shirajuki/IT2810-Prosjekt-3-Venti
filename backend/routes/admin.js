@@ -8,7 +8,7 @@ router.get('/', adminController.getIndex);
 router.get('/add-product', adminController.getAddProduct);
 
 router.get('/filter-product/:filterTerm', adminController.filterProducts);
-s
+
 router.get('/search-products/:searchTerm', adminController.searchProducts);
 
 router.get('/edit-product/:productId', adminController.getEditProduct);

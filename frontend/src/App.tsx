@@ -21,7 +21,6 @@ const App = () => {
             const data = await response.json();
 
             try {
-                console.log(data);
                 setLoading(false);
                 setProduct(data);
             } catch (error) {
@@ -57,7 +56,6 @@ const App = () => {
 					const data = await response.json();
 					
 					try {
-						console.log(data);
 						setSearchResult(data);
 					} catch (error) {
 						console.log(error);
@@ -111,7 +109,7 @@ const App = () => {
 									<li>Microwave</li>
 								</ul>
 								<h2>Price</h2>
-								<input type="number" value="0 - 200kr"/>
+								<input type="number" defaultValue="0 - 200kr"/>
 								<h2>Colors</h2>
 								<ul>
 									<li>Black</li>

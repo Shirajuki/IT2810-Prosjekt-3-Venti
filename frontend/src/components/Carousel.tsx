@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import Items from './Items';
 type slideType = {
-	id: string;
+	title: string;
 }
 interface IProps {
-	setModal: (id:string) => void;
+	setModal: (title:string) => void;
 }
 interface CarouselProps {
 	slides: slideType[];
-	setModal: (id:string) => void;
+	setModal: (title:string) => void;
 }
 interface CarouselState {
 	count: number;
@@ -61,69 +61,69 @@ function splitArray(array: slideType[],chunk: number) {
 	nArray.push([...nsplit]);
 	return nArray;
 }
-const Display = (props: {count: number, slides: slideType[], setModal: (id:string) => void}) => {
+const Display = (props: {count: number, slides: slideType[], setModal: (title:string) => void}) => {
 	const arr: slideType[][] = splitArray(props.slides, 5)
-	/*return (
+	return (
 	<>
-		{arr[props.count].map((slide) => {
-			return (<Items id={slide.id} onClick={() => props.setModal(slide.id)} />);
-		})}
+		
 	</>
-	);*/
-	return (<></>);
+	);
 }
+
+/* {arr[props.count].map((slide) => {
+			return (<Items title={slide.title} onClick={() => props.setModal(slide.title)} />);
+		})}*/
 const slides: slideType[] = [
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 	{
-		id: "",
+		title: "",
 	},
 	{
-		id: "newest",
+		title: "newest",
 	},
 ];
 function Carousel( props: IProps ) {
-	return(<></>)
-	/*return (
+	return (
 		<Slide slides={slides} setModal={props.setModal}/>
-	);*/
+	);
 }
 /*
 

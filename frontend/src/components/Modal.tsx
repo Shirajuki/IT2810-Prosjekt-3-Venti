@@ -11,23 +11,24 @@ function Modal( props: IProps ) {
     const [product, setProduct] = useState<Product>();
 	const [loading, setLoading] = useState(true);
 	
-	useEffect(() => {
-		if(props.modal.id !== "none") {}
-        const getAPI = async () => {
-            const response = await fetch(`http://localhost:8080/${props.modal.id}`);
-            const data = await response.json();
 
+	useEffect(()=>{
+		const getAPI = async () => {
+			const response = await fetch(`http://localhost:8080/${props.modal.id}`);
+            const data = await response.json();
             try {
-                console.log(data);
+				console.log(data);
                 setLoading(false);
                 setProduct(data);
             } catch (error) {
-                console.log(error);
+				console.log(error);
             }
-        };
+		};
+		if(props.modal.id !== "none") {
 		getAPI();
-	}
-	}, []);
+		}
+	},[props.modal.id])
+
 	
 	return (
 		<div
@@ -39,7 +40,7 @@ function Modal( props: IProps ) {
 						&#10006;
 					</div>
 				</div>
-				{product._id !== undefined ? <Items id={product._id} img={product.image_link} name={product.name} description={product.description} price={product.price} onClick={() => void(0)}/>	: null}
+				{product !== undefined ? <Items id={product._id} img={product.image_link} name={product.name} description={product.description} price={product.price} onClick={() => void(0)} isModal={false} />	: null}
 			</div>
 		</div>
 	);

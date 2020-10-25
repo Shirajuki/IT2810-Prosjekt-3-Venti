@@ -15,10 +15,10 @@ function ItemDisplay(props: IProps) {
 	useEffect(() => {
         const getAPI = async () => {
             const response = await fetch('http://localhost:8080/');
-            const data = await response.json();
+			const data = await response.json();
+			console.log(data)
 
             try {
-                console.log(data);
                 setLoading(false);
                 setProduct(data);
             } catch (error) {
@@ -34,7 +34,7 @@ function ItemDisplay(props: IProps) {
 	<>
 		<div className="itemDisplay">
 			{product.map(item => (
-				<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} onClick={() => props.setModal(item._id)} />
+				<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} onClick={() => props.setModal(item._id) }isModal = {true} />
 			))}
 		</div>
 	</>
