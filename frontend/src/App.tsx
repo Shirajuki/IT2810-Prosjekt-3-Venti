@@ -31,7 +31,7 @@ const App = () => {
                 console.log(data);
                 setLoading(false);
 				const cart = data.pop();
-				setCart(cart);
+				setCart(""+cart);
                 setProduct(data);
 				let cookie = Cookies.get("connect.sid")||"none";
 				if (cookie !== "none") cookie = cookie.split("\.")[0].substring(2);
@@ -46,9 +46,13 @@ const App = () => {
 	const [session, setSession] = useState({
 		sessionID: "none",
 	});
-	function post() {
-		let nCart = +(JSON.parse(cart)[0]) || 1;
-		fetch('http://localhost:8080/editCart/'+(nCart+1),{
+	function editCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/editCart/'+rndProduct,{
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
@@ -59,7 +63,49 @@ const App = () => {
 			}
 		})
 		.then(response => console.log(response));
-		setCart("["+(nCart+1)+"]");
+		let existInCart = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				existInCart = i;
+				break;
+			}
+		}
+		if (existInCart !== -1) {
+			nCart[existInCart][1]++;
+		} else {
+			nCart.push([rndProduct,1]);
+		}
+		setCart(JSON.stringify(nCart));
+	}
+	function removeCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/removeCart/'+rndProduct,{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		let indexProduct = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				indexProduct = i;
+				break;
+			}
+		}
+		if (indexProduct !== -1) {
+			nCart[indexProduct][1]--;
+			if (nCart[indexProduct][1] == 0) nCart.splice(indexProduct, 1);
+		}
+		setCart(JSON.stringify(nCart));
 	}
     const [product, setProduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -73,7 +119,8 @@ const App = () => {
 						<div>
 							<button>🔎</button>
 							<button onClick={() => console.log(cart)}>🛒</button>
-							<button onClick={() => post()}>Add2Cart</button>
+							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
+							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
 						</div>
 					</nav>
 				</header>
@@ -101,7 +148,7 @@ const App = () => {
 									<li>Microwave</li>
 								</ul>
 								<h2>Price</h2>
-								<input type="number" value="0 - 200kr"/>
+								<input type="number" value="" placeholder="0 - 200kr"/>
 								<h2>Colors</h2>
 								<ul>
 									<li>Black</li>
