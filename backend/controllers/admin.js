@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const mongoose = require('mongoose');
 const Session = require('../models/session');
 
 exports.getIndex = async (req, res) => {
@@ -96,10 +97,46 @@ exports.postEditCart = async (req, res) => {
 };
 exports.getProduct = async (req, res) => {
     const productId = req.params.productId;
-	const product = await Product.find({id: productId}, (product) => product);
+    const product = await Product.find({id: productId}, (product) => product);
     try {
         console.log(product);
         res.status(200).json(product);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+exports.filterProducts = async (req, res) => {
+    const filterTerm = req.params.filterTerm;
+
+    const product = await Product.find((data) => data)
+    
+    function propComparator(prop) {
+        return function(a, b) {
+            return a[prop] - b[prop];
+        }
+    }
+    
+    product.sort(propComparator(filterTerm));
+
+    try {
+        console.log(product);
+        res.status(200)
+        res.send(JSON.stringify(product))
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+exports.searchProducts = async (req, res) => {
+    const searchTerm = req.params.searchTerm;
+
+    const product = await Product.find( { $text: { $search: searchTerm } } )
+
+    try {
+        //console.log(product);
+        res.status(200)
+        res.send(JSON.stringify(product))
     } catch (error) {
         console.log(error);
     }
@@ -160,7 +197,7 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.postDelete = async (req, res) => {
-    const productId = req.body.productId;
+    const productId = req.params.productId;
 
     const product = await Product.findByIdAndRemove(productId, (data) => data);
 

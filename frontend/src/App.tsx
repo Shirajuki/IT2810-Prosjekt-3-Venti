@@ -1,19 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
+import Items from './components/Items';
 import Cookies from "js-cookie";
 
 const App = () => {
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
-		title: "none",
+		id: "none",
 	});
 
-	const itemModal = (title: string) => {
-		setModal({ title: title });
+	const itemModal = (id: string) => {
+		setModal({ id: id });
 	};
+
+    const [searchResult, setSearchResult] = useState<Product[]>([]);
+	const [hidden, setHidden] = useState(true);
+	const [searched, setSearched] = useState(false);
+	const searchRef = useRef(null);
+
+	var handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if(event.key === 'Enter'){
+			search();
+		  }
+	}
+
+	function search() {
+		if (hidden) {
+			setHidden(false);
+		}
+		else {
+			console.log("opened")
+				const getAPI = async () => {
+					console.log(searchRef.current.value)
+					if(searchRef.current) {
+					const response = await fetch(`http://localhost:8080/search-products/${searchRef.current!.value || ""}`);
+					const data = await response.json();
+					
+					try {
+						setSearchResult(data);
+						setSearched(true);
+					} catch (error) {
+						console.log(error);
+					}
+				}
+			};getAPI();
+		}
+	}
+
     useEffect(() => {
         const getAPI = async () => {
             const response = await fetch('http://localhost:8080/',{
@@ -109,6 +145,7 @@ const App = () => {
 	}
     const [product, setProduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+>>>>>>> frontend/src/App.tsx
 	return (
 		<>
 			<div className="divWrapper">
@@ -117,6 +154,11 @@ const App = () => {
 						<h3>logo {session.sessionID}</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
+						<div style= {{display:(hidden ? "none" : "block")}}>
+                        	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+                    	</div>
+							<button onClick={()=>search()}>🔎</button>
+							<button>🛒</button>
 							<button>🔎</button>
 							<button onClick={() => console.log(cart)}>🛒</button>
 							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
@@ -124,6 +166,11 @@ const App = () => {
 						</div>
 					</nav>
 				</header>
+				<div className="searchResults" style= {{display:(searched ? "block" : "none")}}>
+				{searchResult.map(item => (
+					<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
+				))}
+				</div>
 				<main>
 					<div className="splash">
 						<div className="splashEye">
@@ -148,7 +195,7 @@ const App = () => {
 									<li>Microwave</li>
 								</ul>
 								<h2>Price</h2>
-								<input type="number" value="" placeholder="0 - 200kr"/>
+								<input type="number" defaultValue="0" placeholder="0 - 200kr"/>
 								<h2>Colors</h2>
 								<ul>
 									<li>Black</li>
