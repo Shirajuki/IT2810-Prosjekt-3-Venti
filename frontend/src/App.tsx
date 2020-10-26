@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
 import Items from './components/Items';
-
+import Cookies from "js-cookie";
 
 const App = () => {
 	//Declares a modal used for displaying the art
@@ -27,7 +27,6 @@ const App = () => {
 		  }
 	}
 
-	
 	function search() {
 		if (hidden) {
 			setHidden(false);
@@ -51,23 +50,119 @@ const App = () => {
 		}
 	}
 
-
-
+    useEffect(() => {
+        const getAPI = async () => {
+            const response = await fetch('http://localhost:8080/',{
+				method: 'GET',
+				mode: 'cors',
+				credentials: 'include', // Don't forget to specify this if you need cookies
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Origin':'http://localhost:3000',
+				},
+			});
+            const data = await response.json();
+            try {
+                console.log(data);
+                setLoading(false);
+				const cart = data.pop();
+				setCart(""+cart);
+                setProduct(data);
+				let cookie = Cookies.get("connect.sid")||"none";
+				if (cookie !== "none") cookie = cookie.split("\.")[0].substring(2);
+				setSession({sessionID: cookie});
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAPI();
+    }, []);
+	const [cart, setCart] = useState<string>("[]");
+	const [session, setSession] = useState({
+		sessionID: "none",
+	});
+	function editCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/editCart/'+rndProduct,{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		let existInCart = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				existInCart = i;
+				break;
+			}
+		}
+		if (existInCart !== -1) {
+			nCart[existInCart][1]++;
+		} else {
+			nCart.push([rndProduct,1]);
+		}
+		setCart(JSON.stringify(nCart));
+	}
+	function removeCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/removeCart/'+rndProduct,{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		let indexProduct = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				indexProduct = i;
+				break;
+			}
+		}
+		if (indexProduct !== -1) {
+			nCart[indexProduct][1]--;
+			if (nCart[indexProduct][1] == 0) nCart.splice(indexProduct, 1);
+		}
+		setCart(JSON.stringify(nCart));
+	}
+    const [product, setProduct] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+>>>>>>> frontend/src/App.tsx
 	return (
 		<>
 			<div className="divWrapper">
 				<header id="nav">
 					<nav>
-						<h3>logo</h3>
+						<h3>logo {session.sessionID}</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
 						<div style= {{display:(hidden ? "none" : "block")}}>
-                    	
                         	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
                     	</div>
-						
 							<button onClick={()=>search()}>🔎</button>
 							<button>🛒</button>
+							<button>🔎</button>
+							<button onClick={() => console.log(cart)}>🛒</button>
+							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
+							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
 						</div>
 					</nav>
 				</header>
@@ -100,7 +195,7 @@ const App = () => {
 									<li>Microwave</li>
 								</ul>
 								<h2>Price</h2>
-								<input type="number" defaultValue="0 - 200kr"/>
+								<input type="number" defaultValue="0" placeholder="0 - 200kr"/>
 								<h2>Colors</h2>
 								<ul>
 									<li>Black</li>

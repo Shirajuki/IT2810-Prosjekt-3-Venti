@@ -7,8 +7,45 @@ const adminRoute = require('./routes/admin');
 const fs = require('fs');
 const app = express();
 const url = 'mongodb://user:user@it2810-07.idi.ntnu.no:27017/project3db';
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session);
 
-app.use(cors());
+const expirationTime = 24 * 60 * 60 * 365 * 1000; // 30 days in ms
+const store = new MongoDBStore({
+	uri: 'mongodb://user:user@it2810-07.idi.ntnu.no:27017/project3db',
+	collection: 'sessions',
+	expires: expirationTime,
+	connectionOptions: {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	}
+});
+
+// Catch errors
+store.on('error', function(error) {
+	console.log(error);
+});
+
+// Session auth
+const sess = {
+	secret: 'ecommerce_app',
+	resave: false,
+	saveUnitiliaized: false,
+	store: store,
+	cookie: { 
+		maxAge: expirationTime,
+		sameSite: false,
+		httpOnly: false,
+	}
+}
+if (app.get('env') === 'production') {
+	app.set('trust proxy', 1); // trust first proxy
+	sess.cookie.secure = true; // serve secure cookies
+}
+app.use(session(sess))
+
+//app.use(cors());
+app.use(cors({credentials: true, origin: 'http://localhost:1111'}));
 
 //app.set('view engine', 'ejs');
 app.set('views', './src/pages');
