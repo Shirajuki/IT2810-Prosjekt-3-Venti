@@ -3,6 +3,8 @@ import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
+import Items from './components/Items';
+
 
 const App = () => {
 	//Declares a modal used for displaying the art
@@ -14,26 +16,9 @@ const App = () => {
 		setModal({ id: id });
 	};
 
-	
-    useEffect(() => {
-        const getAPI = async () => {
-            const response = await fetch('http://localhost:8080/');
-            const data = await response.json();
-
-            try {
-                setLoading(false);
-                setProduct(data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        getAPI();
-    }, []);
-
-    const [product, setProduct] = useState<Product[]>([]);
-	const [loading, setLoading] = useState(true);
     const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
+	const [searched, setSearched] = useState(false);
 	const searchRef = useRef(null);
 
 	var handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -57,6 +42,7 @@ const App = () => {
 					
 					try {
 						setSearchResult(data);
+						setSearched(true);
 					} catch (error) {
 						console.log(error);
 					}
@@ -85,6 +71,11 @@ const App = () => {
 						</div>
 					</nav>
 				</header>
+				<div className="searchResults" style= {{display:(searched ? "block" : "none")}}>
+				{searchResult.map(item => (
+					<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
+				))}
+				</div>
 				<main>
 					<div className="splash">
 						<div className="splashEye">

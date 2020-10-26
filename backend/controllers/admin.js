@@ -19,7 +19,7 @@ exports.getProduct = async (req, res) => {
     
     try {
         res.status(200)
-        console.log(product);
+        //console.log(product);
         res.send(JSON.stringify(product));
     } catch (error) {
         console.log(error);
@@ -55,7 +55,7 @@ exports.searchProducts = async (req, res) => {
     const product = await Product.find( { $text: { $search: searchTerm } } )
 
     try {
-        console.log(product);
+        //console.log(product);
         res.status(200)
         res.send(JSON.stringify(product))
     } catch (error) {

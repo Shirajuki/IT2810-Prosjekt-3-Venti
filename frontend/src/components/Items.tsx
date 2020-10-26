@@ -9,6 +9,7 @@ interface IProps {
 	description: string;
 	price: string;
 	isModal: boolean;
+	isCarousel: boolean;
 }
 
 
@@ -26,6 +27,7 @@ function Items(props: IProps) {
 						<p className="pris">{props.price}</p>
 					</div>
 					:
+					(!props.isCarousel ?
 					<div className="items-modal" onClick={props.onClick}>
 						<img className="modal-image" src={props.img} alt={`${props.name}`}/>
 						<div className="info-container">
@@ -35,7 +37,13 @@ function Items(props: IProps) {
 							<p className="itemDescription">{props.description}</p>
 						</div>
 					</div>
-		}
+					:
+					<div className="carousel-container" onClick={props.onClick}>
+						<img className="modal-image" src={props.img} alt={`${props.name}`}/>
+						<p className="itemName">{props.name}</p>
+					</div>
+					)
+					}			
 					</>
 				);
 		}

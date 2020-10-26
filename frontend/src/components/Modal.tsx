@@ -40,7 +40,7 @@ function Modal( props: IProps ) {
 						&#10006;
 					</div>
 				</div>
-				{product !== undefined ? <Items id={product._id} img={product.image_link} name={product.name} description={product.description} price={product.price} onClick={() => void(0)} isModal={false} />	: null}
+				{product !== undefined ? <Items id={product._id} isCarousel={false} img={product.image_link} name={product.name} description={product.description} price={product.price} onClick={() => void(0)} isModal={false} />	: null}
 			</div>
 		</div>
 	);
