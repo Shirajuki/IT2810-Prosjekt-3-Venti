@@ -72,21 +72,10 @@ const App = () => {
 		}
 	}
 
-	const filterList : String[] = [];
-	function addOrRemoveFilter(category: String, item:String){
-		let pos = filterList.indexOf(item);
-		if (pos < 0 )
-			filterList.push(item);
-		else
-			filterList.splice(pos,1);
-		console.log(filterList)
-		filter();
-	}
-
-	function filter(){
+	function filter(list: Array<String>){
+		console.log(list);
 		const getAPI = async () => {
-			if (filterList.length > 0 ){
-				for (var val in filterList){
+			if (list.length > 0 ){
 					console.log(filterRef.current.value)
 						if(filterRef.current) {
 						const response = await fetch(`http://localhost:8080/filter-products/${filterRef.current!.value || ""}`);
@@ -98,14 +87,29 @@ const App = () => {
 						} catch (error) {
 							console.log(error);
 						}
-					}
-				};getAPI(); 
+					};getAPI(); 
 				}
-			}
+			else {
+				console.log("hei")}
+		}
 	}
 
-	function sortFilter(sort:any){
-		if (sort !== 'none') {
+	const filterList : String[] = [];
+	function addOrRemoveFilter(item:String){
+		let pos = filterList.indexOf(item);
+		if (pos < 0 )
+			filterList.push(item);
+		else
+			filterList.splice(pos,1);
+		filter(filterList);
+	}
+
+	function sortFilter(){
+		var sort = (document.getElementById("sortFilter") as HTMLSelectElement);
+		var strSort = sort.options[sort.selectedIndex].value;
+
+		//console.log(strSort);
+		if (strSort !== 'none') {
 			const getAPI = async () => {
 				console.log(sortRef.current.value)
 				if(sortRef.current) {
@@ -122,8 +126,6 @@ const App = () => {
 			};getAPI(); 
 		}
 	}
-
-
 
 	return (
 		<>
@@ -161,34 +163,37 @@ const App = () => {
 							<aside>
 								<h1>Our Products</h1>
 								<h2>Product Type</h2>
-								<ul>
-									<li><button onClick={()=>addOrRemoveFilter("product_type", "lipstick")}>Lipstick</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("product_type", "foundation")}>Foundation</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("product_type", "eyeshadow")}>Eyeshadow</button></li>
-								</ul>
+								<input type="checkbox" id="productType1" name="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")} ref={filterRef} />
+  									<label htmlFor="productType1"> Lipstick</label><br></br>
+								<input type="checkbox" id="productType2" name="productType2" onClick={()=>addOrRemoveFilter("product_type=foundation")} ref={filterRef} />
+									<label htmlFor="productType2"> Foundation</label><br></br>
+								<input type="checkbox" id="productType3" name="productType3" onClick={()=>addOrRemoveFilter("product_type=eyeshadow")} ref={filterRef} />
+									<label htmlFor="productType3"> Eyeshadow</label><br></br>
 								<h2>Brand</h2>
-								<ul>
-									<li><button onClick={()=>addOrRemoveFilter("brand", "dior")}>Dior</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("brand", "colourpop")}>Colourpop</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("brand", "makeup_geek")}>Makeup Geek</button></li>
-								</ul>
+								<input type="checkbox" id="brand1" name="brand1" onClick={()=>addOrRemoveFilter("brand=dior")} ref={filterRef} />
+  									<label htmlFor="brand1"> Dior</label><br></br>
+								<input type="checkbox" id="brand2" name="brand2" onClick={()=>addOrRemoveFilter("brand=colourpop")} ref={filterRef} />
+									<label htmlFor="brand2"> Colourpop</label><br></br>
+								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=makeup_geek")} ref={filterRef} />
+									<label htmlFor="brand3"> Makeup Geek</label><br></br>
 								<h2>Price</h2>
 								<input type="number" value="0 - 200kr"/>
 								<h2>Colors</h2>
-								<ul>
-									<li><button onClick={()=>addOrRemoveFilter("color", "black")}>Black</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("color", "red")}>Red</button></li>
-									<li><button onClick={()=>addOrRemoveFilter("color", "purple")}>Purple</button></li>
-								</ul>
+								<input type="checkbox" id="color1" name="color1" onClick={()=>addOrRemoveFilter("color=black")} ref={filterRef} />
+  									<label htmlFor="color1"> Black</label><br></br>
+								<input type="checkbox" id="color2" name="color2" onClick={()=>addOrRemoveFilter("color=red")} ref={filterRef} />
+									<label htmlFor="color2"> Red</label><br></br>
+								<input type="checkbox" id="color3" name="color3" onClick={()=>addOrRemoveFilter("color=purple")} ref={filterRef} />
+									<label htmlFor="color3"> Purple</label><br></br>
 							</aside>
 							<div className="itemDisplayWrapper">
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" onChange={()=>sortFilter("{this.value}")}>
+								<select name="sort" id="sortFilter" onChange={()=>sortFilter()}>
 									<option value="none"> --- </option>
-									<option value="asc_Name">Name A - Z</option>
-									<option value="desc_Name">Name Z - A</option>
-									<option value="asc_Price">Price $ - $$$</option>
-									<option value="desc_Price">Price $$$ - $</option>
+									<option value="Name_asc" ref={sortRef}>Name A - Z</option>
+									<option value="Name_desc" ref={sortRef}>Name Z - A</option>
+									<option value="Price_asc" ref={sortRef}>Price $ - $$$</option>
+									<option value="Price_desc" ref={sortRef}>Price $$$ - $</option>
 								</select>
 								<ItemDisplay title="" setModal={itemModal}/>
 								<div className="itemNavigation">- 1 2 3 .. 20 -</div>

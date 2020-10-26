@@ -43,22 +43,18 @@ exports.searchProducts = async (req, res) => {
 
 exports.filterProducts = async (req, res) => {
     const filterTerm = req.params.filterTerm;
-    const typeTerm = req.params.typeTerm;
     const filter = req.query.filter;
     const filterOn = req.query.filterOn;
+    
+    const str = filterTerm.map(e => e.split("="));
+    const Jstr = JSON.params(str.map(e => `{"${e[0]}": "${e[1]}"}`).join().split("},{").join(", "))
 
-    if (filter.length > 0){
-        if (filterOn.length > 0){
+
+    if (filterTerm.length > 0){
             filterQuery = {
-                [filterOn] : filter
+                Jstr
             }
         }
-        else {
-            filterQuery = {
-                name : filter
-            }
-        }
-    }
 
     const product = await Product.find(filterQuery)
 
@@ -73,23 +69,22 @@ exports.filterProducts = async (req, res) => {
 
 exports.sortProducts = async (req, res) => {
     const sortTerm = req.params.sortTerm;
-    const type = req.params.type
     /*const sortBy = req.query.sortBy || 'name';
-    const OrderBy = req.query.OrderBy || 'asc';*/
+    const OrderBy = req.query.OrderBy || 'asc';
     const sortQuery = {
         [sortTerm] : type
-    };
+    };*/
 
     const product = await Product.find((data) => data)
 
-    /*function propComparator(prop) {
+    function propComparator(prop) {
         if(req.query.sortBy && req.query.OrderBy){
             const str = req.query.sortBy.split("_");
             sort[str[0]] = str[1] === 'desc' ? -1 : 1
         }
-    }*/
+    }
 
-    product.sort(sortQuery);
+    product.sort(propComparator(sortTerm));
 
     try {
         console.log(product);

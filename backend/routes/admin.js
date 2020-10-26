@@ -11,9 +11,9 @@ router.get('/search-products/:searchTerm', adminController.searchProducts);
 
 router.get('/edit-product/:productId', adminController.getEditProduct);
 
-router.get('/filter-products/:typeTerm=filterTerm', adminController.filterProducts);
+router.get('/filter-products/:filterTerm', adminController.filterProducts);
 
-router.get('/sort-products/:sortTerm=type', adminController.sortProducts);
+router.get('/sort-products/:sortTerm', adminController.sortProducts);
 
 router.post('/add-product', adminController.postProduct);
 
