@@ -1,43 +1,27 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
 import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from 'constants';
+import Items from './components/Items';
+import Cookies from "js-cookie";
 
 const App = () => {
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
-		title: "none",
+		id: "none",
 	});
 
-	const itemModal = (title: string) => {
-		setModal({ title: title });
+	const itemModal = (id: string) => {
+		setModal({ id: id });
 	};
 
-	
-    useEffect(() => {
-        const getAPI = async () => {
-            const response = await fetch('http://localhost:8080/');
-            const data = await response.json();
-
-            try {
-                console.log(data);
-                setLoading(false);
-                setProduct(data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        getAPI();
-    }, []);
-
-    const [product, setProduct] = useState<Product[]>([]);
     const [searchResult, setSearchResult] = useState<Product[]>([]);
-	const [loading, setLoading] = useState(true);
 	const [hidden, setHidden] = useState(true);
 	const [filterResult, setFilter] = useState<Product[]>([]);
 	const [sortList, setSort] = useState<Product[]>([]);
+	const [searched, setSearched] = useState(false);
 	const searchRef = useRef(null);
 	const sortRef = useRef(null);
 	const filterRef = useRef(null);
@@ -48,7 +32,6 @@ const App = () => {
 		  }
 	}
 
-	
 	function search() {
 		if (hidden) {
 			setHidden(false);
@@ -62,8 +45,8 @@ const App = () => {
 					const data = await response.json();
 					
 					try {
-						console.log(data);
 						setSearchResult(data);
+						setSearched(true);
 					} catch (error) {
 						console.log(error);
 					}
@@ -127,24 +110,127 @@ const App = () => {
 		}
 	}
 
+    useEffect(() => {
+        const getAPI = async () => {
+            const response = await fetch('http://localhost:8080/',{
+				method: 'GET',
+				mode: 'cors',
+				credentials: 'include', // Don't forget to specify this if you need cookies
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Origin':'http://localhost:3000',
+				},
+			});
+            const data = await response.json();
+            try {
+                console.log(data);
+                setLoading(false);
+				const cart = data.pop();
+				setCart(""+cart);
+                setProduct(data);
+				let cookie = Cookies.get("connect.sid")||"none";
+				if (cookie !== "none") cookie = cookie.split("\.")[0].substring(2);
+				setSession({sessionID: cookie});
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAPI();
+    }, []);
+	const [cart, setCart] = useState<string>("[]");
+	const [session, setSession] = useState({
+		sessionID: "none",
+	});
+	function editCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/editCart/'+rndProduct,{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		let existInCart = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				existInCart = i;
+				break;
+			}
+		}
+		if (existInCart !== -1) {
+			nCart[existInCart][1]++;
+		} else {
+			nCart.push([rndProduct,1]);
+		}
+		setCart(JSON.stringify(nCart));
+	}
+	function removeCart(productId: number = -1) {
+		let nCart = JSON.parse(cart);
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		if (productId !== -1) {
+			rndProduct = ""+productId;
+		}
+		fetch('http://localhost:8080/removeCart/'+rndProduct,{
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:3000',
+			}
+		})
+		.then(response => console.log(response));
+		let indexProduct = -1;
+		for (let i=0; i<nCart.length; i++) {
+			if (nCart[i][0] == rndProduct) {
+				indexProduct = i;
+				break;
+			}
+		}
+		if (indexProduct !== -1) {
+			nCart[indexProduct][1]--;
+			if (nCart[indexProduct][1] == 0) nCart.splice(indexProduct, 1);
+		}
+		setCart(JSON.stringify(nCart));
+	}
+    const [product, setProduct] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
 	return (
 		<>
 			<div className="divWrapper">
 				<header id="nav">
 					<nav>
-						<h3>logo</h3>
+						<h3>logo {session.sessionID}</h3>
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
 						<div style= {{display:(hidden ? "none" : "block")}}>
-                    	
                         	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
                     	</div>
-						
 							<button onClick={()=>search()}>🔎</button>
 							<button>🛒</button>
+							<button>🔎</button>
+							<button onClick={() => console.log(cart)}>🛒</button>
+							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
+							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
 						</div>
 					</nav>
 				</header>
+				<div className="searchResults" style= {{display:(searched ? "block" : "none")}}>
+				{searchResult.map(item => (
+					<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
+				))}
+				</div>
 				<main>
 					<div className="splash">
 						<div className="splashEye">
@@ -177,7 +263,7 @@ const App = () => {
 								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=makeup_geek")} ref={filterRef} />
 									<label htmlFor="brand3"> Makeup Geek</label><br></br>
 								<h2>Price</h2>
-								<input type="number" value="0 - 200kr"/>
+								<input type="number" defaultValue="0" placeholder="0 - 200kr"/>
 								<h2>Colors</h2>
 								<input type="checkbox" id="color1" name="color1" onClick={()=>addOrRemoveFilter("color=black")} ref={filterRef} />
   									<label htmlFor="color1"> Black</label><br></br>

@@ -5,7 +5,13 @@ const router = express.Router();
 
 router.get('/', adminController.getIndex);
 
+router.post('/editCart/:productId', adminController.postEditCart);
+
+router.post('/removeCart/:productId', adminController.postRemoveProductFromCart);
+
 router.get('/add-product', adminController.getAddProduct);
+
+router.get('/filter-product/:filterTerm', adminController.filterProducts);
 
 router.get('/search-products/:searchTerm', adminController.searchProducts);
 
@@ -21,6 +27,6 @@ router.post('/edit-product', adminController.postEditProduct);
 
 router.get('/:productId', adminController.getProduct);
 
-router.post('/delete', adminController.postDelete);
+router.post('/delete/:productId', adminController.postDelete);
 
 module.exports = router;
