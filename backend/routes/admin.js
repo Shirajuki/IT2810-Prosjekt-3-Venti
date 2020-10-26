@@ -11,6 +11,10 @@ router.get('/search-products/:searchTerm', adminController.searchProducts);
 
 router.get('/edit-product/:productId', adminController.getEditProduct);
 
+router.get('/filter-products/:typeTerm=filterTerm', adminController.filterProducts);
+
+router.get('/sort-products/:sortTerm=type', adminController.sortProducts);
+
 router.post('/add-product', adminController.postProduct);
 
 router.post('/edit-product', adminController.postEditProduct);

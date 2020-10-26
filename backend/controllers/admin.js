@@ -41,6 +41,65 @@ exports.searchProducts = async (req, res) => {
     }
 };
 
+exports.filterProducts = async (req, res) => {
+    const filterTerm = req.params.filterTerm;
+    const typeTerm = req.params.typeTerm;
+    const filter = req.query.filter;
+    const filterOn = req.query.filterOn;
+
+    if (filter.length > 0){
+        if (filterOn.length > 0){
+            filterQuery = {
+                [filterOn] : filter
+            }
+        }
+        else {
+            filterQuery = {
+                name : filter
+            }
+        }
+    }
+
+    const product = await Product.find(filterQuery)
+
+    try {
+        console.log(product);
+        res.status(200)
+        res.send(JSON.stringify(product))
+    } catch (error) {
+        console.log(error);
+    }
+}; 
+
+exports.sortProducts = async (req, res) => {
+    const sortTerm = req.params.sortTerm;
+    const type = req.params.type
+    /*const sortBy = req.query.sortBy || 'name';
+    const OrderBy = req.query.OrderBy || 'asc';*/
+    const sortQuery = {
+        [sortTerm] : type
+    };
+
+    const product = await Product.find((data) => data)
+
+    /*function propComparator(prop) {
+        if(req.query.sortBy && req.query.OrderBy){
+            const str = req.query.sortBy.split("_");
+            sort[str[0]] = str[1] === 'desc' ? -1 : 1
+        }
+    }*/
+
+    product.sort(sortQuery);
+
+    try {
+        console.log(product);
+        res.status(200)
+        res.send(JSON.stringify(product))
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.getAddProduct = (req, res) => {
     res.status(200).render('edit-product', { editing: false });
 };
