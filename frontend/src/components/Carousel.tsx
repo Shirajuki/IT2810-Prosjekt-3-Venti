@@ -162,7 +162,7 @@ function Carousel(props: IProps) {
 	};
 	getAPI();
 	}, []);
-	const slides: slideType[] = product.map(item =>( {id: item._id, image_link: item.image_link, name: item.name, description: item.description, price: item.price}))
+	const slides: slideType[] = product.map(item =>( {id: item.id, image_link: item.image_link, name: item.name, description: item.description, price: item.price}))
 	console.log(slides);
 	return <Slide slides={slides} setModal={props.setModal}/>;
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema({
     name: {
@@ -24,5 +24,7 @@ const productSchema = mongoose.Schema({
     product_colors: Array
   }
   );
-  
-  module.exports = mongoose.model('product', productSchema);
+
+// module.exports = mongoose.model('product', productSchema);
+export default mongoose.model('product', productSchema);
+
