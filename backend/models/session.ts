@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-
-const sessionSchema = mongoose.Schema({
+import { SessionDoc } from "./modelDoc";
+const sessionSchema = new mongoose.Schema({
 	_id: {
 		type: String,
 		required: true,
@@ -12,5 +12,5 @@ const sessionSchema = mongoose.Schema({
 );
 
 // module.exports = mongoose.model('session', sessionSchema);
-export default mongoose.model("session", sessionSchema);
+export default mongoose.model<SessionDoc>("session", sessionSchema);
 

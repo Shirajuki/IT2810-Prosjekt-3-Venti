@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
 import fs from "fs";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import path from "path";
 dotenv.config();
 import adminRoute from "./routes/admin";
@@ -14,12 +14,12 @@ const MongoDBStore = connectMongoDBSession(session);
 const expirationTime = 24 * 60 * 60 * 365 * 1000; // 30 days in ms
 const store = new MongoDBStore({
 	uri: url,
-	expires: expirationTime,
 	collection: "sessions",
 	connectionOptions: {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	},
+	expires: expirationTime,
 });
 
 // Catch errors

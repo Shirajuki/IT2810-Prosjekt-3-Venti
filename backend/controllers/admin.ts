@@ -1,36 +1,39 @@
 import Product from "../models/product";
 import Session from "../models/session";
+import { Request, Response } from 'express';
+import { ProductDoc, SessionDoc } from "../models/modelDoc";
 
-exports.getIndex = async (req, res) => {
+const getIndex = async (req: Request, res: Response) => {
 	const product = await Product.find((data) => data); // object
 	const sessionDB = await Session.find((data) => data);
-	console.log(typeof sessionDB)
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	console.log(typeof session)
+	let final: any[] = [];
 	if (session.length > 0) {
 		console.log("Welcome back",req.sessionID);
 		console.log(session[0]._doc.cart);
 		if (session[0]._doc?.cart === undefined) {
-			product.push('[]');
-			const update = await Session.findOneAndUpdate(
+			final = [...product, '[]'];
+			const update = await Session.updateOne(
 			    { _id: req.sessionID },
 				{ cart: "[]" },
 				{ multi: true },
 			);
 			console.log(update);
 		} else {
-			product.push(session[0]._doc.cart);
+			final = [...product,session[0]._doc.cart];
 		}
+	} else {
+		final = [...product, '[]'];
 	}
     try {
-		// console.log(product);
-        res.json(product);
+		console.log(final[final.length-1]);
+		res.json(final);
     } catch (error) {
         console.log(error);
     }
 };
 
-exports.postRemoveProductFromCart = async (req, res) => {
+const postRemoveProductFromCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 	if (!productId) return res.status(200);
 	const sessionDB = await Session.find((data) => data);
@@ -63,7 +66,7 @@ exports.postRemoveProductFromCart = async (req, res) => {
         console.log(error);
     }
 };
-exports.postEditCart = async (req, res) => {
+const postEditCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 	if (!productId) return res.status(200);
 	const sessionDB = await Session.find((data) => data);
@@ -96,9 +99,9 @@ exports.postEditCart = async (req, res) => {
         console.log(error);
     }
 };
-exports.getProduct = async (req, res) => {
+const getProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;
-    const product = await Product.find({id: productId});
+    const product = await Product.find({id: +productId});
     try {
         console.log(product);
         res.status(200).json(product);
@@ -107,14 +110,14 @@ exports.getProduct = async (req, res) => {
     }
 };
 
-exports.filterProducts = async (req, res) => {
-    const filterTerm = req.params.filterTerm;
+const filterProducts = async (req: Request, res: Response) => {
+	const filterTerm: string = req.params.filterTerm;
 
     const product = await Product.find((data) => data)
 
-    const propComparator = prop => {
-        return (a, b) => {
-            return a[prop] - b[prop];
+	const propComparator = (prop: string) => {
+		return (a: ProductDoc, b: ProductDoc) => {
+            return a.get(prop) - b.get(prop);
         }
     }
 
@@ -129,7 +132,7 @@ exports.filterProducts = async (req, res) => {
     }
 };
 
-exports.searchProducts = async (req, res) => {
+const searchProducts = async (req: Request, res: Response) => {
     const searchTerm = req.params.searchTerm;
 
     const product = await Product.find( { $text: { $search: searchTerm } } )
@@ -143,11 +146,11 @@ exports.searchProducts = async (req, res) => {
     }
 };
 
-exports.getAddProduct = (req, res) => {
+const getAddProduct = (req: Request, res: Response) => {
     res.status(200).render('edit-product', { editing: false });
 };
 
-exports.getEditProduct = async (req, res) => {
+const getEditProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;
     const editMode = req.query.edit;
     if (!editMode) {
@@ -165,7 +168,7 @@ exports.getEditProduct = async (req, res) => {
     }
 };
 
-exports.postProduct = (req, res) => {
+const postProduct = (req: Request, res: Response) => {
     const { name, brand, image_link, product_type, description, price } = req.body;
 
     const product = new Product({ name, brand, image_link, product_type, description, price });
@@ -174,30 +177,7 @@ exports.postProduct = (req, res) => {
     res.status(201).redirect('http://localhost:3000/');
 };
 
-exports.postEditProduct = (req, res) => {
-    const productId = req.body.productId;
-    const { name, brand, image_link, product_type, description, price } = req.body;
-
-    Product.findById(productId)
-        .then((product) => {
-            product.name = name;
-            product.brand = brand;
-            product.image_link = image_link;
-            product.description = description;
-            product.product_type = product_type;
-            product.price = price;
-            return product.save();
-        })
-        .then(() => {
-            console.log('Item Updated');
-            res.status(201).redirect('/');
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
-
-exports.postDelete = async (req, res) => {
+const postDelete = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 
     const product = await Product.findByIdAndRemove(productId, (data) => data);
@@ -209,4 +189,16 @@ exports.postDelete = async (req, res) => {
     } catch (error) {
         console.log(error);
     }
+};
+export default {
+	getIndex: getIndex,
+	postRemoveProductFromCart: postRemoveProductFromCart,
+	postEditCart: postEditCart,
+	postProduct: postProduct,
+	getProduct: getProduct,
+	filterProducts: filterProducts,
+	searchProducts: searchProducts,
+	getAddProduct: getAddProduct,
+	getEditProduct: getEditProduct,
+	postDelete: postDelete,
 };

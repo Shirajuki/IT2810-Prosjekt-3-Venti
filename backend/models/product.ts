@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-
-const productSchema = mongoose.Schema({
+import { ProductDoc } from "./modelDoc";
+const productSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -26,5 +26,5 @@ const productSchema = mongoose.Schema({
   );
 
 // module.exports = mongoose.model('product', productSchema);
-export default mongoose.model('product', productSchema);
+export default mongoose.model<ProductDoc>('product', productSchema);
 
