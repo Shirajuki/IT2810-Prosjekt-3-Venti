@@ -145,7 +145,6 @@ const App = () => {
 	}
     const [product, setProduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
->>>>>>> frontend/src/App.tsx
 	return (
 		<>
 			<div className="divWrapper">
@@ -168,7 +167,7 @@ const App = () => {
 				</header>
 				<div className="searchResults" style= {{display:(searched ? "block" : "none")}}>
 				{searchResult.map(item => (
-					<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
+					<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
 				))}
 				</div>
 				<main>

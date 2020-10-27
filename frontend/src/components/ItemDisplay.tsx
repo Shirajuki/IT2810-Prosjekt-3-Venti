@@ -36,7 +36,7 @@ function ItemDisplay(props: IProps) {
 	<>
 		<div className="itemDisplay">
 			{product.map(item => (
-				<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => props.setModal(item._id) }isModal = {true} />
+				<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => props.setModal(item.id) }isModal = {true} />
 			))}
 		</div>
 	</>
