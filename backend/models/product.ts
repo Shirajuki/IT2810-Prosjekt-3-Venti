@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-
-const productSchema = mongoose.Schema({
+import mongoose from "mongoose";
+import { ProductDoc } from "./modelDoc";
+const productSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -24,5 +24,7 @@ const productSchema = mongoose.Schema({
     product_colors: Array
   }
   );
-  
-  module.exports = mongoose.model('product', productSchema);
+
+// module.exports = mongoose.model('product', productSchema);
+export default mongoose.model<ProductDoc>('product', productSchema);
+

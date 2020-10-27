@@ -70,7 +70,7 @@ const App = () => {
 				setCart(""+cart);
                 setProduct(data);
 				let cookie = Cookies.get("connect.sid")||"none";
-				if (cookie !== "none") cookie = cookie.split("\.")[0].substring(2);
+				if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
 				setSession({sessionID: cookie});
             } catch (error) {
                 console.log(error);
@@ -101,7 +101,7 @@ const App = () => {
 		.then(response => console.log(response));
 		let existInCart = -1;
 		for (let i=0; i<nCart.length; i++) {
-			if (nCart[i][0] == rndProduct) {
+			if (nCart[i][0] === rndProduct) {
 				existInCart = i;
 				break;
 			}
@@ -132,20 +132,19 @@ const App = () => {
 		.then(response => console.log(response));
 		let indexProduct = -1;
 		for (let i=0; i<nCart.length; i++) {
-			if (nCart[i][0] == rndProduct) {
+			if (nCart[i][0] === rndProduct) {
 				indexProduct = i;
 				break;
 			}
 		}
 		if (indexProduct !== -1) {
 			nCart[indexProduct][1]--;
-			if (nCart[indexProduct][1] == 0) nCart.splice(indexProduct, 1);
+			if (nCart[indexProduct][1] === 0) nCart.splice(indexProduct, 1);
 		}
 		setCart(JSON.stringify(nCart));
 	}
     const [product, setProduct] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
->>>>>>> frontend/src/App.tsx
 	return (
 		<>
 			<div className="divWrapper">
@@ -158,8 +157,6 @@ const App = () => {
                         	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
                     	</div>
 							<button onClick={()=>search()}>🔎</button>
-							<button>🛒</button>
-							<button>🔎</button>
 							<button onClick={() => console.log(cart)}>🛒</button>
 							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
 							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
@@ -168,7 +165,7 @@ const App = () => {
 				</header>
 				<div className="searchResults" style= {{display:(searched ? "block" : "none")}}>
 				{searchResult.map(item => (
-					<Items id={item._id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
+					<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
 				))}
 				</div>
 				<main>
