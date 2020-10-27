@@ -3,7 +3,6 @@ import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
-import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from 'constants';
 import Items from './components/Items';
 import Cookies from "js-cookie";
 
