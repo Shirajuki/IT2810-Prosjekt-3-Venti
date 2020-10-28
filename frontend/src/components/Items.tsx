@@ -38,9 +38,11 @@ function Items(props: IProps) {
 						</div>
 					</div>
 					:
-					<div className="carousel-container" onClick={props.onClick}>
-						<img className="modal-image" src={props.img} alt={`${props.name}`}/>
+					<div className="items" onClick={props.onClick}>
+						<img src={props.img} alt={`${props.name}`}/>
 						<p className="itemName">{props.name}</p>
+						<p className="itemDescription">{props.description}</p>
+						<p className="pris">{props.price}</p>
 					</div>
 					)
 					}			
