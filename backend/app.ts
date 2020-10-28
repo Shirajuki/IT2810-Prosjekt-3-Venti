@@ -50,7 +50,7 @@ app.use(session(sess))
 app.use(cors({credentials: true, origin: "http://localhost:1111"}));
 
 // app.set("view engine", "ejs");
-app.set("views", "./src/pages");
+// app.set("views", "./src/pages");
 
 app.use(express.urlencoded({ extended: false }));
 

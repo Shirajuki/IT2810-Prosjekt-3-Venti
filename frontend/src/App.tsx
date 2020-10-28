@@ -160,6 +160,7 @@ const App = () => {
         getAPI();
 		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
 	}, []);
+
 	useEffect(() => {
 		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
 	}, [filterResult])
@@ -170,9 +171,11 @@ const App = () => {
 	});
 	function editCart(productId: number = -1) {
 		let nCart = JSON.parse(cart);
-		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		let rndProduct = ""+product[Math.floor(Math.random() * product.length)]?.id || "-1";
 		if (productId !== -1) {
 			rndProduct = ""+productId;
+		} else {
+			return;
 		}
 		fetch('http://localhost:8080/editCart/'+rndProduct,{
 			method: 'POST',
