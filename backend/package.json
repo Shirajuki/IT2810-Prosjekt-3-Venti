@@ -8,7 +8,7 @@
     "build": "tsc --project ./",
     "start": "nodemon app.ts",
     "tsc": "tsc",
-	"servers": "concurrently 'npm start' 'cd ../frontend && npm run start'"
+    "servers": "concurrently 'npm start' 'cd ../frontend && npm run start'"
   },
   "author": "",
   "license": "ISC",

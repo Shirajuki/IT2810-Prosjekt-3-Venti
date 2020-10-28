@@ -153,6 +153,9 @@ main .section {
   height: 100%;
   align-content: flex-start;
   align-self: flex-start;
+  overflow-y: hidden;
+  text-align: left;
+  margin: 5px;
 }
 .carousel .items .pris {
   color: #52307c;
@@ -199,14 +202,13 @@ main .section {
 .itemDisplay {
   display: grid;
   grid-gap: 40px;
-  grid-template-columns: repeat(3, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
   grid-template-rows: repeat(3, minmax(350px, 1fr));
 }
 .itemDisplay .items {
   cursor: pointer;
   position: relative;
   display: grid;
-  width: 300px;
   height: 350px;
   grid-template-rows: 60% 10% 20% 10%;
   font-size: 0.9rem;
@@ -216,7 +218,7 @@ main .section {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 .itemDisplay .items img {
-  width: 100%;
+	margin: 0 auto;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -230,6 +232,9 @@ main .section {
   font-weight: normal;
   font-size: 0.8rem;
   color: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .itemDisplay .items .pris {
   color: #52307c;
