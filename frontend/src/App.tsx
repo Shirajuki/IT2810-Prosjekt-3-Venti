@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import ReactPaginate from 'react-paginate';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
@@ -17,7 +18,7 @@ const App = () => {
 		setModal({ id: id, product: product });
 	};
 
-    const [product, setProduct] = useState<Product[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
@@ -26,11 +27,30 @@ const App = () => {
 	const [sortList, setSort] = useState<Product[]>([]);
 	const searchRef = useRef(null);
 	const sortRef = useRef(null);
+	
+	// Pagination
+	const [currentPage, setCurrentPage] = useState(0)
+	const [pageSize] = useState(15)
+	const [pageCount, setPageCount] = useState(0)
+	const [productsCount, setProductsCount] = useState(0)
+	useEffect(() => {
+		const countProducts = async () => {
+			const response = await fetch('http://localhost:8080/count-products/');
+			const {count = 0} = await response.json()
+			setProductsCount(count)
+		}
+		countProducts()
+	}, [])
+	useEffect(() => {
+      setPageCount(Math.ceil(productsCount / pageSize))
+	}, [productsCount, pageSize])
+
 	const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		if(event.key === 'Enter'){
 			search();
 		  }
 	}
+
 	function updateProducts(data: {filterResultList1: Product[], searchResultList1: Product[], sortResultList: Product[], searched: boolean}) {
 		const productsList: Product[] = [];
 		const { filterResultList1, searchResultList1, sortResultList, searched} = data;
@@ -53,7 +73,7 @@ const App = () => {
 				}
 			}
 		}
-		setProduct(productsList)
+		setProducts(productsList)
 	}
 	function search() {
 		if (hidden) {
@@ -113,11 +133,12 @@ const App = () => {
 		filter(newList);
 	}
 
-	function sortFilter(){
+	const sortFilter = useCallback(
+		() => {
 		// const strSort = (document.getElementById("sortFilter") as HTMLSelectElement).value;
 		const getAPI = async () => {
 			console.log(sortRef.current.value);
-			const response = await fetch(`http://localhost:8080/sort-products/${sortRef.current.value || ""}`);
+			const response = await fetch(`http://localhost:8080/sort-products/${sortRef.current.value || ""}?pageOffset=${currentPage}&pageSize=${pageSize}`);
 			const data = await response.json();
 			
 			try {
@@ -129,37 +150,41 @@ const App = () => {
 			}
 		}
 		getAPI(); 
-	}
+	}, [currentPage, pageSize])
+
     useEffect(() => {
         const getAPI = async () => {
-            const response = await fetch('http://localhost:8080/',{
-				method: 'GET',
+            const response = await fetch(`http://localhost:8080/?pageOffset=${currentPage}&pageSize=${pageSize}`,{
+				/*method: 'GET',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json',
 					'Origin':'http://localhost:3000',
-				},
+				},*/
 			});
             const data = await response.json();
             try {
                 console.log("initialize",data);
                 setLoading(false);
 				const cart = data.pop();
-				setProduct(data);
+				setProducts(data);
 				setSort(data);
 				setCart(""+cart);
 				let cookie = Cookies.get("connect.sid")||"none";
 				if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
 				setSession({sessionID: cookie});
+				console.log("Working");
             } catch (error) {
-                console.log(error);
+				console.log(error);
+				console.log("heihei");
             }
         };
         getAPI();
 		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
-	}, []);
+	}, [currentPage, pageSize]);
+
 	useEffect(() => {
 		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
 	}, [filterResult])
@@ -170,7 +195,7 @@ const App = () => {
 	});
 	function editCart(productId: number = -1) {
 		let nCart = JSON.parse(cart);
-		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		let rndProduct = ""+products[Math.floor(Math.random() * products.length)]?.id || "-1";
 		if (productId !== -1) {
 			rndProduct = ""+productId;
 		}
@@ -201,7 +226,7 @@ const App = () => {
 	}
 	function removeCart(productId: number = -1) {
 		let nCart = JSON.parse(cart);
-		let rndProduct = ""+product[Math.floor(Math.random() * product.length)].id;
+		let rndProduct = ""+products[Math.floor(Math.random() * products.length)].id;
 		if (productId !== -1) {
 			rndProduct = ""+productId;
 		}
@@ -297,14 +322,39 @@ const App = () => {
 							</aside>
 							<div className="itemDisplayWrapper">
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>sortFilter()}>
+								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{sortFilter(); setCurrentPage(0)}}>
 									<option value="name_asc" selected={true}>Name A - Z</option>
 									<option value="name_desc">Name Z - A</option>
 									<option value="price_asc">Price $ - $$$</option>
 									<option value="price_desc">Price $$$ - $</option>
 								</select>
-								<ItemDisplay setModal={itemModal} itemList={product}/>
-								<div className="itemNavigation">- 1 2 3 .. 20 -</div>
+								<div className="itemNavigation">
+									<ReactPaginate  previousLabel={'previous'}
+                                      nextLabel={'next'}
+                                      breakLabel={'...'}
+                                      breakClassName={'break-me'}
+                                      pageCount={pageCount}
+									  forcePage={currentPage}
+                                      marginPagesDisplayed={1}
+                                      pageRangeDisplayed={3}
+                                      onPageChange={({selected}) => setCurrentPage(selected)}
+                                      containerClassName={'pagination'}
+                                      activeClassName={'active'} />
+								</div>
+								<ItemDisplay setModal={itemModal} itemList={products}/>
+								<div className="itemNavigation">
+									<ReactPaginate  previousLabel={'previous'}
+                                      nextLabel={'next'}
+                                      breakLabel={'...'}
+                                      breakClassName={'break-me'}
+									  pageCount={pageCount}
+									  forcePage={currentPage}
+                                      marginPagesDisplayed={1}
+                                      pageRangeDisplayed={3}
+                                      onPageChange={({selected}) => setCurrentPage(selected)}
+                                      containerClassName={'pagination'}
+                                      activeClassName={'active'} />
+								</div>
 							</div>
 						</div>
 					</div>

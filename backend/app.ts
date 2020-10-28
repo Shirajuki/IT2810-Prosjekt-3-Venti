@@ -47,7 +47,7 @@ if (app.get("env") === "production") {
 app.use(session(sess))
 
 // app.use(cors());
-app.use(cors({credentials: true, origin: "http://localhost:1111"}));
+app.use(cors({credentials: true, origin: "http://localhost:3000"}));
 
 // app.set("view engine", "ejs");
 app.set("views", "./src/pages");

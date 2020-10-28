@@ -4,7 +4,8 @@ import { Request, Response } from 'express';
 import { ProductDoc } from "../models/modelDoc";
 
 const getIndex = async (req: Request, res: Response) => {
-	const product = await Product.find((data) => data); // object
+	const {pageSize = 15, pageOffset = 0} = req.query;
+	const product = await Product.find((data) => data).skip(+pageOffset*+pageSize).limit(+pageSize); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	let final: any[] = [];
@@ -160,16 +161,24 @@ const sortProducts = async (req: Request, res: Response) => {
 	const sortTerm = req.params.sortTerm.split("_") || "_";
 	const term: any = {}
 	term[sortTerm[0]] = sortTerm[1];
+	const {pageSize = 15, pageOffset = 0} = req.query;
 
-	console.log(term)
-	
-	const product = await Product.find({}).sort(term);
-	
-	console.log(1111111,product[0],product[1]);
+	const product = await Product.find({}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
+
     try {
-        // console.log(product);
         res.status(200)
         res.send(JSON.stringify(product))
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const countProducts = async (_: Request, res: Response) => {
+	const count = await Product.countDocuments()
+
+    try {
+        res.status(200)
+        res.send(JSON.stringify({count}))
     } catch (error) {
         console.log(error);
     }
@@ -215,16 +224,18 @@ const postDelete = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
+
 export default {
-	getIndex: getIndex,
-	postRemoveProductFromCart: postRemoveProductFromCart,
-	postEditCart: postEditCart,
-	postProduct: postProduct,
-	getProduct: getProduct,
-	searchProducts: searchProducts,
-	filterProducts: filterProducts,
-	sortProducts: sortProducts,
-	getAddProduct: getAddProduct,
-	getEditProduct: getEditProduct,
-	postDelete: postDelete,
+	getIndex,
+	countProducts,
+	postRemoveProductFromCart,
+	postEditCart,
+	postProduct,
+	getProduct,
+	searchProducts,
+	filterProducts,
+	sortProducts,
+	getAddProduct,
+	getEditProduct,
+	postDelete,
 };

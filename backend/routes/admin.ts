@@ -17,6 +17,8 @@ router.get('/filter-products/:filterTerm', adminController.filterProducts);
 
 router.get('/sort-products/:sortTerm', adminController.sortProducts);
 
+router.get('/count-products/', adminController.countProducts);
+
 router.get("/edit-product/:productId", adminController.getEditProduct);
 
 router.post("/add-product", adminController.postProduct);
