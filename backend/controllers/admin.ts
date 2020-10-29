@@ -2,12 +2,46 @@ import Product from "../models/product";
 import Session from "../models/session";
 import { Request, Response } from 'express';
 import { ProductDoc } from "../models/modelDoc";
+import { type } from "os";
+
+interface IQuery {
+	pageSize: number,
+	pageOffset: number,
+	sortTerm: string,
+}
 
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
-	const product = await Product.find((data) => data).skip(+pageOffset*+pageSize).limit(+pageSize); // object
+	let sortTerm = req.query.sortTerm;
+	if (typeof(sortTerm) === "string") {
+		sortTerm = sortTerm.split("_");
+	}
+	else {
+		sortTerm = ["name", "asc"];
+	}
+	console.log("Sortterm", sortTerm, typeof(sortTerm));
+	const term: any = {}
+	term[sortTerm[0]] = sortTerm[1];
+
+	let filterTerm = req.query.filterTerm;
+	console.log("lolo", filterTerm ,typeof(filterTerm));
+	const fterm: String[] = JSON.parse(<string>filterTerm).map((e: string) => e.split("="));
+	
+	
+	if (filterTerm.length < 0) return res.status(200);
+		const filterQuery:any = {};
+		for (let i=0; i<fterm.length; i++) {
+			if (filterQuery[fterm[i][0]] !== undefined) {
+				filterQuery[fterm[i][0]] = [...filterQuery[fterm[i][0]], fterm[i][1]];
+			} else {
+				filterQuery[fterm[i][0]] = [fterm[i][1]];
+			}
+		}
+
+	const product = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
+
 	let final: any[] = [];
 	if (session.length > 0) {
 		console.log("Welcome back",req.sessionID);
@@ -33,6 +67,17 @@ const getIndex = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
+
+const countProducts = async (_: Request, res: Response) => {
+	const count = await Product.countDocuments()
+
+    try {
+        res.status(200)
+        res.send(JSON.stringify({count}))
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const postRemoveProductFromCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -173,16 +218,7 @@ const sortProducts = async (req: Request, res: Response) => {
     }
 }
 
-const countProducts = async (_: Request, res: Response) => {
-	const count = await Product.countDocuments()
 
-    try {
-        res.status(200)
-        res.send(JSON.stringify({count}))
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 const getEditProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;

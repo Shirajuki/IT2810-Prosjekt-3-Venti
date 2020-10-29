@@ -22,6 +22,7 @@ const App = () => {
     const [loading, setLoading] = useState(true);
     const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
+	const [filterTerm, setFilterTerm] = useState<String[]>([]);
 	const [filterResult, setFilter] = useState<Product[]>([]);
 	const [filterList, setFilterList] = useState([]);
 	const [sortList, setSort] = useState<Product[]>([]);
@@ -101,10 +102,11 @@ const App = () => {
 
 	function filter(list: Array<String>){
 		console.log(list);
+		setFilterTerm(list);
 		const getAPI = async () => {
 			if (list.length > 0) {
 				console.log("sending...", JSON.stringify(list));
-				const response = await fetch(`http://localhost:8080/filter-products/${JSON.stringify(list) || ""}`);
+				const response = await fetch(`http://localhost:8080/?filterTerm=${JSON.stringify(filterTerm) || ""}`);
 				const data = await response.json();
 				try {
 					console.log("got filter",data);
@@ -138,7 +140,7 @@ const App = () => {
 		// const strSort = (document.getElementById("sortFilter") as HTMLSelectElement).value;
 		const getAPI = async () => {
 			console.log(sortRef.current.value);
-			const response = await fetch(`http://localhost:8080/sort-products/${sortRef.current.value || ""}?pageOffset=${currentPage}&pageSize=${pageSize}`);
+			const response = await fetch(`http://localhost:8080/?sortTerm=${sortRef.current.value}&pageOffset=${currentPage}&pageSize=${pageSize}`);
 			const data = await response.json();
 			
 			try {
