@@ -248,9 +248,9 @@ const App = () => {
 						<button><h2>TECHNIQUE</h2></button>
 						<div>
 						<div style= {{display:(hidden ? "none" : "block")}}>
-                        	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+                        	<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
                     	</div>
-							<button onClick={()=>search()}>🔎</button>
+							<button data-cy="search-button" onClick={()=>search()}>🔎</button>
 							<button onClick={() => console.log(cart)}>🛒</button>
 							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
 							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
