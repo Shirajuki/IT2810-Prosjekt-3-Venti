@@ -23,9 +23,6 @@ const App = () => {
     const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
 	const [filterTerm, setFilterTerm] = useState<String[]>([]);
-	const [filterResult, setFilter] = useState<Product[]>([]);
-	const [filterList, setFilterList] = useState([]);
-	const [sortList, setSort] = useState<Product[]>([]);
 	const searchRef = useRef(null);
 	const sortRef = useRef(null);
 	
@@ -34,14 +31,7 @@ const App = () => {
 	const [pageSize] = useState(15)
 	const [pageCount, setPageCount] = useState(0)
 	const [productsCount, setProductsCount] = useState(0)
-	useEffect(() => {
-		const countProducts = async () => {
-			const response = await fetch('http://localhost:8080/count-products/');
-			const {count = 0} = await response.json()
-			setProductsCount(count)
-		}
-		countProducts()
-	}, [])
+
 	useEffect(() => {
       setPageCount(Math.ceil(productsCount / pageSize))
 	}, [productsCount, pageSize])
@@ -52,30 +42,6 @@ const App = () => {
 		  }
 	}
 
-	function updateProducts(data: {filterResultList1: Product[], searchResultList1: Product[], sortResultList: Product[], searched: boolean}) {
-		const productsList: Product[] = [];
-		const { filterResultList1, searchResultList1, sortResultList, searched} = data;
-		const filterResultList: String[] = filterResultList1.map(e => e.id);
-		const searchResultList: String[] = searchResultList1.map(e => e.id);
-		for (const prod of sortResultList) {
-			if (filterResultList.length > 0) {
-				if (filterResultList.includes(prod.id)) {
-					if (searched) {
-						if (searchResultList.includes(prod.id)) productsList.push(prod);
-					} else {
-						productsList.push(prod);
-					}
-				}
-			} else {
-				if (searched) {
-					if (searchResultList.includes(prod.id)) productsList.push(prod);
-				} else {
-					productsList.push(prod);
-				}
-			}
-		}
-		setProducts(productsList)
-	}
 	function search() {
 		if (hidden) {
 			setHidden(false);
@@ -90,7 +56,6 @@ const App = () => {
 					
 					try {
 						setSearchResult(data);
-						updateProducts({filterResultList1: filterResult, searchResultList1: data, sortResultList: sortList, searched: true});
 					} catch (error) {
 						console.log(error);
 					}
@@ -100,96 +65,55 @@ const App = () => {
 		}
 	}
 
-	function filter(list: Array<String>){
-		console.log(list);
-		setFilterTerm(list);
-		const getAPI = async () => {
-			if (list.length > 0) {
-				console.log("sending...", JSON.stringify(list));
-				const response = await fetch(`http://localhost:8080/?filterTerm=${JSON.stringify(filterTerm) || ""}`);
-				const data = await response.json();
-				try {
-					console.log("got filter",data);
-					setFilter(data);
-				} catch (error) {
-					console.log(error);
-				}
-			} else {
-				console.log("HENT ALL DATA")
-				setFilter([]);
-			}
-		}
-		getAPI();
-	}
-
 	function addOrRemoveFilter(item:String){
-		const pos = filterList.indexOf(item);
-		const newList = filterList.concat();
+		const pos = filterTerm.indexOf(item);
+		const newList = filterTerm.concat();
 		if (pos < 0 ) {
 			newList.push(item);
 		} else {
 			newList.splice(pos,1);
 		}
-		setFilterList(newList);
-		console.log(123,pos,newList)
-		filter(newList);
+		setFilterTerm(newList);
 	}
 
-	const sortFilter = useCallback(
-		() => {
-		// const strSort = (document.getElementById("sortFilter") as HTMLSelectElement).value;
-		const getAPI = async () => {
-			console.log(sortRef.current.value);
-			const response = await fetch(`http://localhost:8080/?sortTerm=${sortRef.current.value}&pageOffset=${currentPage}&pageSize=${pageSize}`);
-			const data = await response.json();
-			
-			try {
-				console.log("got sortdata",data);
-				setSort(data);
-				updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: data, searched: false});
-			} catch (error) {
-				console.log(error);
-			}
+	const getAPI = async () => {
+		let url: string = `http://localhost:8080/?pageOffset=${currentPage}&pageSize=${pageSize}&sortTerm=${sortRef.current.value}`;
+		if (filterTerm.length > 0) url += `&filterTerm=${JSON.stringify(filterTerm)}`;
+		url += "&cart=true"
+		console.log(312321,filterTerm, url);
+		const response = await fetch(url,{
+			method: 'GET',
+			mode: 'cors',
+			credentials: 'include', // Don't forget to specify this if you need cookies
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Origin':'http://localhost:8080',
+			},
+		});
+		const countProducts = async () => {
+			const response = await fetch(url+"&count=true");
+			const {count = 0} = await response.json()
+			setProductsCount(count)
 		}
-		getAPI(); 
-	}, [currentPage, pageSize])
-
+		const data = await response.json();
+		countProducts()
+		try {
+			console.log("initialize",data);
+			setLoading(false);
+			const cart = data.pop();
+			setProducts(data);
+			setCart(""+cart);
+			let cookie = Cookies.get("connect.sid")||"none";
+			if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
+			setSession({sessionID: cookie});
+		} catch (error) {
+			console.log(error);
+		}
+	};
     useEffect(() => {
-        const getAPI = async () => {
-            const response = await fetch(`http://localhost:8080/?pageOffset=${currentPage}&pageSize=${pageSize}`,{
-				/*method: 'GET',
-				mode: 'cors',
-				credentials: 'include', // Don't forget to specify this if you need cookies
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'Origin':'http://localhost:3000',
-				},*/
-			});
-            const data = await response.json();
-            try {
-                console.log("initialize",data);
-                setLoading(false);
-				const cart = data.pop();
-				setProducts(data);
-				setSort(data);
-				setCart(""+cart);
-				let cookie = Cookies.get("connect.sid")||"none";
-				if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
-				setSession({sessionID: cookie});
-				console.log("Working");
-            } catch (error) {
-				console.log(error);
-				console.log("heihei");
-            }
-        };
         getAPI();
-		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
-	}, [currentPage, pageSize]);
-
-	useEffect(() => {
-		updateProducts({filterResultList1: filterResult, searchResultList1: searchResult, sortResultList: sortList, searched: false});
-	}, [filterResult])
+	}, [currentPage, pageSize, filterTerm]);
 
 	const [cart, setCart] = useState<string>("[]");
 	const [session, setSession] = useState({
@@ -324,7 +248,7 @@ const App = () => {
 							</aside>
 							<div className="itemDisplayWrapper">
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{sortFilter(); setCurrentPage(0)}}>
+								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{getAPI(); setCurrentPage(0)}}>
 									<option value="name_asc" selected={true}>Name A - Z</option>
 									<option value="name_desc">Name Z - A</option>
 									<option value="price_asc">Price $ - $$$</option>
