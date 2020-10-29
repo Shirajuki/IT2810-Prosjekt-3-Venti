@@ -7,6 +7,8 @@ router.get("/", adminController.getIndex);
 
 router.post("/editCart/:productId", adminController.postEditCart);
 
+router.post("/showAll", adminController.showAll);
+
 router.post("/removeCart/:productId", adminController.postRemoveProductFromCart);
 
 router.get("/add-product", adminController.getAddProduct);

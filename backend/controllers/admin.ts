@@ -36,8 +36,16 @@ const getIndex = async (req: Request, res: Response) => {
 			filterQuery[fterm[i][0]] = [fterm[i][1]];
 		}
 	}
+	console.log("filter:",filterQuery);
 
-	const product = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize); // object
+	const searchTerm: string = req.params.searchTerm;
+	var product = null;
+
+	if(searchTerm){
+		product = await Product.find({ $text: { $search: searchTerm } }).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize); // object
+		console.log(product);
+	}
+	else{product = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);}
 	const productCount = await Product.find(filterQuery).sort(term); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
@@ -116,6 +124,15 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
+
+const showAll = async (req: Request, res: Response) => {
+	const products = await Product.find((data) => data);
+	res.status(200)
+    res.send(JSON.stringify(products))
+
+}
+    
+
 const postEditCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 	if (!productId) return res.status(200);
@@ -177,6 +194,7 @@ const searchProducts = async (req: Request, res: Response) => {
 const getAddProduct = (req: Request, res: Response) => {
     res.status(200).render('edit-product', { editing: false });
 };
+
 const filterProducts = async (req: Request, res: Response) => {
 	const filterTerm: string = req.params.filterTerm;
 	// "["product_type=lipstick", "product_type=foundation"]"
@@ -278,4 +296,5 @@ export default {
 	getAddProduct,
 	getEditProduct,
 	postDelete,
+	showAll,
 };
