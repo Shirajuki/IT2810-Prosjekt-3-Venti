@@ -306,7 +306,7 @@ const App = () => {
 									<option value="price_asc">Price $ - $$$</option>
 									<option value="price_desc">Price $$$ - $</option>
 								</select>
-								<ItemDisplay setModal={itemModal} itemList={product}/>
+								<ItemDisplay setModal={itemModal} itemList={product} data-cy="item-display"/>
 								<div className="itemNavigation">- 1 2 3 .. 20 -</div>
 							</div>
 						</div>
