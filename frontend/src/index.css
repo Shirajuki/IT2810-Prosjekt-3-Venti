@@ -1,4 +1,4 @@
-´body {
+body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -220,7 +220,7 @@ main .section {
 .itemDisplay .items img {
   margin: 0 auto;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
 .itemDisplay .items p {
   margin: 5px 0;
@@ -323,7 +323,7 @@ div.modalContent {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255);
   width: 80%;
   height: 75%;
 }
@@ -342,7 +342,13 @@ div.modalContent .items {
   background-color: white;
 }
 
+.info-container > button {
+  color: black;
+  font-weight: bold;
+  border: black;
+}
 .items-modal {
+  height: 100%;
   display: flex;
   flex-direction: row;
 }
@@ -359,10 +365,24 @@ div.modalContent .items {
 
 .info-container {
   width: 40%;
+  max-height: 80%;
+}
+
+.itemDescription {
+  max-height: 80%;
+  height: 100%;
+  overflow: hidden;
+  overflow: hidden;
+}
+
+.info-container > img {
+  max-height: fit-content;
+  overflow: hidden;
 }
 
 .modal-image {
-  width: 50%;
+  max-width: 50%;
+  width: 100%;
   padding: 5%;
 }
 .pagination > li {
@@ -388,13 +408,13 @@ div.modalContent .items {
 
 .pagination > li.active > a {
   color: #fff;
-  background-color: #218838;
-  border-color: #1e7e34;
+  background-color: #845ea9;
+  border-color: #845ea9;
 }
 
 /* Style the active class (and buttons on mouse-over) */
 .pagination > li > a:hover {
-  background-color: #218838;
+  background-color: #845ea9;
   color: white;
 }
 .pagination > li:first-child > a,
