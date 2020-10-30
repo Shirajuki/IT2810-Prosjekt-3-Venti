@@ -1,13 +1,18 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useContext, useState, useRef, FC } from 'react';
 import ReactPaginate from 'react-paginate';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import Modal from './components/Modal';
-import Items from './components/Items';
 import Cookies from "js-cookie";
 
-const App = () => {
+import { observer, useLocalObservable, useAsObservableSource } from "mobx-react-lite"
+// import RootStoreContext from "./stores/root-store";
+import { RootStoreContext } from "./stores/root-store";
+
+const App: FC = observer(() => {
+	const CTX = useContext(RootStoreContext);
+	console.log(CTX);
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
 		id: "none",
@@ -33,6 +38,7 @@ const App = () => {
 
 	useEffect(() => {
       setPageCount(Math.ceil(productsCount / pageSize))
+	  console.log(111,CTX);
 	}, [productsCount, pageSize])
 
 	const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -141,6 +147,8 @@ const App = () => {
 		setCart(JSON.stringify(nCart));
 	}
 	function removeCart(productId: number = -1) {
+		CTX.heroStore.addHeroes(1);
+		console.log(123,CTX)
 		let nCart = JSON.parse(cart);
 		let rndProduct = ""+products[Math.floor(Math.random() * products.length)].id;
 		if (productId !== -1) {
@@ -170,13 +178,6 @@ const App = () => {
 		}
 		setCart(JSON.stringify(nCart));
 	}
-	/*
-				<div className="searchResults" style= {{display:(searched ? "none" : "none")}}>
-				{searchResult.map(item => (
-					<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => console.log("Hei")} isModal = {true} />
-				))}
-				</div>
-	 */
 	return (
 		<>
 			<div className="divWrapper">
@@ -304,6 +305,6 @@ const App = () => {
 			</div>
 		</>
 	);
-};
+})
 
 export default App;
