@@ -1,7 +1,7 @@
 describe("testing to see if the pagination works", () => {
 
     before(() => {
-        crypto.start();
+        cy.start();
     })
 
     //test to see that we start on page 1
