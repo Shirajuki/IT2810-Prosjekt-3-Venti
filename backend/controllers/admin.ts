@@ -12,40 +12,45 @@ interface IQuery {
 
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
-	let sortTerm: string = req.query.sortTerm as string;
-	let filterTerm: string = req.query.filterTerm as string;
+	const sortTerm: string = req.query.sortTerm as string;
+	const filterTerm: string = req.query.filterTerm as string;
 	console.log(sortTerm, filterTerm, pageSize, pageOffset);
 	const term: any = {}
-	if (sortTerm !== undefined) {
+	if (sortTerm) {
 		const sterm: string[] = sortTerm.split("_");
 		term[sterm[0]] = sterm[1]
 	} else {
 		term["name"] = "asc";
 	}
 	let fterm: String[] = []
-	if (filterTerm !== undefined) {
+	if (filterTerm) {
 		fterm = JSON.parse(filterTerm).map((e: string) => e.split("="));
 	}
 	
 	// if (filterTerm.length < 0) return res.status(200);
 	const filterQuery:any = {};
 	for (let i=0; i<fterm.length; i++) {
-		if (filterQuery[fterm[i][0]] !== undefined) {
+		if (filterQuery[fterm[i][0]]) {
 			filterQuery[fterm[i][0]] = [...filterQuery[fterm[i][0]], fterm[i][1]];
 		} else {
 			filterQuery[fterm[i][0]] = [fterm[i][1]];
 		}
 	}
-	console.log("filter:",filterQuery);
+	//console.log("filter:",filterQuery);
 
-	const searchTerm: string = req.params.searchTerm;
-	var product = null;
-
-	if(searchTerm){
-		product = await Product.find({ $text: { $search: searchTerm } }).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize); // object
-		console.log(product);
+	const searchTerm: string = req.query.searchTerm as string;
+	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
+	const filterProducts = await Product.find(filterQuery).sort(term);
+	let products: ProductDoc[] = [];
+	let searchProducts: ProductDoc[] = null;
+	if (searchTerm) {
+		searchProducts = await Product.find({ $text: { $search: searchTerm } }).sort(term);
+		products = filterProducts.filter(e1 => searchProducts.map(e2 => e2.id).includes(e1.id));
+	} else {
+		filterProducts.forEach(e => products.push(e));
 	}
-	else{product = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);}
+	console.log(123, searchTerm, searchProducts?.length, products?.length, filterProducts?.length);
+	console.log(123123,products.length);
 	const productCount = await Product.find(filterQuery).sort(term); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
@@ -53,10 +58,10 @@ const getIndex = async (req: Request, res: Response) => {
 	let count: string = req.query.count as string;
 	let final: any[] = [];
 	if (session.length > 0) {
-		console.log("Welcome back",req.sessionID);
+		console.log("Welcome back",req.sessionID);  
 		console.log(session[0]._doc.cart);
-		if (session[0]._doc?.cart === undefined) {
-			final = [...product, '[]'];
+		if (!session[0]._doc?.cart) {
+			final = [...products, '[]'];
 			const update = await Session.updateOne(
 			    { _id: req.sessionID },
 				{ cart: "[]" },
@@ -64,10 +69,10 @@ const getIndex = async (req: Request, res: Response) => {
 			);
 			console.log(update);
 		} else {
-			final = [...product,session[0]._doc.cart];
+			final = [...products,session[0]._doc.cart];
 		}
 	} else {
-		final = [...product, '[]'];
+		final = [...products, '[]'];
 	}
 	if (cart !== "true" && final.length > 0) final.pop();
     try {

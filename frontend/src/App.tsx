@@ -20,7 +20,6 @@ const App = () => {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchResult, setSearchResult] = useState<Product[]>([]);
 	const [hidden, setHidden] = useState(true);
 	const [filterTerm, setFilterTerm] = useState<String[]>([]);
 	const searchRef = useRef(null);
@@ -43,24 +42,12 @@ const App = () => {
 	}
 
 	function search() {
+		console.log("searched", searchRef.current?.value);
 		if (hidden) {
 			setHidden(false);
 		}
 		else {
 			console.log("opened")
-				const getAPI = async () => {
-					console.log(searchRef.current.value)
-					if(searchRef.current) {
-					const response = await fetch(`http://localhost:8080/search-products/${searchRef.current!.value || ""}`);
-					const data = await response.json();
-					
-					try {
-						setSearchResult(data);
-					} catch (error) {
-						console.log(error);
-					}
-				}
-			};
 			getAPI();
 		}
 	}
@@ -79,17 +66,20 @@ const App = () => {
 	const getAPI = async () => {
 		let url: string = `http://localhost:8080/?pageOffset=${currentPage}&pageSize=${pageSize}&sortTerm=${sortRef.current.value}`;
 		if (filterTerm.length > 0) url += `&filterTerm=${JSON.stringify(filterTerm)}`;
+		if (searchRef.current.value) url += `&searchTerm=${searchRef.current.value}`;
 		url += "&cart=true"
 		console.log(312321,filterTerm, url);
 		const response = await fetch(url,{
 			method: 'GET',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
+			/*
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
-				'Origin':'http://localhost:8080',
+				'Origin':'http://localhost:3000',
 			},
+			*/
 		});
 		const countProducts = async () => {
 			const response = await fetch(url+"&count=true");
