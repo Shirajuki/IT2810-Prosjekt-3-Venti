@@ -46,16 +46,19 @@ const getIndex = async (req: Request, res: Response) => {
 	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
 	const filterProducts = await Product.find(filterQuery).sort(term);
 	let products: ProductDoc[] = [];
+	let productCount: ProductDoc[] = [];
 	let searchProducts: ProductDoc[] = null;
 	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
 	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
 	if (searchTerm) {
 		products = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term);
 	} else {
 		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find(filterQuery).sort(term);
 	}
 	
-	const productCount = await Product.find(filterQuery).sort(term); // object
+	//const productCount = await Product.find(filterQuery).sort(term); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	let cart: string = req.query.cart as string;
@@ -71,7 +74,7 @@ const getIndex = async (req: Request, res: Response) => {
 				{ cart: "[]" },
 				{ multi: true },
 			);
-			console.log(update);
+			//console.log(update);
 		} else {
 			final = [...products,session[0]._doc.cart];
 		}
@@ -82,6 +85,7 @@ const getIndex = async (req: Request, res: Response) => {
     try {
 		console.log(final[final.length-1]);
 		if (count == "true") {
+			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
 		}
 		res.json(final);
