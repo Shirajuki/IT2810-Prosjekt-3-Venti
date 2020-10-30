@@ -24,7 +24,6 @@ const App: FC = observer(() => {
 	};
 
     const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
 	const [hidden, setHidden] = useState(true);
 	const [filterTerm, setFilterTerm] = useState<String[]>([]);
 	const searchRef = useRef(null);
@@ -96,7 +95,6 @@ const App: FC = observer(() => {
 		countProducts()
 		try {
 			console.log("initialize",data);
-			setLoading(false);
 			const cart = data.pop();
 			setProducts(data);
 			setCart(""+cart);
@@ -125,11 +123,11 @@ const App: FC = observer(() => {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
-			headers: {
+			/*headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Origin':'http://localhost:3000',
-			}
+			}*/
 		})
 		.then(response => console.log(response));
 		let existInCart = -1;
@@ -158,11 +156,11 @@ const App: FC = observer(() => {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
-			headers: {
+			/*headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Origin':'http://localhost:3000',
-			}
+			}*/
 		})
 		.then(response => console.log(response));
 		let indexProduct = -1;
@@ -214,28 +212,43 @@ const App: FC = observer(() => {
 							<aside>
 								<h1>Our Products</h1>
 								<h2>Product Type</h2>
-								<input type="checkbox" id="productType1" name="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")}/>
-  									<label htmlFor="productType1"> Lipstick</label><br></br>
 								<input type="checkbox" id="productType2" name="productType2" onClick={()=>addOrRemoveFilter("product_type=foundation")}/>
 									<label htmlFor="productType2"> Foundation</label><br></br>
+								<input type="checkbox" id="productType6" name="productType6" onClick={()=>addOrRemoveFilter("product_type=bronzer")}/>
+									<label htmlFor="productType6"> Bronzer</label><br></br>
+								<input type="checkbox" id="productType4" name="productType4" onClick={()=>addOrRemoveFilter("product_type=eyebrow")}/>
+									<label htmlFor="productType4"> Eyebrow</label><br></br>
 								<input type="checkbox" id="productType3" name="productType3" onClick={()=>addOrRemoveFilter("product_type=eyeshadow")}/>
 									<label htmlFor="productType3"> Eyeshadow</label><br></br>
+								<input type="checkbox" id="productType8" name="productType8" onClick={()=>addOrRemoveFilter("product_type=eyeliner")}/>
+									<label htmlFor="productType8"> Eyeliner</label><br></br>
+								<input type="checkbox" id="productType5" name="productType5" onClick={()=>addOrRemoveFilter("product_type=mascara")}/>
+									<label htmlFor="productType5"> Mascara</label><br></br>
+								<input type="checkbox" id="productType1" name="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")}/>
+  									<label htmlFor="productType1"> Lipstick</label><br></br>
+								<input type="checkbox" id="productType7" name="productType7" onClick={()=>addOrRemoveFilter("product_type=nail_polish")}/>
+									<label htmlFor="productType7"> Nail Polish</label><br></br>
 								<h2>Brand</h2>
-								<input type="checkbox" id="brand1" name="brand1" onClick={()=>addOrRemoveFilter("brand=dior")}/>
-  									<label htmlFor="brand1"> Dior</label><br></br>
+								<input type="checkbox" id="brand4" name="brand4" onClick={()=>addOrRemoveFilter("brand=clinique")}/>
+									<label htmlFor="brand4"> Clinique</label><br></br>
+								<input type="checkbox" id="brand7" name="brand7" onClick={()=>addOrRemoveFilter("brand=covergirl")}/>
+									<label htmlFor="brand7"> Covergirl</label><br></br>
 								<input type="checkbox" id="brand2" name="brand2" onClick={()=>addOrRemoveFilter("brand=colourpop")}/>
 									<label htmlFor="brand2"> Colourpop</label><br></br>
-								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=makeup_geek")}/>
-									<label htmlFor="brand3"> Makeup Geek</label><br></br>
-								<h2>Price</h2>
-								<input type="number" defaultValue="0" placeholder="0 - 200kr"/>
-								<h2>Colors</h2>
-								<input type="checkbox" id="color1" name="color1" onClick={()=>addOrRemoveFilter("color=black")}/>
-  									<label htmlFor="color1"> Black</label><br></br>
-								<input type="checkbox" id="color2" name="color2" onClick={()=>addOrRemoveFilter("color=red")}/>
-									<label htmlFor="color2"> Red</label><br></br>
-								<input type="checkbox" id="color3" name="color3" onClick={()=>addOrRemoveFilter("color=purple")}/>
-									<label htmlFor="color3"> Purple</label><br></br>
+								<input type="checkbox" id="brand1" name="brand1" onClick={()=>addOrRemoveFilter("brand=dior")}/>
+  									<label htmlFor="brand1"> Dior</label><br></br>
+								<input type="checkbox" id="brand5" name="brand5" onClick={()=>addOrRemoveFilter("brand=e.l.f.")}/>
+									<label htmlFor="brand5"> e.l.f.</label><br></br>
+								<input type="checkbox" id="brand6" name="brand6" onClick={()=>addOrRemoveFilter("brand=l'oreal")}/>
+									<label htmlFor="brand6"> L'oreal</label><br></br>
+								<input type="checkbox" id="brand9" name="brand9" onClick={()=>addOrRemoveFilter("brand=lotus cosmetics usa")}/>
+									<label htmlFor="brand9"> Lotus Cosmetics USA</label><br></br>
+								<input type="checkbox" id="brand10" name="brand10" onClick={()=>addOrRemoveFilter("brand=marienatie")}/>
+									<label htmlFor="brand10"> Marienatie</label><br></br>
+								<input type="checkbox" id="brand8" name="brand8" onClick={()=>addOrRemoveFilter("brand=nyx")}/>
+									<label htmlFor="brand8"> nyx</label><br></br>
+								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=smashbox")}/>
+									<label htmlFor="brand3"> Smashbox</label><br></br>
 							</aside>
 							<div className="itemDisplayWrapper">
 								<div className="filter">SORT BY:</div>

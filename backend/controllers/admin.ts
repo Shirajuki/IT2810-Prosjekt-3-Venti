@@ -10,11 +10,15 @@ interface IQuery {
 	sortTerm: string,
 }
 
+/*
+db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] },  $text: { $search: "lipliner" } } )
+{{query}, {query}}
+*/
+
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
 	const sortTerm: string = req.query.sortTerm as string;
 	const filterTerm: string = req.query.filterTerm as string;
-	console.log(sortTerm, filterTerm, pageSize, pageOffset);
 	const term: any = {}
 	if (sortTerm) {
 		const sterm: string[] = sortTerm.split("_");
@@ -30,10 +34,10 @@ const getIndex = async (req: Request, res: Response) => {
 	// if (filterTerm.length < 0) return res.status(200);
 	const filterQuery:any = {};
 	for (let i=0; i<fterm.length; i++) {
-		if (filterQuery[fterm[i][0]]) {
-			filterQuery[fterm[i][0]] = [...filterQuery[fterm[i][0]], fterm[i][1]];
+		if (filterQuery[fterm[i][0]]?.$in) {
+			filterQuery[fterm[i][0]].$in = [...filterQuery[fterm[i][0]].$in, fterm[i][1]];
 		} else {
-			filterQuery[fterm[i][0]] = [fterm[i][1]];
+			filterQuery[fterm[i][0]] = {$in: [fterm[i][1]]};
 		}
 	}
 	//console.log("filter:",filterQuery);
@@ -42,16 +46,19 @@ const getIndex = async (req: Request, res: Response) => {
 	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
 	const filterProducts = await Product.find(filterQuery).sort(term);
 	let products: ProductDoc[] = [];
+	let productCount: ProductDoc[] = [];
 	let searchProducts: ProductDoc[] = null;
+	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
+	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
 	if (searchTerm) {
-		searchProducts = await Product.find({ $text: { $search: searchTerm } }).sort(term);
-		products = filterProducts.filter(e1 => searchProducts.map(e2 => e2.id).includes(e1.id));
+		products = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term);
 	} else {
-		filterProducts.forEach(e => products.push(e));
+		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find(filterQuery).sort(term);
 	}
-	console.log(123, searchTerm, searchProducts?.length, products?.length, filterProducts?.length);
-	console.log(123123,products.length);
-	const productCount = await Product.find(filterQuery).sort(term); // object
+	
+	//const productCount = await Product.find(filterQuery).sort(term); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	let cart: string = req.query.cart as string;
@@ -67,7 +74,7 @@ const getIndex = async (req: Request, res: Response) => {
 				{ cart: "[]" },
 				{ multi: true },
 			);
-			console.log(update);
+			//console.log(update);
 		} else {
 			final = [...products,session[0]._doc.cart];
 		}
@@ -78,6 +85,7 @@ const getIndex = async (req: Request, res: Response) => {
     try {
 		console.log(final[final.length-1]);
 		if (count == "true") {
+			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
 		}
 		res.json(final);
