@@ -1,8 +1,10 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
+import { observable, autorun, toJS } from "mobx"
+import { observer, useLocalObservable, useAsObservableSource } from "mobx-react-lite"
 import { useEffect } from "react";
-import { idText } from "typescript";
 import Product from "../models/product";
 import Items from './Items';
+
 type slideType = {
 	id: string;
 	image_link: string;
@@ -15,102 +17,139 @@ interface IProps {
 	setModal: (id:string, product:Product) => void;
 }
 interface CarouselProps {
-	slides: slideType[];
+	slides: Product[];
 	setModal: (id:string, product:Product) => void;
 }
 interface CarouselState {
 	count: number;
 }
-
-class Slide extends Component<CarouselProps,CarouselState> {
-	constructor(props: CarouselProps) {
-		super(props);
-		this.state = {count: 0};
-	}
-	changeSlide(n: number) {
-		if (this.state.count === 0 && n < 0) {
-			this.setState({count: (3-1)});
-		} else {
-			this.setState({count: (this.state.count+n)%3});
-		}
-	}
-	setSlide(n: number) {
-		this.setState({count: n});
-	}
-	render() {
-		return (
-			<div className="carousel">
-				<button className="prev" onClick={() => this.changeSlide(-1)}>&lt;</button>
-				<button className="next" onClick={() => this.changeSlide(1)}>&gt;</button>
-				<Display count={this.state.count} slides={this.props.slides} setModal={this.props.setModal}/>
-				<p style={{position: "absolute", top: 0, right: 0}}>{this.state.count}</p>
-			</div>
-		);
-	}
-}
-function splitArray(array: slideType[],chunk: number) {
-	const nArray: slideType[][] = [];
-	let nsplit: slideType[] = [];
-	for (let i=0; i<array.length; i++) {
-		if (i > 0 && i%chunk === 0) {
-			nArray.push([...nsplit]);
-			nsplit = [];
-		}
-		nsplit.push(array[i]);
-	}
-	if (nsplit.length !== 0) {
-		for (let i=0; i<array.length; i++) {
-			if (i > 0 && i%chunk === 0) {
+const Slide = observer((props: CarouselProps) => {
+	const slides = useAsObservableSource(props.slides);
+	const [state] = useState(() =>
+		observable({
+			// Observables
+			count: 0,
+			maxStates: 3,
+			chunk: 5,
+			slides: slides,
+			// actions
+			setState(data: CarouselState) {
+				this.count = data.count;
+			},
+			changeSlide(n: number) {
+				if (this.count === 0 && n < 0) {
+					this.setState({count: (this.maxStates-1)});
+				} else {
+					this.setState({count: (this.count+n)%this.maxStates});
+				}
+			},
+			// computed values
+			get displaySlides() {
+				const nArray: Product[][] = [];
+				let nsplit: Product[] = [];
+				for (let i=0; i<props.slides.length; i++) {
+					if (i > 0 && i%this.chunk === 0) {
+						nArray.push([...nsplit]);
+						nsplit = [];
+					}
+					nsplit.push(props.slides[i]);
+				}
+				if (nsplit.length !== 0) {
+					for (let i=0; i<props.slides.length; i++) {
+						if (i > 0 && i%this.chunk === 0) {
+							nArray.push([...nsplit]);
+							nsplit = [];
+							break
+						}
+					}
+				}
 				nArray.push([...nsplit]);
-				nsplit = [];
-				break
+				return toJS(nArray[this.count]);
 			}
+		})
+	)
+
+	return (
+		<div className="carousel">
+			<button className="prev" onClick={() => state.changeSlide(-1)}>&lt;</button>
+			<button className="next" onClick={() => state.changeSlide(1)}>&gt;</button>
+			<Display slides={state.displaySlides} setModal={props.setModal}/>
+			<p style={{position: "absolute", top: 0, right: 0}}>{state.count}</p>
+		</div>
+	);
+})
+const Display = observer((props: {slides: Product[], setModal: (id:string, product:Product) => void}) => {
+	const slides = useAsObservableSource(props.slides);
+	useEffect(() => {
+		console.log(props.slides, slides);
+	}, [])
+
+	return (
+		<>
+			{props.slides.map((slide) => {
+				return (<Items id={slide.id} img={slide.image_link} name={slide.name} description={slide.description} price={slide.price} isModal={false} isCarousel={true} onClick={() => props.setModal(slide.id, slide)} />);
+			})}
+		</>
+	);
+})
+
+const TimerView = observer(() => {
+	const timer = useLocalObservable(() => ({
+		secondsPassed: 0,
+		// method/actions
+		increaseTimer() {
+			this.secondsPassed++
 		}
-	}
-	nArray.push([...nsplit]);
-	return nArray;
-}
-const Display = (props: {count: number, slides: slideType[], setModal: (id:string, product:Product) => void}) => {
-	const arr: slideType[][] = splitArray(props.slides, 5)
-	return (
-	<>
-		{arr[props.count].map((slide) => {
-			return (<Items id={slide.id} img={slide.image_link} name={slide.name} description={slide.description} price={slide.price} isModal={false} isCarousel={true} onClick={() => props.setModal(slide.id, slide.product)} />);
-		})}
-	</>
-	);
-}
+	}))
 
-/*
-function Carousel( props: IProps ) {
-	return (
-		<Slide slides={slides} setModal={props.setModal}/>
-	);
-}
-*/
+	// Effect that triggers upon observable changes.
+	useEffect(
+		() =>
+		autorun(() => {
+			if (timer.secondsPassed > 60) {
+				console.log("Still there. It's a minute already?!!");
+				timer.secondsPassed = 0;
+			}
+		}),
+		[]
+	)
 
+	// Effect to set up a timer, only for demo purposes.
+	useEffect(() => {
+		setInterval(timer.increaseTimer, 1000)
+	}, [])
 
-function Carousel(props: IProps) {
-	
-	const [product, setProduct] = useState<Product[]>([]);
-	const [loading, setLoading] = useState(true);
-
+	return <span>Seconds passed: {timer.secondsPassed}</span>
+})
+const Carousel = observer((props: IProps) => {
+	const [product] = useState(() =>
+		observable({
+			// Observables
+			list: [],
+			// actions
+			setProduct(data: Product[]) {
+				this.list = data.concat();
+			}
+		})
+	)
 	useEffect(() => {
 		const getAPI = async () => {
 			const response = await fetch('http://localhost:8080/');
 			const data = await response.json();
 			try {
-				setLoading(false);
-				setProduct(data);
+				product.setProduct(data);
 			} catch (error) {
 				console.log(error);
 			}
 		};
 		getAPI();
 	}, []);
-	const slides: slideType[] = product.map(item =>( {id: item.id, image_link: item.image_link, name: item.name, description: item.description, price: item.price, product: item}))
-	return <Slide slides={slides} setModal={props.setModal}/>;
+	return (
+		<>
+			<Slide slides={product.list} setModal={props.setModal}/>
+		</>
+	);
 
-}
+})
 
 export default Carousel;
