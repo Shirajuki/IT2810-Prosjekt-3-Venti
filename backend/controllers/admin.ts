@@ -88,7 +88,7 @@ const getIndex = async (req: Request, res: Response) => {
 			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
 		}
-		res.json(final);
+		else{res.json(final);}
     } catch (error) {
         console.log(error);
     }
