@@ -119,11 +119,11 @@ const App = () => {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
-			headers: {
+			/*headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Origin':'http://localhost:3000',
-			}
+			}*/
 		})
 		.then(response => console.log(response));
 		let existInCart = -1;
@@ -150,11 +150,11 @@ const App = () => {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include', // Don't forget to specify this if you need cookies
-			headers: {
+			/*headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Origin':'http://localhost:3000',
-			}
+			}*/
 		})
 		.then(response => console.log(response));
 		let indexProduct = -1;
