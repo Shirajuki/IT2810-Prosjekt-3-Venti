@@ -27,7 +27,7 @@
 Cypress.Commands.add('start', () => {
     cy.server();
     cy.route({url:"../mock-data"})
-    cy.visit();
+    cy.visit('/');
 })
 
 Cypress.Commands.add('sortAsc', () => {
