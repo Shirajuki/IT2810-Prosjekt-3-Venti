@@ -300,7 +300,7 @@ const App = () => {
 							</aside>
 							<div className="itemDisplayWrapper">
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>sortFilter()}>
+								<select name="sort" id="sortFilter" ref={sortRef} data-cy="sort_filter" onChange={()=>sortFilter()}>
 									<option value="name_asc" selected={true}>Name A - Z</option>
 									<option value="name_desc">Name Z - A</option>
 									<option value="price_asc">Price $ - $$$</option>

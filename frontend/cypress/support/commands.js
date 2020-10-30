@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('start', () => {
+    cy.server();
+    cy.route({url:"../mock-data"})
+    cy.visit();
+})
+
+Cypress.Commands.add('sortAsc', () => {
+    cy.get('[data-cy=select_filter]').select("Name A - Z").should("have.value", name_asc);
+})

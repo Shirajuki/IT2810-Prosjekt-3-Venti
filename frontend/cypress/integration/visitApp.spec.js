@@ -2,7 +2,7 @@ describe("Visits website", () => {
     const backendUrl = Cypress.config("backendUrl");
 
     beforeEach(() => {
-        cy.visit("/");
+        cy.start();
     })
     
     it("visits website", ()=> {
