@@ -275,27 +275,27 @@ const App = () => {
 							<aside>
 								<h1>Our Products</h1>
 								<h2>Product Type</h2>
-								<input type="checkbox" id="productType1" name="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")}/>
+								<input type="checkbox" id="productType1" name="productType1" data-cy="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")}/>
   									<label htmlFor="productType1"> Lipstick</label><br></br>
-								<input type="checkbox" id="productType2" name="productType2" onClick={()=>addOrRemoveFilter("product_type=foundation")}/>
+								<input type="checkbox" id="productType2" name="productType2" data-cy="productType2" onClick={()=>addOrRemoveFilter("product_type=foundation")}/>
 									<label htmlFor="productType2"> Foundation</label><br></br>
-								<input type="checkbox" id="productType3" name="productType3" onClick={()=>addOrRemoveFilter("product_type=eyeshadow")}/>
+								<input type="checkbox" id="productType3" name="productType3" data-cy="productType3" onClick={()=>addOrRemoveFilter("product_type=eyeshadow")}/>
 									<label htmlFor="productType3"> Eyeshadow</label><br></br>
 								<h2>Brand</h2>
-								<input type="checkbox" id="brand1" name="brand1" onClick={()=>addOrRemoveFilter("brand=dior")}/>
+								<input type="checkbox" id="brand1" name="brand1" data-cy="brand1" onClick={()=>addOrRemoveFilter("brand=dior")}/>
   									<label htmlFor="brand1"> Dior</label><br></br>
-								<input type="checkbox" id="brand2" name="brand2" onClick={()=>addOrRemoveFilter("brand=colourpop")}/>
+								<input type="checkbox" id="brand2" name="brand2" data-cy="brand2" onClick={()=>addOrRemoveFilter("brand=colourpop")}/>
 									<label htmlFor="brand2"> Colourpop</label><br></br>
-								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=makeup_geek")}/>
+								<input type="checkbox" id="brand3" name="brand3" data-cy="brand3" onClick={()=>addOrRemoveFilter("brand=makeup_geek")}/>
 									<label htmlFor="brand3"> Makeup Geek</label><br></br>
 								<h2>Price</h2>
 								<input type="number" defaultValue="0" placeholder="0 - 200kr"/>
 								<h2>Colors</h2>
-								<input type="checkbox" id="color1" name="color1" onClick={()=>addOrRemoveFilter("color=black")}/>
+								<input type="checkbox" id="color1" name="color1" data-cy="color1" onClick={()=>addOrRemoveFilter("color=black")}/>
   									<label htmlFor="color1"> Black</label><br></br>
-								<input type="checkbox" id="color2" name="color2" onClick={()=>addOrRemoveFilter("color=red")}/>
+								<input type="checkbox" id="color2" name="color2" data-cy="color2" onClick={()=>addOrRemoveFilter("color=red")}/>
 									<label htmlFor="color2"> Red</label><br></br>
-								<input type="checkbox" id="color3" name="color3" onClick={()=>addOrRemoveFilter("color=purple")}/>
+								<input type="checkbox" id="color3" name="color3" data-cy="color3" onClick={()=>addOrRemoveFilter("color=purple")}/>
 									<label htmlFor="color3"> Purple</label><br></br>
 							</aside>
 							<div className="itemDisplayWrapper">
