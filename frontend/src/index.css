@@ -142,6 +142,7 @@ main > img:hover {
 	opacity: 1;
 }
 main .section {
+	position: relative;
 	text-align: center;
 	width: 95%;
 	margin: 0 auto;
@@ -386,6 +387,9 @@ div.modalContainer {
 	pointer-events: none;
 	transition-duration: 0.5s;
 }
+div.modalContainer .itemDescription {
+	min-height: 250px;
+}
 div.modalContainer.shown {
 	opacity: 1;
 	pointer-events: all;
@@ -476,11 +480,11 @@ div.modalContent .imgDiv > div {
 	max-width: 50%;
 	width: 100%;
 	padding: 5%;
-	position: absolute;
-	top: 50%;
+	position: relative;
+	top: 100px;
 	left: 50%;
 	width: 300px;
-	transform: translate(-50%, -50%);
+	transform: translateX(-50%);
 }
 .pagination > li {
 	display: inline-block;
