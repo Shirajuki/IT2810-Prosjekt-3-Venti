@@ -145,6 +145,34 @@ const showAll = async (req: Request, res: Response) => {
 
 }
     
+const getGetCart = async (req: Request, res: Response) => {
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	let final: any[] = [];
+	if (session.length > 0) {
+		console.log("Welcome back",req.sessionID);  
+		console.log(session[0]._doc.cart);
+		if (!session[0]._doc?.cart) {
+			final = ['[]'];
+			await Session.updateOne(
+			    { _id: req.sessionID },
+				{ cart: "[]" },
+				{ multi: true },
+			);
+			//console.log(update);
+		} else {
+			final = [session[0]._doc.cart];
+		}
+	} else {
+		final = ['[]'];
+	}
+    try {
+		console.log(final[final.length-1]);
+		res.json(final[0]);
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 const postEditCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -300,6 +328,7 @@ export default {
 	getIndex,
 	countProducts,
 	postRemoveProductFromCart,
+	getGetCart,
 	postEditCart,
 	postProduct,
 	getProduct,

@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get("/", adminController.getIndex);
 
+router.get("/getCart", adminController.getGetCart);
+
 router.post("/editCart/:productId", adminController.postEditCart);
 
 router.post("/showAll", adminController.showAll);

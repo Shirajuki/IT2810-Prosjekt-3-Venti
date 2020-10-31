@@ -3,194 +3,65 @@ import ReactPaginate from 'react-paginate';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
+import ProductFilters from './components/ProductFilters';
 import Modal from './components/Modal';
 import Cookies from "js-cookie";
 
-import { observer, useLocalObservable, useAsObservableSource } from "mobx-react-lite"
-// import RootStoreContext from "./stores/root-store";
+import { observer } from "mobx-react-lite"
 import { RootStoreContext } from "./stores/root-store";
 
 const App: FC = observer(() => {
 	const CTX = useContext(RootStoreContext);
-	console.log(CTX);
+	const searchRef = useRef(null);
+	const sortRef = useRef(null);
+
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
 		id: "none",
 		product: null,
 	});
-
 	const itemModal = (id: string, product: Product = null) => {
 		setModal({ id: id, product: product });
 	};
 
-    const [products, setProducts] = useState<Product[]>([]);
-	const [hidden, setHidden] = useState(true);
-	const [filterTerm, setFilterTerm] = useState<String[]>([]);
-	const searchRef = useRef(null);
-	const sortRef = useRef(null);
-	
+	const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if(event.key === 'Enter') {
+			CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value);
+		}
+	}
 	// Pagination
-	const [currentPage, setCurrentPage] = useState(0)
-	const [pageSize] = useState(15)
-	const [pageCount, setPageCount] = useState(0)
-	const [productsCount, setProductsCount] = useState(0)
+	useEffect(() => {
+	  CTX.fetchStore.setPageCount(Math.ceil(CTX.fetchStore.productsCount / CTX.fetchStore.pageSize))
+	}, [CTX.fetchStore.productsCount, CTX.fetchStore.pageSize])
+
+    useEffect(() => {
+        CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
+	}, [CTX.fetchStore.currentPage, CTX.fetchStore.pageSize, CTX.fetchStore.filterTerm]);
 
 	useEffect(() => {
-      setPageCount(Math.ceil(productsCount / pageSize))
-	  console.log(111,CTX);
-	}, [productsCount, pageSize])
-
-	const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if(event.key === 'Enter'){
-			search();
-		  }
-	}
-
-	function search() {
-		console.log("searched", searchRef.current?.value);
-		if (hidden) {
-			setHidden(false);
-		}
-		else {
-			console.log("opened")
-			getAPI();
-		}
-	}
-
-	function addOrRemoveFilter(item:String){
-		const pos = filterTerm.indexOf(item);
-		const newList = filterTerm.concat();
-		if (pos < 0 ) {
-			newList.push(item);
-		} else {
-			newList.splice(pos,1);
-		}
-		setFilterTerm(newList);
-	}
-
-	const getAPI = async () => {
-		let url: string = `http://localhost:8080/?pageOffset=${currentPage}&pageSize=${pageSize}&sortTerm=${sortRef.current.value}`;
-		if (filterTerm.length > 0) url += `&filterTerm=${JSON.stringify(filterTerm)}`;
-		if (searchRef.current.value) url += `&searchTerm=${searchRef.current.value}`;
-		url += "&cart=true"
-		console.log(312321,filterTerm, url);
-		const response = await fetch(url,{
-			method: 'GET',
-			mode: 'cors',
-			credentials: 'include', // Don't forget to specify this if you need cookies
-			/*
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Origin':'http://localhost:3000',
-			},
-			*/
-		});
-		const countProducts = async () => {
-			const response = await fetch(url+"&count=true");
-			const {count = 0} = await response.json()
-			setProductsCount(count)
-		}
-		const data = await response.json();
-		countProducts()
-		try {
-			console.log("initialize",data);
-			const cart = data.pop();
-			setProducts(data);
-			setCart(""+cart);
-			let cookie = Cookies.get("connect.sid")||"none";
-			if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
-			setSession({sessionID: cookie});
-		} catch (error) {
-			console.log(error);
-		}
-	};
-    useEffect(() => {
-        getAPI();
-	}, [currentPage, pageSize, filterTerm]);
-
-	const [cart, setCart] = useState<string>("[]");
-	const [session, setSession] = useState({
-		sessionID: "none",
-	});
-	function editCart(productId: number = -1) {
-		let nCart = JSON.parse(cart);
-		let rndProduct = ""+products[Math.floor(Math.random() * products.length)]?.id || "-1";
-		if (productId !== -1) {
-			rndProduct = ""+productId;
-		}
-		fetch('http://localhost:8080/editCart/'+rndProduct,{
-			method: 'POST',
-			mode: 'cors',
-			credentials: 'include', // Don't forget to specify this if you need cookies
-			/*headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Origin':'http://localhost:3000',
-			}*/
-		})
-		.then(response => console.log(response));
-		let existInCart = -1;
-		for (let i=0; i<nCart.length; i++) {
-			if (nCart[i][0] === rndProduct) {
-				existInCart = i;
-				break;
-			}
-		}
-		if (existInCart !== -1) {
-			nCart[existInCart][1]++;
-		} else {
-			nCart.push([rndProduct,1]);
-		}
-		setCart(JSON.stringify(nCart));
-	}
-	function removeCart(productId: number = -1) {
-		CTX.heroStore.addHeroes(1);
-		console.log(123,CTX)
-		let nCart = JSON.parse(cart);
-		let rndProduct = ""+products[Math.floor(Math.random() * products.length)].id;
-		if (productId !== -1) {
-			rndProduct = ""+productId;
-		}
-		fetch('http://localhost:8080/removeCart/'+rndProduct,{
-			method: 'POST',
-			mode: 'cors',
-			credentials: 'include', // Don't forget to specify this if you need cookies
-			/*headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Origin':'http://localhost:3000',
-			}*/
-		})
-		.then(response => console.log(response));
-		let indexProduct = -1;
-		for (let i=0; i<nCart.length; i++) {
-			if (nCart[i][0] === rndProduct) {
-				indexProduct = i;
-				break;
-			}
-		}
-		if (indexProduct !== -1) {
-			nCart[indexProduct][1]--;
-			if (nCart[indexProduct][1] === 0) nCart.splice(indexProduct, 1);
-		}
-		setCart(JSON.stringify(nCart));
-	}
+		const cart = CTX.sessionStore.getCart;
+		let cookie = Cookies.get("connect.sid")||"none";
+		if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
+		CTX.sessionStore.setCart(""+cart);
+		CTX.sessionStore.setSession(cookie);
+	}, [])
 	return (
 		<>
 			<div className="divWrapper">
 				<header id="nav">
 					<nav>
-						<h3>logo {session.sessionID}</h3>
-						<button><h2>TECHNIQUE</h2></button>
+						<div className="logo">
+							<a href="/"><img src="images/logo_transparent.png" alt={CTX.sessionStore.session.sessionID}/></a>
+						</div>
+						<a href="/"><h2>VENTI</h2></a>
 						<div>
-						<div style= {{display:(hidden ? "none" : "block")}}>
-                        	<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
-                    	</div>
-							<button onClick={()=>search()}>🔎</button>
-							<button onClick={() => console.log(cart)}>🛒</button>
-							<button className="ThisIsATest" onClick={() => editCart()}>Add2Cart</button>
-							<button className="ThisIsATestToo" onClick={() => removeCart()}>RM</button>
+							<div style= {{display:(CTX.fetchStore.hidden ? "none" : "block")}}>
+								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+							</div>
+							<button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search">🔎</span></button>
+							<button onClick={() => console.log(CTX.sessionStore.cart)}><span role="img" aria-label="cart">🛒</span></button>
+							<button className="ThisIsATest" onClick={() => CTX.sessionStore.editCart(CTX.fetchStore.products)}>Add2Cart</button>
+							<button className="ThisIsATestToo" onClick={() => CTX.sessionStore.removeCart(CTX.fetchStore.products)}>RM</button>
 						</div>
 					</nav>
 				</header>
@@ -198,61 +69,28 @@ const App: FC = observer(() => {
 					<div className="splash">
 						<div className="splashEye">
 							<h1>A wonderful serenity has taken <br/><span>possession of my entire soul.</span></h1>
-							<button>SHOW ITEMS</button>
+							<a href="#itemDisplay"><button>SHOW ITEMS</button></a>
 							<img src="splash.png" alt="splash"/>
 						</div>
 					</div>
-					<img src="banner1.jpeg" alt="Banner1"/>
+					<a href="#carousel"><img src="banner1.jpeg" alt="Banner1"/></a>
 					<div className="section">
+						<span id="carousel" className="hiddenAnchor"></span>
 						<h1>NEWS</h1>
 						<Carousel setModal={itemModal}/>
 					</div>
 					<div className="section">
 						<div className="shopping">
 							<aside>
-								<h1>Our Products</h1>
-								<h2>Product Type</h2>
-								<input type="checkbox" id="productType2" name="productType2" onClick={()=>addOrRemoveFilter("product_type=foundation")}/>
-									<label htmlFor="productType2"> Foundation</label><br></br>
-								<input type="checkbox" id="productType6" name="productType6" onClick={()=>addOrRemoveFilter("product_type=bronzer")}/>
-									<label htmlFor="productType6"> Bronzer</label><br></br>
-								<input type="checkbox" id="productType4" name="productType4" onClick={()=>addOrRemoveFilter("product_type=eyebrow")}/>
-									<label htmlFor="productType4"> Eyebrow</label><br></br>
-								<input type="checkbox" id="productType3" name="productType3" onClick={()=>addOrRemoveFilter("product_type=eyeshadow")}/>
-									<label htmlFor="productType3"> Eyeshadow</label><br></br>
-								<input type="checkbox" id="productType8" name="productType8" onClick={()=>addOrRemoveFilter("product_type=eyeliner")}/>
-									<label htmlFor="productType8"> Eyeliner</label><br></br>
-								<input type="checkbox" id="productType5" name="productType5" onClick={()=>addOrRemoveFilter("product_type=mascara")}/>
-									<label htmlFor="productType5"> Mascara</label><br></br>
-								<input type="checkbox" id="productType1" name="productType1" onClick={()=>addOrRemoveFilter("product_type=lipstick")}/>
-  									<label htmlFor="productType1"> Lipstick</label><br></br>
-								<input type="checkbox" id="productType7" name="productType7" onClick={()=>addOrRemoveFilter("product_type=nail_polish")}/>
-									<label htmlFor="productType7"> Nail Polish</label><br></br>
-								<h2>Brand</h2>
-								<input type="checkbox" id="brand4" name="brand4" onClick={()=>addOrRemoveFilter("brand=clinique")}/>
-									<label htmlFor="brand4"> Clinique</label><br></br>
-								<input type="checkbox" id="brand7" name="brand7" onClick={()=>addOrRemoveFilter("brand=covergirl")}/>
-									<label htmlFor="brand7"> Covergirl</label><br></br>
-								<input type="checkbox" id="brand2" name="brand2" onClick={()=>addOrRemoveFilter("brand=colourpop")}/>
-									<label htmlFor="brand2"> Colourpop</label><br></br>
-								<input type="checkbox" id="brand1" name="brand1" onClick={()=>addOrRemoveFilter("brand=dior")}/>
-  									<label htmlFor="brand1"> Dior</label><br></br>
-								<input type="checkbox" id="brand5" name="brand5" onClick={()=>addOrRemoveFilter("brand=e.l.f.")}/>
-									<label htmlFor="brand5"> e.l.f.</label><br></br>
-								<input type="checkbox" id="brand6" name="brand6" onClick={()=>addOrRemoveFilter("brand=l'oreal")}/>
-									<label htmlFor="brand6"> L'oreal</label><br></br>
-								<input type="checkbox" id="brand9" name="brand9" onClick={()=>addOrRemoveFilter("brand=lotus cosmetics usa")}/>
-									<label htmlFor="brand9"> Lotus Cosmetics USA</label><br></br>
-								<input type="checkbox" id="brand10" name="brand10" onClick={()=>addOrRemoveFilter("brand=marienatie")}/>
-									<label htmlFor="brand10"> Marienatie</label><br></br>
-								<input type="checkbox" id="brand8" name="brand8" onClick={()=>addOrRemoveFilter("brand=nyx")}/>
-									<label htmlFor="brand8"> nyx</label><br></br>
-								<input type="checkbox" id="brand3" name="brand3" onClick={()=>addOrRemoveFilter("brand=smashbox")}/>
-									<label htmlFor="brand3"> Smashbox</label><br></br>
+								<ProductFilters/>
 							</aside>
 							<div className="itemDisplayWrapper">
+								<span id="itemDisplay" className="hiddenAnchor"></span>
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{getAPI(); setCurrentPage(0)}}>
+								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{
+									CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
+									CTX.fetchStore.setCurrentPage(0)}
+								}>
 									<option value="name_asc" selected={true}>Name A - Z</option>
 									<option value="name_desc">Name Z - A</option>
 									<option value="price_asc">Price $ - $$$</option>
@@ -263,25 +101,25 @@ const App: FC = observer(() => {
                                       nextLabel={'next'}
                                       breakLabel={'...'}
                                       breakClassName={'break-me'}
-                                      pageCount={pageCount}
-									  forcePage={currentPage}
+                                      pageCount={CTX.fetchStore.pageCount}
+									  forcePage={CTX.fetchStore.currentPage}
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
-                                      onPageChange={({selected}) => setCurrentPage(selected)}
+                                      onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
                                       containerClassName={'pagination'}
                                       activeClassName={'active'} />
 								</div>
-								<ItemDisplay setModal={itemModal} itemList={products}/>
+								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products}/>
 								<div className="itemNavigation">
 									<ReactPaginate  previousLabel={'previous'}
                                       nextLabel={'next'}
                                       breakLabel={'...'}
                                       breakClassName={'break-me'}
-									  pageCount={pageCount}
-									  forcePage={currentPage}
+									  pageCount={CTX.fetchStore.pageCount}
+									  forcePage={CTX.fetchStore.currentPage}
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
-                                      onPageChange={({selected}) => setCurrentPage(selected)}
+                                      onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
                                       containerClassName={'pagination'}
                                       activeClassName={'active'} />
 								</div>
@@ -300,7 +138,7 @@ const App: FC = observer(() => {
 							<button>FAQ</button>
 						</div>
 						<div className="social">
-							<h2>TECHNIQUE</h2>
+							<h2>VENTI</h2>
 							<div>
 								<button>FB</button>
 								<button>SP</button>

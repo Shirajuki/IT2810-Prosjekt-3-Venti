@@ -1,4 +1,3 @@
-import React, { createContext } from "react";
 import { useLocalObservable } from "mobx-react-lite";
 
 const HeroContext = () => {

@@ -4,7 +4,6 @@ export type HeroStoreSchema = {
 	totalHeroes: number;
 }
 
-
 export type HeroModel = {
 	id: string;
 	firstName: string;
