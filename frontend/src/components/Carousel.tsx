@@ -1,18 +1,10 @@
 import React, { useState } from "react";
-import { observable, autorun, toJS } from "mobx"
-import { observer, useLocalObservable, useAsObservableSource } from "mobx-react-lite"
+import { observable, toJS } from "mobx"
+import { observer, useAsObservableSource } from "mobx-react-lite"
 import { useEffect } from "react";
 import Product from "../models/product";
 import Items from './Items';
 
-type slideType = {
-	id: string;
-	image_link: string;
-	name: string;
-	description: string;
-	price: string;
-	product: Product;
-}
 interface IProps {
 	setModal: (id:string, product:Product) => void;
 }
@@ -93,34 +85,6 @@ const Display = observer((props: {slides: Product[], setModal: (id:string, produ
 	);
 })
 
-const TimerView = observer(() => {
-	const timer = useLocalObservable(() => ({
-		secondsPassed: 0,
-		// method/actions
-		increaseTimer() {
-			this.secondsPassed++
-		}
-	}))
-
-	// Effect that triggers upon observable changes.
-	useEffect(
-		() =>
-		autorun(() => {
-			if (timer.secondsPassed > 60) {
-				console.log("Still there. It's a minute already?!!");
-				timer.secondsPassed = 0;
-			}
-		}),
-		[]
-	)
-
-	// Effect to set up a timer, only for demo purposes.
-	useEffect(() => {
-		setInterval(timer.increaseTimer, 1000)
-	}, [])
-
-	return <span>Seconds passed: {timer.secondsPassed}</span>
-})
 const Carousel = observer((props: IProps) => {
 	const [product] = useState(() =>
 		observable({
