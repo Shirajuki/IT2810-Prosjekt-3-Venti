@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef, FC, useContext} from 'react';
 import ReactPaginate from 'react-paginate';
 import Product from "./models/product"
 import Carousel from './components/Carousel';
