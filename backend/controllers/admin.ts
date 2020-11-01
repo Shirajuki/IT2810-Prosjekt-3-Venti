@@ -2,36 +2,107 @@ import Product from "../models/product";
 import Session from "../models/session";
 import { Request, Response } from 'express';
 import { ProductDoc } from "../models/modelDoc";
+import { type } from "os";
+
+interface IQuery {
+	pageSize: number,
+	pageOffset: number,
+	sortTerm: string,
+}
+
+/*
+db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] },  $text: { $search: "lipliner" } } )
+{{query}, {query}}
+*/
 
 const getIndex = async (req: Request, res: Response) => {
-	const product = await Product.find((data) => data); // object
+	const {pageSize = 15, pageOffset = 0} = req.query;
+	const sortTerm: string = req.query.sortTerm as string;
+	const filterTerm: string = req.query.filterTerm as string;
+	const term: any = {}
+	if (sortTerm) {
+		const sterm: string[] = sortTerm.split("_");
+		term[sterm[0]] = sterm[1]
+	} else {
+		term["name"] = "asc";
+	}
+	let fterm: String[] = []
+	if (filterTerm) {
+		fterm = JSON.parse(filterTerm).map((e: string) => e.split("="));
+	}
+	
+	// if (filterTerm.length < 0) return res.status(200);
+	const filterQuery:any = {};
+	for (let i=0; i<fterm.length; i++) {
+		if (filterQuery[fterm[i][0]]?.$in) {
+			filterQuery[fterm[i][0]].$in = [...filterQuery[fterm[i][0]].$in, fterm[i][1]];
+		} else {
+			filterQuery[fterm[i][0]] = {$in: [fterm[i][1]]};
+		}
+	}
+	//console.log("filter:",filterQuery);
+
+	const searchTerm: string = req.query.searchTerm as string;
+	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
+	const filterProducts = await Product.find(filterQuery).sort(term);
+	let products: ProductDoc[] = [];
+	let productCount: ProductDoc[] = [];
+	let searchProducts: ProductDoc[] = null;
+	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
+	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
+	if (searchTerm) {
+		products = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term);
+	} else {
+		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
+		productCount = await Product.find(filterQuery).sort(term);
+	}
+	
+	//const productCount = await Product.find(filterQuery).sort(term); // object
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
+	let cart: string = req.query.cart as string;
+	let count: string = req.query.count as string;
 	let final: any[] = [];
 	if (session.length > 0) {
-		console.log("Welcome back",req.sessionID);
+		console.log("Welcome back",req.sessionID);  
 		console.log(session[0]._doc.cart);
-		if (session[0]._doc?.cart === undefined) {
-			final = [...product, '[]'];
+		if (!session[0]._doc?.cart) {
+			final = [...products, '[]'];
 			const update = await Session.updateOne(
 			    { _id: req.sessionID },
 				{ cart: "[]" },
 				{ multi: true },
 			);
-			console.log(update);
+			//console.log(update);
 		} else {
-			final = [...product,session[0]._doc.cart];
+			final = [...products,session[0]._doc.cart];
 		}
 	} else {
-		final = [...product, '[]'];
+		final = [...products, '[]'];
 	}
+	if (cart !== "true" && final.length > 0) final.pop();
     try {
 		console.log(final[final.length-1]);
-		res.json(final);
+		if (count == "true") {
+			console.log("smil",productCount.length);
+			res.json({count: productCount.length});
+		}
+		else{res.json(final);}
     } catch (error) {
         console.log(error);
     }
 };
+
+const countProducts = async (_: Request, res: Response) => {
+	const count = await Product.countDocuments()
+    try {
+        res.status(200)
+        res.send(JSON.stringify({count}))
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const postRemoveProductFromCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -66,6 +137,43 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
+
+const showAll = async (req: Request, res: Response) => {
+	const products = await Product.find((data) => data);
+	res.status(200)
+    res.send(JSON.stringify(products))
+
+}
+    
+const getGetCart = async (req: Request, res: Response) => {
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	let final: any[] = [];
+	if (session.length > 0) {
+		console.log("Welcome back",req.sessionID);  
+		console.log(session[0]._doc.cart);
+		if (!session[0]._doc?.cart) {
+			final = ['[]'];
+			await Session.updateOne(
+			    { _id: req.sessionID },
+				{ cart: "[]" },
+				{ multi: true },
+			);
+			//console.log(update);
+		} else {
+			final = [session[0]._doc.cart];
+		}
+	} else {
+		final = ['[]'];
+	}
+    try {
+		console.log(final[final.length-1]);
+		res.json(final[0]);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 const postEditCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 	if (!productId) return res.status(200);
@@ -127,6 +235,7 @@ const searchProducts = async (req: Request, res: Response) => {
 const getAddProduct = (req: Request, res: Response) => {
     res.status(200).render('edit-product', { editing: false });
 };
+
 const filterProducts = async (req: Request, res: Response) => {
 	const filterTerm: string = req.params.filterTerm;
 	// "["product_type=lipstick", "product_type=foundation"]"
@@ -160,20 +269,19 @@ const sortProducts = async (req: Request, res: Response) => {
 	const sortTerm = req.params.sortTerm.split("_") || "_";
 	const term: any = {}
 	term[sortTerm[0]] = sortTerm[1];
+	const {pageSize = 15, pageOffset = 0} = req.query;
 
-	console.log(term)
-	
-	const product = await Product.find({}).sort(term);
-	
-	console.log(1111111,product[0],product[1]);
+	const product = await Product.find({}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
+
     try {
-        // console.log(product);
         res.status(200)
         res.send(JSON.stringify(product))
     } catch (error) {
         console.log(error);
     }
 }
+
+
 
 const getEditProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -215,16 +323,20 @@ const postDelete = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
+
 export default {
-	getIndex: getIndex,
-	postRemoveProductFromCart: postRemoveProductFromCart,
-	postEditCart: postEditCart,
-	postProduct: postProduct,
-	getProduct: getProduct,
-	searchProducts: searchProducts,
-	filterProducts: filterProducts,
-	sortProducts: sortProducts,
-	getAddProduct: getAddProduct,
-	getEditProduct: getEditProduct,
-	postDelete: postDelete,
+	getIndex,
+	countProducts,
+	postRemoveProductFromCart,
+	getGetCart,
+	postEditCart,
+	postProduct,
+	getProduct,
+	searchProducts,
+	filterProducts,
+	sortProducts,
+	getAddProduct,
+	getEditProduct,
+	postDelete,
+	showAll,
 };
