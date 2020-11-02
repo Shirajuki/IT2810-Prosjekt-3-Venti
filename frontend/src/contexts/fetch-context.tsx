@@ -63,6 +63,7 @@ const FetchContext = () => {
 				this.setProductsCount(count)
 			}
 			const data = await response.json();
+			console.log("got item data", data);
 			countProducts()
 			try {
 				console.log("initialize",data);

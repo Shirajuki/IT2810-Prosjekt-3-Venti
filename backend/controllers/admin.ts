@@ -3,13 +3,6 @@ import Session from "../models/session";
 import Review from "../models/review";
 import { Request, Response } from 'express';
 import { ProductDoc } from "../models/modelDoc";
-import { type } from "os";
-
-interface IQuery {
-	pageSize: number,
-	pageOffset: number,
-	sortTerm: string,
-}
 
 /*
 db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] },  $text: { $search: "lipliner" } } )
@@ -56,37 +49,15 @@ const getIndex = async (req: Request, res: Response) => {
 		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
 		productCount = await Product.find(filterQuery).sort(term);
 	}
-	
+	console.log(products.length)
 	//const productCount = await Product.find(filterQuery).sort(term); // object
-	const sessionDB = await Session.find((data) => data);
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	let cart: string = req.query.cart as string;
 	let count: string = req.query.count as string;
-	let final: any[] = [];
-	if (session.length > 0) {
-		console.log("Welcome back",req.sessionID);  
-		console.log(session[0]._doc.cart);
-		if (!session[0]._doc?.cart) {
-			final = [...products, '[]'];
-			const update = await Session.updateOne(
-			    { _id: req.sessionID },
-				{ cart: "[]" },
-				{ multi: true },
-			);
-			//console.log(update);
-		} else {
-			final = [...products,session[0]._doc.cart];
-		}
-	} else {
-		final = [...products, '[]'];
-	}
-	if (cart !== "true" && final.length > 0) final.pop();
     try {
 		if (count == "true") {
 			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
 		}
-		else{res.json(final);}
+		else{res.json(products);}
     } catch (error) {
         console.log(error);
     }
@@ -172,7 +143,7 @@ const postEditCart = async (req: Request, res: Response) => {
 	if (!productId) return res.status(200);
 	const sessionDB = await Session.find({});
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	console.log(req.sessionID, sessionDB.map(e => e._id), )
+	// console.log(req.sessionID, sessionDB.map(e => e._id), )
 	const cart = JSON.parse(session[0]?._doc?.cart) || [];
 	let indexProduct = -1;
 	for (let i=0; i<cart.length; i++) {
@@ -225,16 +196,19 @@ const getReviews = async (req: Request, res: Response) => {
 };
 
 const postReview = (req: Request, res: Response) => {
-    const {productId, name, reviewtext} = req.params;
-
-    const review = new Product({productId, name, reviewtext });
-    review.save();
-    console.log('Product Added to the database');
-    res.status(201).redirect('http://localhost:3000/');
-};
-
-const getAddProduct = (req: Request, res: Response) => {
-    res.status(200).render('edit-product', { editing: false });
+	const productId: string = req.query.productId as string;
+	const name: string = req.query.name as string;
+	const sessionId: string = req.query.sessionId as string;
+	const reviewText: string = req.query.reviewText as string;
+	console.log(productId,name,sessionId, reviewText);
+	const review = new Review({productId, sessionId, name, reviewText});
+	review.save((err: any) =>{
+        if (err) return res.status(404);
+        // saved!
+		console.log('Product Added to the database', review);
+		return res.status(200);
+    })
+	res.status(404);
 };
 
 
@@ -258,7 +232,6 @@ const getEditProduct = async (req: Request, res: Response) => {
 
 const postProduct = (req: Request, res: Response) => {
     const { name, brand, image_link, product_type, description, price } = req.body;
-
     const product = new Product({ name, brand, image_link, product_type, description, price });
     product.save();
     console.log('Product Added to the database');
@@ -267,9 +240,7 @@ const postProduct = (req: Request, res: Response) => {
 
 const postDelete = async (req: Request, res: Response) => {
     const productId = req.params.productId;
-
     const product = await Product.findByIdAndRemove(productId, (data) => data);
-
     try {
         console.log(product);
         console.log('Item Deleted');
@@ -287,8 +258,8 @@ export default {
 	postEditCart,
 	postProduct,
 	getProduct,
-	getAddProduct,
 	getEditProduct,
 	postDelete,
 	getReviews,
+	postReview,
 };

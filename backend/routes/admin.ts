@@ -13,7 +13,7 @@ router.post("/removeCart/:productId", adminController.postRemoveProductFromCart)
 
 router.get("/reviews/:productId", adminController.getReviews);
 
-router.get("/add-product", adminController.getAddProduct);
+router.post("/post-review/", adminController.postReview);
 
 router.get('/count-products/', adminController.countProducts);
 

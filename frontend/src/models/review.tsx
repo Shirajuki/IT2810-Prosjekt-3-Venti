@@ -1,5 +1,6 @@
-export default interface Product {
-	productId: string
-    name: string
-    review: string
+export default interface Review {
+	productId: string;
+	sessionId: string;
+    name: string;
+    reviewText: string;
 }
