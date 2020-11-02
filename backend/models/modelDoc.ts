@@ -16,3 +16,10 @@ export interface SessionDoc extends mongoose.Document {
 		cart: string
 	}
 }
+
+export interface ReviewDoc extends mongoose.Document {
+	_id: string,
+	productId: number,
+	name: string,
+	review: string,
+}

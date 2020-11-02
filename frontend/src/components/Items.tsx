@@ -27,7 +27,7 @@ const Items = observer((props: IProps) => {
 							<img src={props.img} alt={`${props.name}`}/>
 						</div>
 						<p className="itemName">{props.name}</p>
-						<p className="itemDescription">{props.description}</p>
+						{/*<p className="itemDescription">{props.description}</p>*/}
 						<p className="pris">{props.price}</p>
 					</div>
 					:
@@ -37,8 +37,9 @@ const Items = observer((props: IProps) => {
 							<img src={props.img} alt={`${props.name}`}/>
 						</div>
 						<p className="itemName">{props.name}</p>
-						<p className="itemDescription">{props.description}</p>
-						<p className="pris">{props.price}</p>
+						<p className="itemPrice">$ {props.price}</p>
+						{/*<p className="itemDescription">{props.description}</p>*/}
+						<p className="quickView">Quick View</p>
 					</div>
 					:
 					<div className="items-modal" onClick={props.onClick}>
