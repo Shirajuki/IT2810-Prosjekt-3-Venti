@@ -9,17 +9,11 @@ router.get("/getCart", adminController.getGetCart);
 
 router.post("/editCart/:productId", adminController.postEditCart);
 
-router.post("/showAll", adminController.showAll);
-
 router.post("/removeCart/:productId", adminController.postRemoveProductFromCart);
 
+router.get("/reviews/:productId", adminController.getReviews);
+
 router.get("/add-product", adminController.getAddProduct);
-
-router.get("/search-products/:searchTerm", adminController.searchProducts);
-
-router.get('/filter-products/:filterTerm', adminController.filterProducts);
-
-router.get('/sort-products/:sortTerm', adminController.sortProducts);
 
 router.get('/count-products/', adminController.countProducts);
 

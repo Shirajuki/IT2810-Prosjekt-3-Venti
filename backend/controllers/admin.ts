@@ -1,5 +1,6 @@
 import Product from "../models/product";
 import Session from "../models/session";
+import Review from "../models/review";
 import { Request, Response } from 'express';
 import { ProductDoc } from "../models/modelDoc";
 import { type } from "os";
@@ -138,12 +139,6 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
     }
 };
 
-const showAll = async (req: Request, res: Response) => {
-	const products = await Product.find((data) => data);
-	res.status(200)
-    res.send(JSON.stringify(products))
-
-}
     
 const getGetCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find((data) => data);
@@ -218,69 +213,30 @@ const getProduct = async (req: Request, res: Response) => {
     }
 };
 
-const searchProducts = async (req: Request, res: Response) => {
-    const searchTerm = req.params.searchTerm;
-
-    const product = await Product.find( { $text: { $search: searchTerm } } )
-
+const getReviews = async (req: Request, res: Response) => {
+	const productId = req.params.productId;
+	console.log(productId);
+    const reviews = await Review.find({productId: +productId});
     try {
-        // console.log(product);
-        res.status(200)
-        res.send(JSON.stringify(product))
+        console.log(reviews);
+        res.status(200).json(reviews);
     } catch (error) {
         console.log(error);
     }
+};
+
+const postReview = (req: Request, res: Response) => {
+    const {productId, name, reviewtext} = req.params;
+
+    const review = new Product({productId, name, reviewtext });
+    review.save();
+    console.log('Product Added to the database');
+    res.status(201).redirect('http://localhost:3000/');
 };
 
 const getAddProduct = (req: Request, res: Response) => {
     res.status(200).render('edit-product', { editing: false });
 };
-
-const filterProducts = async (req: Request, res: Response) => {
-	const filterTerm: string = req.params.filterTerm;
-	// "["product_type=lipstick", "product_type=foundation"]"
-	// {product_type: lipstick or foundation}
-	const term: String[] = JSON.parse(filterTerm).map((e: string) => e.split("="));
-    //const str = filterTerm.map(e => e.split("="));
-    //const Jstr = JSON.parse(str.map(e => `{"${e[0]}": "${e[1]}"}`).join().split("},{").join(", "))
-	
-	if (filterTerm.length < 0) return res.status(200);
-	const filterQuery:any = {};
-	for (let i=0; i<term.length; i++) {
-		if (filterQuery[term[i][0]] !== undefined) {
-			filterQuery[term[i][0]] = [...filterQuery[term[i][0]], term[i][1]];
-		} else {
-			filterQuery[term[i][0]] = [term[i][1]];
-		}
-	}
-	console.log(filterQuery);
-    const product = await Product.find(filterQuery)
-
-    try {
-        console.log(product);
-        res.status(200)
-        res.send(JSON.stringify(product))
-    } catch (error) {
-        console.log(error);
-    }
-}; 
-
-const sortProducts = async (req: Request, res: Response) => {
-	const sortTerm = req.params.sortTerm.split("_") || "_";
-	const term: any = {}
-	term[sortTerm[0]] = sortTerm[1];
-	const {pageSize = 15, pageOffset = 0} = req.query;
-
-	const product = await Product.find({}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
-
-    try {
-        res.status(200)
-        res.send(JSON.stringify(product))
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 
 
 const getEditProduct = async (req: Request, res: Response) => {
@@ -332,11 +288,8 @@ export default {
 	postEditCart,
 	postProduct,
 	getProduct,
-	searchProducts,
-	filterProducts,
-	sortProducts,
 	getAddProduct,
 	getEditProduct,
 	postDelete,
-	showAll,
+	getReviews,
 };
