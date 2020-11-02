@@ -48,6 +48,7 @@ function Modal( props: IProps ) {
 				<Items id={props.modal.product?.id} isCarousel={false} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} isModal={false}/>
 				<div className="reviews">
 					<div className="review-input">
+						<textarea value="" placeholder="Name"></textarea>
 						<textarea value="" placeholder="Write your review here..."></textarea>
 						<button>Send</button>
 					</div>
