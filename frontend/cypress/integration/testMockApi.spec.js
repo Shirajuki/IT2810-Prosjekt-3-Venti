@@ -1,3 +1,4 @@
+//kan slettes
 describe("test the mock api works", ()=> {
   it("requests data of mock api", () => {
       cy.request("../mock-data").as("makeup");

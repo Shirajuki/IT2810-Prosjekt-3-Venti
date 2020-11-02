@@ -53,12 +53,12 @@ const App: FC = observer(() => {
 						<div className="logo">
 							<a href="/"><img src="images/logo_transparent.png" alt={CTX.sessionStore.session.sessionID}/></a>
 						</div>
-						<a href="/"><h2>VENTI</h2></a>
+						<a className="appName" href="/"><h2>VENTI</h2></a>
 						<div>
 							<div style= {{display:(CTX.fetchStore.hidden ? "none" : "block")}}>
-								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search">🔎</span></button>
+							<button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)} data-cy="search-button" className="search-icon">🔎</button>
 							<button onClick={() => console.log(CTX.sessionStore.cart)}><span role="img" aria-label="cart">🛒</span></button>
 							<button className="ThisIsATest" onClick={() => CTX.sessionStore.editCart(CTX.fetchStore.products)}>Add2Cart</button>
 							<button className="ThisIsATestToo" onClick={() => CTX.sessionStore.removeCart(CTX.fetchStore.products)}>RM</button>
@@ -87,7 +87,7 @@ const App: FC = observer(() => {
 							<div className="itemDisplayWrapper">
 								<span id="itemDisplay" className="hiddenAnchor"></span>
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{
+								<select name="sort" id="sortFilter" data-cy="sort-filter" ref={sortRef} onChange={()=>{
 									CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
 									CTX.fetchStore.setCurrentPage(0)}
 								}>
@@ -106,10 +106,11 @@ const App: FC = observer(() => {
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
                                       onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'pagination'}
+									  containerClassName={'pagination'}
+									  nextClassName={'next'}
                                       activeClassName={'active'} />
 								</div>
-								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products}/>
+								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products} data-cy="item-display" />
 								<div className="itemNavigation">
 									<ReactPaginate  previousLabel={'previous'}
                                       nextLabel={'next'}
@@ -120,7 +121,7 @@ const App: FC = observer(() => {
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
                                       onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'pagination'}
+                                      containerClassName={'paginations'}
                                       activeClassName={'active'} />
 								</div>
 							</div>

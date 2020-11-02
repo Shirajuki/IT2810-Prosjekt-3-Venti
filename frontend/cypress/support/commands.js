@@ -30,6 +30,10 @@ Cypress.Commands.add('start', () => {
     cy.visit('/');
 })
 
+//sorts by price $ - $$$
 Cypress.Commands.add('sortAsc', () => {
-    cy.get('[data-cy=select_filter]').select("Name A - Z").should("have.value", name_asc);
+    //cy.get('[data-cy=sort-filter]').click()
+    //cy.get('mdc-select-item').contains('Country seven';
+    //Cypress.$('[data-cy=sort-filter]').select('').eq(2).click({ force: true })
+    cy.get('[data-cy=sort-filter]').select('Price $ - $$$', {force: true}).should('have.value', 'price_asc');
 })

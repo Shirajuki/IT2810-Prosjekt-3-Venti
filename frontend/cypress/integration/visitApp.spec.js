@@ -5,7 +5,8 @@ describe("Visits website", () => {
         cy.start();
     })
     
-    it("visits website", ()=> {
+    //end to end testing of the application
+    it("visits website and tests differnet components", ()=> {
         cy.server();
 
         cy.visit("http://localhost:3000")
