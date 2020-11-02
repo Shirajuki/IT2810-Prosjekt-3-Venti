@@ -58,9 +58,7 @@ const App: FC = observer(() => {
 								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
 							<button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search">🔎</span></button>
-							<button onClick={() => console.log(CTX.sessionStore.cart)}><span role="img" aria-label="cart">🛒</span></button>
-							<button className="ThisIsATest" onClick={() => CTX.sessionStore.editCart(CTX.fetchStore.products)}>Add2Cart</button>
-							<button className="ThisIsATestToo" onClick={() => CTX.sessionStore.removeCart(CTX.fetchStore.products)}>RM</button>
+							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart">🛒</span></button>
 						</div>
 					</nav>
 				</header>

@@ -5,8 +5,7 @@ interface IProps {
 	modal: {id: string, product: Product},
 	setModal: (id:string, product: Product) => void;
 }
-function Modal( props: IProps ) {
-
+const Modal = ( props: IProps ) => {
 	return (
 		<div className={`modalContainer ${props.modal.id === "none" ? "hidden" : "shown"}`}>
 			<div className="modalContent">

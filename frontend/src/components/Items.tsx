@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useContext} from "react";
+import { RootStoreContext } from "../stores/root-store";
+import { observer } from "mobx-react-lite"
 
 //Declares type of title
 interface IProps {
@@ -12,8 +14,8 @@ interface IProps {
 	isCarousel: boolean;
 }
 
-
-function Items(props: IProps) {
+const Items = observer((props: IProps) => {
+	const CTX = useContext(RootStoreContext);
 	const item = () => {
 		switch (props.name) {
 			default:
@@ -46,7 +48,7 @@ function Items(props: IProps) {
 						<div className="info-container">
 							<p className="itemName">{props.name}</p>
 							<p className="pris">{props.price}</p>
-							<button>BUY</button>
+							<button onClick={() => CTX.sessionStore.editCart(+props.id)}>Add to cart</button>
 							<p className="itemDescription">{props.description}</p>
 						</div>
 					</div>
@@ -57,6 +59,6 @@ function Items(props: IProps) {
 		}
 	};
 	return item();
-}
+})
 
 export default Items;
