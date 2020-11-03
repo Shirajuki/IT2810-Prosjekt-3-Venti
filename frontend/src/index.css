@@ -583,8 +583,8 @@ div.modalContent .imgDiv > div {
 }
 .review-input {
   display: grid;
-  grid-template-columns: 80% 19%;
-  grid-gap: 1%;
+  grid-template-columns: 50% 50%;
+  grid-gap: 0%;
 }
 div.modalContent .review-input > button {
   width: 100%;
