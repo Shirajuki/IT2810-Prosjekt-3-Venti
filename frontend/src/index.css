@@ -57,8 +57,8 @@ nav {
   margin: 0 auto;
 }
 nav > div button {
-	position: relative;
-	z-index: 6;
+  position: relative;
+  z-index: 6;
 }
 nav > a {
   position: absolute;
@@ -72,35 +72,35 @@ nav > .logo {
   height: 60px;
 }
 nav > div {
-	position: relative;
+  position: relative;
 }
 nav img {
   width: 124px;
   transform: translateY(-33px);
 }
 .searchBar {
-	display: block;
-	position: absolute;
-	z-index: 2;
-	top: -5px;
-	width: 100px;
+  display: block;
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  width: 100px;
 }
 .searchBar > input {
-	transition-duration: 1s;
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-	width: 0;
-	left: 0;
-	border-radius: 14px;
-	border: none;
-	padding: 9px;
+  transition-duration: 1s;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  left: 0;
+  border-radius: 14px;
+  border: none;
+  padding: 9px;
 }
 .searchBar.active > input {
-	opacity: 1;
-	pointer-events: all;
-	left: -150px;
-	width: 160px;
+  opacity: 1;
+  pointer-events: all;
+  left: -150px;
+  width: 160px;
 }
 /* MAIN */
 main {
@@ -197,20 +197,13 @@ main .section {
   width: 18%;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   display: grid;
-<<<<<<< HEAD
   grid-template-rows: 65% 15% 10% 10%;
-=======
-  grid-template-rows: 50% 15% 25% 10%;
->>>>>>> test
 }
 .carousel .imgDiv {
   display: flex;
   justify-content: center;
   align-items: center;
-<<<<<<< HEAD
   max-height: 100%;
-=======
->>>>>>> test
 }
 .carousel .items img {
   width: 80%;
@@ -224,7 +217,6 @@ main .section {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-<<<<<<< HEAD
 .carousel .items .itemPrice {
   font-size: 0.8rem;
   height: 100%;
@@ -233,18 +225,6 @@ main .section {
   margin: 5px;
 }
 .carousel .items .quickView {
-=======
-.carousel .items .itemDescription {
-  font-size: 0.8rem;
-  height: 100%;
-  align-content: flex-start;
-  align-self: flex-start;
-  overflow-y: hidden;
-  text-align: left;
-  margin: 5px;
-}
-.carousel .items .pris {
->>>>>>> test
   display: flex;
   align-items: center;
   justify-content: center;
@@ -257,11 +237,7 @@ main .section {
 }
 .carousel .items:hover .pris {
   color: #52307c;
-<<<<<<< HEAD
   font-weight: bold;
-=======
-  background-color: #dbc9f1;
->>>>>>> test
 }
 
 .carousel .prev,
@@ -340,19 +316,9 @@ main .section {
 }
 .itemDisplay .items .itemName {
   font-weight: bold;
-<<<<<<< HEAD
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-=======
-}
-.itemDisplay .items .itemDescription {
-  font-weight: normal;
-  font-size: 0.8rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
->>>>>>> test
 }
 .itemDisplay .items .itemDescription {
   font-weight: normal;
@@ -466,10 +432,7 @@ div.modalContainer .itemDescription {
 div.modalContainer.shown {
   opacity: 1;
   pointer-events: all;
-<<<<<<< HEAD
   z-index: 100;
-=======
->>>>>>> test
 }
 div.modalContent {
   position: relative;
@@ -532,12 +495,7 @@ div.modalContent button:hover {
 }
 
 .itemDescription {
-<<<<<<< HEAD
   min-height: 100%;
-=======
-  max-height: 80%;
-  height: 100%;
->>>>>>> test
   overflow: hidden;
   color: rgba(0, 0, 0, 0.5);
 }
@@ -605,11 +563,7 @@ div.modalContent .imgDiv > div {
   padding: 0px;
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;
-<<<<<<< HEAD
-  display: none !important;
-=======
   /*display: none !important;*/
->>>>>>> test
 }
 .pagination > li:last-child > a,
 .pagination > li:last-child > span {
@@ -617,23 +571,15 @@ div.modalContent .imgDiv > div {
   margin-right: 0;
   padding: 0px !important;
   border-top-right-radius: 4px;
-<<<<<<< HEAD
-  display: none !important;
-=======
   /*display: none !important;*/
->>>>>>> test
 }
 /* REVIEWS */
 .reviews {
   box-sizing: border-box;
   width: 100%;
-<<<<<<< HEAD
   padding: 0 10px 10px 10px;
   position: relative;
   z-index: 10;
-=======
-  padding: 0 10px;
->>>>>>> test
 }
 .review {
   padding: 10px;
@@ -641,13 +587,8 @@ div.modalContent .imgDiv > div {
 }
 .review-input {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: 50% 50%;
   grid-gap: 0%;
-=======
-  grid-template-columns: 80% 19%;
-  grid-gap: 1%;
->>>>>>> test
 }
 div.modalContent .review-input > button {
   width: 100%;
@@ -675,16 +616,4 @@ div.modalContent .review-input > button {
     width: auto;
     height: 80%;
   }
-<<<<<<< HEAD
-=======
-  footer {
-    height: 150%;
-  }
-
-  .us {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
->>>>>>> test
 }
