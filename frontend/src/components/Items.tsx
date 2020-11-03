@@ -26,9 +26,9 @@ const Items = observer((props: IProps) => {
 						<div className="imgDiv">
 							<img src={props.img} alt={`${props.name}`}/>
 						</div>
-						<p className="itemName">{props.name}</p>
-						{/*<p className="itemDescription">{props.description}</p>*/}
-						<p className="pris">{props.price}</p>
+						<p className="itemName" data-cy="item-name">{props.name}</p>
+						<p className="itemDescription">{props.description}</p>
+						<p className="pris" data-cy="item-price">{props.price}</p>
 					</div>
 					:
 					(props.isCarousel ?
@@ -38,7 +38,6 @@ const Items = observer((props: IProps) => {
 						</div>
 						<p className="itemName">{props.name}</p>
 						<p className="pris">{props.price}</p>
-						{/*<p className="itemDescription">{props.description}</p>*/}
 						<p className="quickView">Quick View</p>
 					</div>
 					:

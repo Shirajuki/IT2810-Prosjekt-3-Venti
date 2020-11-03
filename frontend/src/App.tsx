@@ -58,7 +58,7 @@ const App: FC = observer(() => {
 						</div>
 						<div>
 							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
-								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
+								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
 							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
 							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
@@ -87,7 +87,7 @@ const App: FC = observer(() => {
 							<div className="itemDisplayWrapper">
 								<span id="itemDisplay" className="hiddenAnchor"></span>
 								<div className="filter">SORT BY:</div>
-								<select name="sort" id="sortFilter" ref={sortRef} onChange={()=>{
+								<select name="sort" id="sortFilter" data-cy="sort-filter" ref={sortRef} onChange={()=>{
 									CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
 									CTX.fetchStore.setCurrentPage(0)}
 								}>
@@ -106,10 +106,11 @@ const App: FC = observer(() => {
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
                                       onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'pagination'}
+									  containerClassName={'pagination'}
+									  nextClassName={'next'}
                                       activeClassName={'active'} />
 								</div>
-								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products}/>
+								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products} data-cy="item-display" />
 								<div className="itemNavigation">
 									<ReactPaginate  previousLabel={'previous'}
                                       nextLabel={'next'}
@@ -120,7 +121,7 @@ const App: FC = observer(() => {
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
                                       onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'pagination'}
+                                      containerClassName={'paginations'}
                                       activeClassName={'active'} />
 								</div>
 							</div>

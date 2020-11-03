@@ -9,10 +9,10 @@
     "@types/jest": "^24.0.0",
     "@types/js-cookie": "^2.2.6",
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-icons": "^3.0.0",
     "@types/react-paginate": "^6.2.1",
+    "@types/react-test-renderer": "^16.9.3",
     "js-cookie": "^2.2.1",
     "mobx": "^6.0.1",
     "mobx-react-lite": "^3.0.1",
@@ -21,6 +21,7 @@
     "react-icons": "^3.11.0",
     "react-paginate": "^6.5.0",
     "react-scripts": "3.4.3",
+    "react-test-renderer": "^17.0.1",
     "typescript": "~3.7.2"
   },
   "scripts": {
@@ -43,5 +44,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.55",
+    "cypress": "^5.5.0",
+    "cypress-react-selector": "^2.2.0",
+    "cypress-react-unit-test": "^4.16.7",
+    "jest": "^26.6.1"
   }
 }
