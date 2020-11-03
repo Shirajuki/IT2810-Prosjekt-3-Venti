@@ -13,7 +13,7 @@ const ItemDisplay = (props: IProps) => {
 		<>
 		<div className="itemDisplay">
 			{props.itemList.map(item => (
-				<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => props.setModal(item.id, item) }isModal = {true} />
+				<Items data-cy="item-display-items" id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} isCarousel={false} onClick={() => props.setModal(item.id, item) }isModal = {true} />
 			))}
 		</div>
 	</>

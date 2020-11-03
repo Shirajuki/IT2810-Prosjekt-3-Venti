@@ -41,7 +41,7 @@ const ProductFilters = observer(() => {
 		<h2>Product Type</h2>
 		{product.types.map((item: String[]) => (
 			<label>
-				<input type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`product_type=${item[0]}`)}/>
+				<input data-cy="type" type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`product_type=${item[0]}`)}/>
 				{item[1]}
 			</label>
 		))}
@@ -49,7 +49,7 @@ const ProductFilters = observer(() => {
 		<h2>Brand</h2>
 		{product.brands.map((item: String[]) => (
 			<label>
-				<input type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`brand=${item[0]}`)}/>
+				<input data-cy="brand" type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`brand=${item[0]}`)}/>
 				{item[1]}
 			</label>
 		))}
