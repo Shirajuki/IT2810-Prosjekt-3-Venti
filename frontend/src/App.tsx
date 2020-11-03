@@ -6,6 +6,8 @@ import ItemDisplay from './components/ItemDisplay';
 import ProductFilters from './components/ProductFilters';
 import Modal from './components/Modal';
 import Cookies from "js-cookie";
+import { FcSearch } from "react-icons/fc";
+import { TiShoppingCart } from "react-icons/ti";
 
 import { observer } from "mobx-react-lite"
 import { RootStoreContext } from "./stores/root-store";
@@ -57,8 +59,8 @@ const App: FC = observer(() => {
 							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
 								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search">🔎</span></button></a>
-							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart">🛒</span></button>
+							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
+							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
 						</div>
 					</nav>
 				</header>
