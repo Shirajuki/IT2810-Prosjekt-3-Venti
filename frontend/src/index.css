@@ -594,6 +594,62 @@ div.modalContent .review-input > button {
   width: 100%;
   padding: 10px;
 }
+/* Shopping Cart */
+.shoppingCart {
+	display: grid;
+	position: fixed;
+	right: 0;
+	top: 0;
+	background-color: white;
+	min-width: 300px;
+	width: 20%;
+	height: 100vh;
+	grid-template-rows: 10% 70% 20%;
+	z-index: 10;
+	box-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+	transform: translateX(100%);
+	transition-duration: 1s;
+}
+.shoppingCart.active {
+	transform: translateX(0);
+}
+.cartTitle {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: tomato;
+}
+.cartTitle > .cartExit {
+	position: absolute;
+	right: 40px;
+}
+.cartItems {
+	background-color: lightgray;
+}
+.cartInfo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	background-color: coral;
+}
+.cartInfo > p {
+  color: #52307c;
+  font-weight: bold;
+}
+.cartInfo > button {
+  color: white;
+  font-weight: bold;
+  background-color: #8364a9;
+  padding: 15px 20px;
+  width: 80%;
+  transition-duration: 0.4s;
+}
+.cartInfo button:hover {
+  color: #52307c;
+  background-color: #dbc9f1;
+}
 @media only screen and (max-width: 880px) {
   .itemDisplay {
     grid-template-columns: repeat(2, minmax(150px, 1fr));

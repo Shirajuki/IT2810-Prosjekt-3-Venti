@@ -4,6 +4,7 @@ import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import ProductFilters from './components/ProductFilters';
+import ShoppingCart from './components/ShoppingCart';
 import Modal from './components/Modal';
 import Cookies from "js-cookie";
 import { FcSearch } from "react-icons/fc";
@@ -152,6 +153,7 @@ const App: FC = observer(() => {
 					</div>
 				</footer>
 				<Modal modal={modal} setModal={itemModal}/>
+				<ShoppingCart />
 			</div>
 		</>
 	);
