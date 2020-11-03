@@ -11,9 +11,9 @@ const ProductFilters = observer(() => {
 			type: {
 				"foundation": "Foundation",
 				"bronzer": "Bronzer",
-				"Eyeshadow": "Eyeshadow",
+				"eyeshadow": "Eyeshadow",
 				"eyeliner": "Eyeliner",
-				"macara": "Mascara",
+				"mascara": "Mascara",
 				"lipstick": "Lipstick",
 			},
 			brand: {

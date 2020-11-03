@@ -53,7 +53,6 @@ const App: FC = observer(() => {
 						<div className="logo">
 							<a href="/"><img src="images/logo_transparent.png" alt={CTX.sessionStore.session.sessionID}/></a>
 						</div>
-						<a href="/"><h2>VENTI</h2></a>
 						<div>
 							<div style= {{display:(CTX.fetchStore.hidden ? "none" : "block")}}>
 								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
