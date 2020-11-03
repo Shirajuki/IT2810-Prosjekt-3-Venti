@@ -56,13 +56,6 @@ const FetchContext = () => {
 				method: 'GET',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
-				/*
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'Origin':'http://localhost:3000',
-				},
-				*/
 			});
 			const countProducts = async () => {
 				const response = await fetch(url+"&count=true");
@@ -70,6 +63,7 @@ const FetchContext = () => {
 				this.setProductsCount(count)
 			}
 			const data = await response.json();
+			console.log("got item data", data);
 			countProducts()
 			try {
 				console.log("initialize",data);

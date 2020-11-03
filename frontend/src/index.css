@@ -56,6 +56,10 @@ nav {
   width: 80%;
   margin: 0 auto;
 }
+nav > div button {
+	position: relative;
+	z-index: 6;
+}
 nav > a {
   position: absolute;
   left: 50%;
@@ -67,9 +71,36 @@ nav > .logo {
   width: 60px;
   height: 60px;
 }
+nav > div {
+	position: relative;
+}
 nav img {
   width: 124px;
   transform: translateY(-33px);
+}
+.searchBar {
+	display: block;
+	position: absolute;
+	z-index: 2;
+	top: -5px;
+	width: 100px;
+}
+.searchBar > input {
+	transition-duration: 1s;
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 0;
+	left: 0;
+	border-radius: 14px;
+	border: none;
+	padding: 9px;
+}
+.searchBar.active > input {
+	opacity: 1;
+	pointer-events: all;
+	left: -150px;
+	width: 160px;
 }
 /* MAIN */
 main {
@@ -202,7 +233,7 @@ main .section {
 }
 .carousel .items:hover .pris {
   color: #52307c;
-  background-color: #dbc9f1;
+  font-weight: bold;
 }
 
 .carousel .prev,
@@ -281,6 +312,9 @@ main .section {
 }
 .itemDisplay .items .itemName {
   font-weight: bold;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .itemDisplay .items .itemDescription {
   font-weight: normal;
@@ -394,6 +428,7 @@ div.modalContainer .itemDescription {
 div.modalContainer.shown {
   opacity: 1;
   pointer-events: all;
+  z-index: 100;
 }
 div.modalContent {
   position: relative;
@@ -456,8 +491,7 @@ div.modalContent button:hover {
 }
 
 .itemDescription {
-  max-height: 80%;
-  height: 100%;
+  min-height: 100%;
   overflow: hidden;
   color: rgba(0, 0, 0, 0.5);
 }
@@ -539,7 +573,9 @@ div.modalContent .imgDiv > div {
 .reviews {
   box-sizing: border-box;
   width: 100%;
-  padding: 0 10px;
+  padding: 0 10px 10px 10px;
+  position: relative;
+  z-index: 10;
 }
 .review {
   padding: 10px;

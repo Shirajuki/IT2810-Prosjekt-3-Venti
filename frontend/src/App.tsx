@@ -6,6 +6,8 @@ import ItemDisplay from './components/ItemDisplay';
 import ProductFilters from './components/ProductFilters';
 import Modal from './components/Modal';
 import Cookies from "js-cookie";
+import { FcSearch } from "react-icons/fc";
+import { TiShoppingCart } from "react-icons/ti";
 
 import { observer } from "mobx-react-lite"
 import { RootStoreContext } from "./stores/root-store";
@@ -14,7 +16,6 @@ const App: FC = observer(() => {
 	const CTX = useContext(RootStoreContext);
 	const searchRef = useRef(null);
 	const sortRef = useRef(null);
-
 	//Declares a modal used for displaying the art
 	const [modal, setModal] = useState({
 		id: "none",
@@ -44,6 +45,7 @@ const App: FC = observer(() => {
 		if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
 		CTX.sessionStore.setCart(""+cart);
 		CTX.sessionStore.setSession(cookie);
+		CTX.reviewStore.setSession(cookie);
 	}, [])
 	return (
 		<>
@@ -54,13 +56,11 @@ const App: FC = observer(() => {
 							<a href="/"><img src="images/logo_transparent.png" alt={CTX.sessionStore.session.sessionID}/></a>
 						</div>
 						<div>
-							<div style= {{display:(CTX.fetchStore.hidden ? "none" : "block")}}>
+							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
 								<input type="text" name="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search">🔎</span></button>
-							<button onClick={() => console.log(CTX.sessionStore.cart)}><span role="img" aria-label="cart">🛒</span></button>
-							<button className="ThisIsATest" onClick={() => CTX.sessionStore.editCart(CTX.fetchStore.products)}>Add2Cart</button>
-							<button className="ThisIsATestToo" onClick={() => CTX.sessionStore.removeCart(CTX.fetchStore.products)}>RM</button>
+							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
+							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
 						</div>
 					</nav>
 				</header>

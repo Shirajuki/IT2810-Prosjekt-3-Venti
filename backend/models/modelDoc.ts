@@ -18,8 +18,8 @@ export interface SessionDoc extends mongoose.Document {
 }
 
 export interface ReviewDoc extends mongoose.Document {
-	_id: string,
 	productId: number,
+	sessionId: string,
 	name: string,
-	review: string,
+	reviewText: string,
 }

@@ -4,15 +4,19 @@ const reviewSchema = new mongoose.Schema({
     productId: {
         type: Number,
         required: true,
-    },
+	},
+	sessionId: {
+		type: String,
+		required: true,
+	},
     name: {
         type: String,
         required: true,
     },
-    review: {
+    reviewText: {
         type: String,
         required: true,
-    }
+	}
   }
   );
 

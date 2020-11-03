@@ -1,10 +1,9 @@
-import Product from "../models/product"
 import { useLocalObservable } from "mobx-react-lite";
 
 const SessionContext = () => {
 	const store = useLocalObservable(() => ({
 		/*observables here*/
-		cart: "[]",
+		cart: "[[1,1]]",
 		session: { sessionID: "none" },
 		/*actions here*/
 		setCart(s: string) {
@@ -13,11 +12,10 @@ const SessionContext = () => {
 		setSession(s: string) {
 			this.session.sessionID = s;
 		},
-		editCart(products: Product[]) {
-			console.log("test1")
-			let nCart = JSON.parse(this.cart);
-			let rndProduct = ""+products[Math.floor(Math.random() * products.length)]?.id || "-1";
-			fetch('http://localhost:8080/editCart/'+rndProduct,{
+		editCart(productId: number) {
+			console.log(productId, this.cart||"[]")
+			let nCart = JSON.parse(this.cart||"[]");
+			fetch('http://localhost:8080/editCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
@@ -25,7 +23,7 @@ const SessionContext = () => {
 			.then(response => console.log(response));
 			let existInCart = -1;
 			for (let i=0; i<nCart.length; i++) {
-				if (nCart[i][0] === rndProduct) {
+				if (nCart[i][0] === productId) {
 					existInCart = i;
 					break;
 				}
@@ -33,15 +31,14 @@ const SessionContext = () => {
 			if (existInCart !== -1) {
 				nCart[existInCart][1]++;
 			} else {
-				nCart.push([rndProduct,1]);
+				nCart.push([productId,1]);
 			}
 			this.setCart(JSON.stringify(nCart));
+			console.log(111,this.cart)
 		},
-		removeCart(products: Product[]) {
-			console.log("test2")
-			let nCart = JSON.parse(this.cart);
-			let rndProduct = ""+products[Math.floor(Math.random() * products.length)].id;
-			fetch('http://localhost:8080/removeCart/'+rndProduct,{
+		removeCart(productId: number) {
+			let nCart = JSON.parse(this.cart||"[]");
+			fetch('http://localhost:8080/removeCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
@@ -49,7 +46,7 @@ const SessionContext = () => {
 			.then(response => console.log(response));
 			let indexProduct = -1;
 			for (let i=0; i<nCart.length; i++) {
-				if (nCart[i][0] === rndProduct) {
+				if (nCart[i][0] === productId) {
 					indexProduct = i;
 					break;
 				}
@@ -70,14 +67,14 @@ const SessionContext = () => {
 				});
 				const data = await response.json();
 				try {
-					console.log("initialize",data);
-					return data;
+					console.log("got session",data, typeof data);
+					return (data) ? data : "[]";
 				} catch (error) {
 					console.log(error);
 				}
 			}
 			getAPI();
-			return "";
+			return "[]";
 		}
 	}));
 	return store;
