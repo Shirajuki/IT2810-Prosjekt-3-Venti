@@ -3,9 +3,12 @@
 ### Install dependencies:
 
 - Clone the applictaion with https.
-- `git clone https://gitlab.stud.idi.ntnu.no/it2810-h20/team-07/prosjekt-3.git `
+
+`git clone https://gitlab.stud.idi.ntnu.no/it2810-h20/team-07/prosjekt-3.git `
+
 - Run the following command in both the frontend and backed folder:
-- `npm install`
+
+`npm install`
 
 ### Running the application
 
