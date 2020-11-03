@@ -22,4 +22,5 @@ export interface ReviewDoc extends mongoose.Document {
 	sessionId: string,
 	name: string,
 	reviewText: string,
+	stars: number,
 }

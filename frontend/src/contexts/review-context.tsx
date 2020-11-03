@@ -16,12 +16,12 @@ const ReviewContext = () => {
 		get sessionId() {
 			return this.session.sessionID;
 		},
-		postReviews(productId: string, reviewText: string, rndName: string) {
-			console.log(reviewText,this.sessionId,rndName,productId);
+		postReviews(productId: string, reviewText: string, rndName: string, stars: number) {
+			//console.log(reviewText,this.sessionId,rndName,productId);
 			if (this.sessionId && rndName && reviewText && productId) {
 				console.log("sending...")
 				const getAPI = async () => {
-					const url: string = `http://localhost:8080/post-review/?productId=${productId}&sessionId=${this.sessionId}&name=${rndName}&reviewText=${reviewText}`;
+					const url: string = `http://localhost:8080/post-review/?productId=${productId}&sessionId=${this.sessionId}&name=${rndName}&reviewText=${reviewText}&stars=${stars}`;
 					fetch(url,{
 						method: 'POST',
 						mode: 'cors',

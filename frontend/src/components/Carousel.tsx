@@ -66,7 +66,6 @@ const Slide = observer((props: CarouselProps) => {
 			<button className="prev" onClick={() => state.changeSlide(-1)}>&lt;</button>
 			<button className="next" onClick={() => state.changeSlide(1)}>&gt;</button>
 			<Display slides={state.displaySlides} setModal={props.setModal}/>
-			<p style={{position: "absolute", top: 0, right: 0}}>{state.count}</p>
 		</div>
 	);
 })

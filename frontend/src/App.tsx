@@ -59,7 +59,7 @@ const App: FC = observer(() => {
 							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
 								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
+							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
 							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
 						</div>
 					</nav>
@@ -120,7 +120,7 @@ const App: FC = observer(() => {
                                       marginPagesDisplayed={1}
                                       pageRangeDisplayed={3}
                                       onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'paginations'}
+                                      containerClassName={'pagination'}
                                       activeClassName={'active'} />
 								</div>
 							</div>

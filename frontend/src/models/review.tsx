@@ -3,4 +3,5 @@ export default interface Review {
 	sessionId: string;
     name: string;
     reviewText: string;
+    stars: number
 }
