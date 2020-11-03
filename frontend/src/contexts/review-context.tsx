@@ -16,8 +16,7 @@ const ReviewContext = () => {
 		get sessionId() {
 			return this.session.sessionID;
 		},
-		postReviews(productId: string, reviewText: string) {
-			const rndName = "Jonny";
+		postReviews(productId: string, reviewText: string, rndName: string) {
 			console.log(reviewText,this.sessionId,rndName,productId);
 			if (this.sessionId && rndName && reviewText && productId) {
 				console.log("sending...")

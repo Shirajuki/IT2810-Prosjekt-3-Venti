@@ -11,9 +11,10 @@ interface IProps {
 const Modal = observer(( props: IProps ) => {
 	const CTX = useContext(RootStoreContext);
 	const messageRef = useRef(null);
+	const nameRef = useRef(null);
 	
 	const post = () => {
-		if (CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value)) {
+		if (CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value)) {
 			messageRef.current.value = "";
 			setTimeout(() => document.getElementsByClassName("modalContent")[0].scrollTo(0,document.body.scrollHeight*1000),1000);
 		}
@@ -36,6 +37,7 @@ const Modal = observer(( props: IProps ) => {
 				<Items id={props.modal.product?.id} isCarousel={false} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} isModal={false}/>
 				<div className="reviews">
 					<div className="review-input">
+						<textarea ref={nameRef} placeholder="Name"></textarea>
 						<textarea ref={messageRef} placeholder="Write your review here..."></textarea>
 						<button onClick={() => post()}>Send</button>
 					</div>
