@@ -75,7 +75,7 @@ const countProducts = async (_: Request, res: Response) => {
 
 const postRemoveProductFromCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
-	if (!productId) return res.status(200);
+	if (!productId) return res.status(202);
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	const cart = JSON.parse(session[0]?._doc?.cart) || [];
@@ -90,7 +90,7 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
 		cart[indexProduct][1]--;
 		if (cart[indexProduct][1] === 0) cart.splice(indexProduct, 1);
 	} else {
-		res.status(200);
+		res.status(201);
 	}
 	console.log("Removed the product",productId);
     try {
@@ -111,12 +111,11 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
 const getGetCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	let final: any[] = [];
+	let final: any[] = ["[]"];
 	if (session.length > 0) {
 		console.log("Welcome back",req.sessionID);  
 		console.log(session[0]._doc.cart);
 		if (!session[0]._doc?.cart) {
-			final = ['[]'];
 			await Session.updateOne(
 			    { _id: req.sessionID },
 				{ cart: "[]" },
@@ -126,12 +125,15 @@ const getGetCart = async (req: Request, res: Response) => {
 		} else {
 			final = [session[0]._doc.cart];
 		}
-	} else {
-		final = ['[]'];
 	}
+	console.log(final)
+	const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
+	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
+	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
+	const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
+	final = [...final, products];
     try {
-		console.log(final[final.length-1]);
-		res.json(final[0]);
+		res.json(final);
     } catch (error) {
         console.log(error);
     }
@@ -140,7 +142,7 @@ const getGetCart = async (req: Request, res: Response) => {
 const postEditCart = async (req: Request, res: Response) => {
 	const productId = req.params.productId;
 	console.log(productId)
-	if (!productId) return res.status(200);
+	if (!productId) return res.status(202);
 	const sessionDB = await Session.find({});
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	// console.log(req.sessionID, sessionDB.map(e => e._id), )
@@ -167,7 +169,7 @@ const postEditCart = async (req: Request, res: Response) => {
 				{ new: true },
 			);
 		}
-        res.status(200);
+        res.status(201);
     } catch (error) {
         console.log(error);
     }

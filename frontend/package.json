@@ -12,6 +12,7 @@
     "@types/react-paginate": "^6.2.1",
     "@types/react-star-rating-component": "^1.4.0",
     "@types/react-test-renderer": "^16.9.3",
+    "jest": "24.9.0",
     "js-cookie": "^2.2.1",
     "mobx": "^6.0.1",
     "mobx-react-lite": "^3.0.1",

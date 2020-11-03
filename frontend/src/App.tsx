@@ -4,6 +4,7 @@ import Product from "./models/product"
 import Carousel from './components/Carousel';
 import ItemDisplay from './components/ItemDisplay';
 import ProductFilters from './components/ProductFilters';
+import ShoppingCart from './components/ShoppingCart';
 import Modal from './components/Modal';
 import Cookies from "js-cookie";
 import { FcSearch } from "react-icons/fc";
@@ -40,10 +41,9 @@ const App: FC = observer(() => {
 	}, [CTX.fetchStore.currentPage, CTX.fetchStore.pageSize, CTX.fetchStore.filterTerm]);
 
 	useEffect(() => {
-		const cart = CTX.sessionStore.getCart;
 		let cookie = Cookies.get("connect.sid")||"none";
 		if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
-		CTX.sessionStore.setCart(""+cart);
+		CTX.sessionStore.getCart();
 		CTX.sessionStore.setSession(cookie);
 		CTX.reviewStore.setSession(cookie);
 	}, [])
@@ -59,8 +59,8 @@ const App: FC = observer(() => {
 							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
 								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
-							<button onClick={() => console.log(CTX.sessionStore.getCart)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
+							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><FcSearch/></button></a>
+							<button onClick={() => CTX.sessionStore.setCartActive(true)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
 						</div>
 					</nav>
 				</header>
@@ -153,6 +153,7 @@ const App: FC = observer(() => {
 					</div>
 				</footer>
 				<Modal modal={modal} setModal={itemModal}/>
+				<ShoppingCart setModal={itemModal}/>
 			</div>
 		</>
 	);

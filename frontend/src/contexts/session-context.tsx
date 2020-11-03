@@ -1,63 +1,58 @@
+import Product from "../models/product"
 import { useLocalObservable } from "mobx-react-lite";
 
 const SessionContext = () => {
 	const store = useLocalObservable(() => ({
 		/*observables here*/
 		cart: "[[1,1]]",
+		cartProduct: [],
 		session: { sessionID: "none" },
+		cartActive: false,
 		/*actions here*/
 		setCart(s: string) {
 			this.cart = s;
 		},
+		setCartProduct(arr: Product[]) {
+			this.cartProduct = arr.concat();
+		},
 		setSession(s: string) {
 			this.session.sessionID = s;
 		},
-		editCart(productId: number) {
-			console.log(productId, this.cart||"[]")
-			let nCart = JSON.parse(this.cart||"[]");
-			fetch('http://localhost:8080/editCart/'+productId,{
-				method: 'POST',
-				mode: 'cors',
-				credentials: 'include', // Don't forget to specify this if you need cookies
-			})
-			.then(response => console.log(response));
-			let existInCart = -1;
-			for (let i=0; i<nCart.length; i++) {
-				if (nCart[i][0] === productId) {
-					existInCart = i;
+		editCart(productId: number, type: boolean) {
+			for (const map of JSON.parse(this.cart)) {
+				if (Number(map[0]) === productId) {
+					if (type) {
+						this.addCart(productId);
+					} else {
+						if (Number(map[1]) > 1) this.removeCart(productId);
+					}
 					break;
 				}
 			}
-			if (existInCart !== -1) {
-				nCart[existInCart][1]++;
-			} else {
-				nCart.push([productId,1]);
-			}
-			this.setCart(JSON.stringify(nCart));
-			console.log(111,this.cart)
+		},
+		addCart(productId: number) {
+			console.log(productId, this.cart||"[]")
+			fetch('http://localhost:8080/editCart/'+productId,{
+				method: 'POST',
+				mode: 'cors',
+				credentials: 'include',
+			})
+			this.getCart();
 		},
 		removeCart(productId: number) {
-			let nCart = JSON.parse(this.cart||"[]");
+			console.log("Removed item",productId);
 			fetch('http://localhost:8080/removeCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
 			})
-			.then(response => console.log(response));
-			let indexProduct = -1;
-			for (let i=0; i<nCart.length; i++) {
-				if (nCart[i][0] === productId) {
-					indexProduct = i;
-					break;
-				}
-			}
-			if (indexProduct !== -1) {
-				nCart[indexProduct][1]--;
-				if (nCart[indexProduct][1] === 0) nCart.splice(indexProduct, 1);
-			}
-			this.setCart(JSON.stringify(nCart));
+			this.getCart();
 		},
-		get getCart() {
+		setCartActive(b: boolean) {
+			if (b) this.getCart();
+			this.cartActive = b;
+		},
+		getCart() {
 			let url: string = "http://localhost:8080/getCart";
 			const getAPI = async () => {
 				const response = await fetch(url,{
@@ -67,14 +62,36 @@ const SessionContext = () => {
 				});
 				const data = await response.json();
 				try {
-					console.log("got session",data, typeof data);
-					return (data) ? data : "[]";
+					console.log("got session",data);
+					this.setCart(data[0]);
+					this.setCartProduct(data[1]);
 				} catch (error) {
 					console.log(error);
 				}
 			}
 			getAPI();
-			return "[]";
+		},
+		productCount(productId: number) {
+			for (const map of JSON.parse(this.cart)) {
+				if (Number(map[0]) === productId) {
+					return Number(map[1]);
+				}
+			}
+			return 0;
+		},
+		get cartTotalPrice() {
+			let sum = 0;
+			const nCart = JSON.parse(this.cart);
+			for (const product of this.cartProduct) {
+				for (const map of nCart) {
+					console.log(map,product.id,product.price)
+					if (Number(map[0]) === Number(product.id)) {
+						sum += product.price*Number(map[1]);
+						break;
+					}
+				}
+			}
+			return sum;
 		}
 	}));
 	return store;

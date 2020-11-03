@@ -36,7 +36,7 @@ const Modal = observer(( props: IProps ) => {
 						&#10006;
 					</div>
 				</div>
-				<Items id={props.modal.product?.id} isCarousel={false} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} isModal={false}/>
+				<Items id={props.modal.product?.id} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} type="modal"/>
 				<StarRating roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
 				<div className="reviews">
 					<div className="review-input">
