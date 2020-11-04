@@ -4,21 +4,27 @@ import Product from "../models/product";
 import Review from "../models/review"
 import Items from './Items';
 import { RootStoreContext } from "../stores/root-store";
-import { observer } from "mobx-react-lite"
+import { observer, useAsObservableSource } from "mobx-react-lite"
 interface IProps {
 	modal: {id: string, product: Product},
 	setModal: (id:string, product: Product) => void;
 }
 const Modal = observer(( props: IProps ) => {
+	const product = useAsObservableSource(props.modal.product);
+	console.log(product)
 	const CTX = useContext(RootStoreContext);
 	const messageRef = useRef(null);
 	const nameRef = useRef(null);
 	const [stars, setStars] = useState(Number);
 	
-	const post = () => {
-		if (CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value, stars)) {
+	const post = async () => {
+		if (await CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value, stars)) {
 			messageRef.current.value = "";
-			setTimeout(() => document.getElementsByClassName("modalContent")[0].scrollTo(0,document.body.scrollHeight*1000),1000);
+			nameRef.current.value = "";
+			setStars(0);
+			setTimeout(() => {
+				document.getElementsByClassName("modalContent")[0].scrollTop = 999999;
+			}, 1000);
 		}
 	}
 
@@ -37,7 +43,7 @@ const Modal = observer(( props: IProps ) => {
 						&#10006;
 					</div>
 				</div>
-				<Items id={props.modal.product?.id} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} type="modal"/>
+				<Items id={props.modal.product?.id} img={product?.image_link} name={product?.name} description={product?.description} rating={Number(product?.rating)} price={product?.price} onClick={() => void(0)} type="modal"/>
 				<StarRating data-cy="star-area" roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
 				<div className="reviews">
 					<div className="review-input">

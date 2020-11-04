@@ -63,10 +63,7 @@ const App: FC = observer(() => {
 								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
 							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><FcSearch/></button></a>
-							<button data-cy="cart" onClick={() => {
-								CTX.sessionStore.setCartActive(true);
-								CTX.sessionStore.getCart();
-							}}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
+							<button data-cy="cart" onClick={() => CTX.sessionStore.setCartActive(true)}><TiShoppingCart /></button>
 						</div>
 					</nav>
 				</header>
