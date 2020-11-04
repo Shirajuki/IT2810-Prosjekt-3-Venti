@@ -37,11 +37,45 @@ const SessionContext = () => {
 				mode: 'cors',
 				credentials: 'include',
 			})
-			this.getCart();
+			const nCart = JSON.parse(this.cart);
+			let exists: boolean = false;
+			for (const map of nCart) {
+				if (Number(map[0]) === productId) {
+					map[1]++;
+					exists = true;
+					break;
+				}
+			}
+			if (!exists) {
+				this.getCart();
+			} else {
+				this.setCart(JSON.stringify(nCart));
+			}
 		},
 		removeCart(productId: number) {
 			console.log("Removed item",productId);
 			fetch('http://localhost:8080/removeCart/'+productId,{
+				method: 'POST',
+				mode: 'cors',
+				credentials: 'include', // Don't forget to specify this if you need cookies
+			})
+			const nCart = JSON.parse(this.cart);
+			let exists: boolean = false;
+			for (const map of nCart) {
+				if (Number(map[0]) === productId) {
+					map[1]--;
+					exists = true;
+					break;
+				}
+			}
+			if (!exists) {
+				this.getCart();
+			} else {
+				this.setCart(JSON.stringify(nCart));
+			}
+		},
+		deleteCart(productId: number) {
+			fetch('http://localhost:8080/deleteCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
 				credentials: 'include', // Don't forget to specify this if you need cookies
@@ -70,6 +104,13 @@ const SessionContext = () => {
 				}
 			}
 			getAPI();
+		},
+		updateCart() {
+			fetch('http://localhost:8080/updateCart/'+this.cart,{
+				method: 'POST',
+				mode: 'cors',
+				credentials: 'include', // Don't forget to specify this if you need cookies
+			})
 		},
 		productCount(productId: number) {
 			for (const map of JSON.parse(this.cart)) {

@@ -34,10 +34,12 @@ const App: FC = observer(() => {
 	// Pagination
 	useEffect(() => {
 	  CTX.fetchStore.setPageCount(Math.ceil(CTX.fetchStore.productsCount / CTX.fetchStore.pageSize))
+	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [CTX.fetchStore.productsCount, CTX.fetchStore.pageSize])
 
     useEffect(() => {
         CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [CTX.fetchStore.currentPage, CTX.fetchStore.pageSize, CTX.fetchStore.filterTerm]);
 
 	useEffect(() => {
@@ -46,6 +48,7 @@ const App: FC = observer(() => {
 		CTX.sessionStore.getCart();
 		CTX.sessionStore.setSession(cookie);
 		CTX.reviewStore.setSession(cookie);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
 		<>
@@ -90,7 +93,7 @@ const App: FC = observer(() => {
 									CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
 									CTX.fetchStore.setCurrentPage(0)}
 								}>
-									<option value="name_asc" selected={true}>Name A - Z</option>
+									<option value="name_asc" defaultValue="true">Name A - Z</option>
 									<option value="name_desc">Name Z - A</option>
 									<option value="price_asc">Price $ - $$$</option>
 									<option value="price_desc">Price $$$ - $</option>

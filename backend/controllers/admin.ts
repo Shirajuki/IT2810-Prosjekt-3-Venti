@@ -73,7 +73,69 @@ const countProducts = async (_: Request, res: Response) => {
     }
 }
 
-const postRemoveProductFromCart = async (req: Request, res: Response) => {
+const getGetCart = async (req: Request, res: Response) => {
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	let final: any[] = ["[]"];
+	if (session.length > 0) {
+		console.log("Welcome back",req.sessionID);  
+		console.log(session[0]._doc.cart);
+		if (!session[0]._doc?.cart) {
+			await Session.updateOne(
+			    { _id: req.sessionID },
+				{ cart: "[]" },
+				{ multi: true },
+			);
+			//console.log(update);
+		} else {
+			final = [session[0]._doc.cart];
+		}
+	}
+	console.log(final)
+	const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
+	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
+	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
+	const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
+	final = [...final, products];
+    try {
+		res.json(final);
+    } catch (error) {
+        console.log(error);
+    }
+};
+const postDeleteCart = async (req: Request, res: Response) => {
+    const productId = req.params.productId;
+	if (!productId) return res.status(202);
+	const sessionDB = await Session.find((data) => data);
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	const cart = JSON.parse(session[0]?._doc?.cart) || [];
+	let indexProduct = -1;
+	for (let i=0; i<cart.length; i++) {
+		if (cart[i][0] === productId) {
+			indexProduct = i;
+			break;
+		}
+	}
+	if (indexProduct !== -1) {
+		cart.splice(indexProduct, 1);
+	} else {
+		res.status(201);
+	}
+	console.log("Deleted the product",productId);
+    try {
+		if (session.length > 0) {
+			await Session.findOneAndUpdate(
+				{ _id: req.sessionID },
+				{ cart: JSON.stringify(cart) },
+				{ new: true },
+			);
+		}
+        res.status(200);
+    } catch (error) {
+        console.log(error);
+    }
+};
+const postRemoveCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
 	if (!productId) return res.status(202);
 	const sessionDB = await Session.find((data) => data);
@@ -106,39 +168,6 @@ const postRemoveProductFromCart = async (req: Request, res: Response) => {
         console.log(error);
     }
 };
-
-    
-const getGetCart = async (req: Request, res: Response) => {
-	const sessionDB = await Session.find((data) => data);
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	let final: any[] = ["[]"];
-	if (session.length > 0) {
-		console.log("Welcome back",req.sessionID);  
-		console.log(session[0]._doc.cart);
-		if (!session[0]._doc?.cart) {
-			await Session.updateOne(
-			    { _id: req.sessionID },
-				{ cart: "[]" },
-				{ multi: true },
-			);
-			//console.log(update);
-		} else {
-			final = [session[0]._doc.cart];
-		}
-	}
-	console.log(final)
-	const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
-	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
-	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
-	const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
-	final = [...final, products];
-    try {
-		res.json(final);
-    } catch (error) {
-        console.log(error);
-    }
-};
-
 const postEditCart = async (req: Request, res: Response) => {
 	const productId = req.params.productId;
 	console.log(productId)
@@ -173,6 +202,26 @@ const postEditCart = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
     }
+};
+const postUpdateCart = async (req: Request, res: Response) => {
+	const nCart = req.params.cart;
+	const sessionDB = await Session.find({});
+	const session = sessionDB.filter(e => e._id === req.sessionID);
+	console.log("Updated the cart",nCart);
+    try {
+		if (nCart) {
+			await Session.findOneAndUpdate(
+				{ _id: req.sessionID },
+				{ cart: JSON.stringify(nCart) },
+				{ new: true },
+			);
+		}
+        res.status(201);
+    } catch (error) {
+		console.log(error);
+		res.status(202);
+    }
+	
 };
 const getProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -256,9 +305,11 @@ const postDelete = async (req: Request, res: Response) => {
 export default {
 	getIndex,
 	countProducts,
-	postRemoveProductFromCart,
+	postRemoveCart,
+	postDeleteCart,
 	getGetCart,
 	postEditCart,
+	postUpdateCart,
 	postProduct,
 	getProduct,
 	getEditProduct,
