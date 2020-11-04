@@ -24,6 +24,7 @@
     "react-svg-star-rating": "^1.1.5",
     "react-test-renderer": "^17.0.1",
     "reactjs-popup": "^2.0.4",
+    "sweetalert2": "^10.9.0",
     "typescript": "~3.7.2"
   },
   "scripts": {

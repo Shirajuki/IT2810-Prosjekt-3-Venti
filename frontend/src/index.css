@@ -645,7 +645,7 @@ div.modalContent .review-input > button {
   grid-template-columns: 30% 50% 20%;
   grid-gap: 5px;
   margin: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   border-bottom: 2px solid rgba(100, 100, 100, 0.1);
 }
 .cartItems .item img {

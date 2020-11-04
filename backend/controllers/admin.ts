@@ -4,11 +4,6 @@ import Review from "../models/review";
 import { Request, Response } from 'express';
 import { ProductDoc, ReviewDoc } from "../models/modelDoc";
 
-/*
-db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] },  $text: { $search: "lipliner" } } )
-{{query}, {query}}
-*/
-
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
 	const sortTerm: string = req.query.sortTerm as string;
@@ -25,7 +20,6 @@ const getIndex = async (req: Request, res: Response) => {
 		fterm = JSON.parse(filterTerm).map((e: string) => e.split("="));
 	}
 	
-	// if (filterTerm.length < 0) return res.status(200);
 	const filterQuery:any = {};
 	for (let i=0; i<fterm.length; i++) {
 		if (filterQuery[fterm[i][0]]?.$in) {
@@ -34,14 +28,9 @@ const getIndex = async (req: Request, res: Response) => {
 			filterQuery[fterm[i][0]] = {$in: [fterm[i][1]]};
 		}
 	}
-	// console.log("filter:",filterQuery);
-
 	const searchTerm: string = req.query.searchTerm as string;
-	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
 	let products: ProductDoc[] = [];
 	let productCount: ProductDoc[] = [];
-	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
-	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
 	if (searchTerm) {
 		products = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
 		productCount = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term);
@@ -49,8 +38,6 @@ const getIndex = async (req: Request, res: Response) => {
 		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
 		productCount = await Product.find(filterQuery).sort(term);
 	}
-	console.log(products.length)
-	//const productCount = await Product.find(filterQuery).sort(term); // object
 	let count: string = req.query.count as string;
     try {
 		if (count == "true") {
@@ -76,7 +63,8 @@ const countProducts = async (_: Request, res: Response) => {
 const getGetCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	let final: any[] = ["[]"];
+	console.log("Hello!",req.sessionID);
+	let final: any[] = ['[]'];
 	if (session.length > 0) {
 		console.log("Welcome back",req.sessionID);  
 		console.log(session[0]._doc.cart);
@@ -86,7 +74,6 @@ const getGetCart = async (req: Request, res: Response) => {
 				{ cart: '[]' },
 				{ multi: true },
 			);
-			//console.log(update);
 		} else {
 			final = [session[0]._doc.cart];
 		}
@@ -94,8 +81,6 @@ const getGetCart = async (req: Request, res: Response) => {
 	console.log(123123,JSON.parse(final[0]));
 	try {
 		const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
-		//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
-		//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
 		const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
 		final = [...final, products];
 		try {
@@ -104,7 +89,7 @@ const getGetCart = async (req: Request, res: Response) => {
 			console.log(error);
 		}
 	} catch (err){
-		return res.json(["[]",[]]);
+		return res.json(['[]',[]]);
 	}
 	
 };
@@ -180,9 +165,9 @@ const postEditCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find({});
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	// console.log(req.sessionID, sessionDB.map(e => e._id), )
-	console.log(123123,[session[0]?._doc?.cart], [JSON.parse(session[0].cart)]);
-	const cart: any[] = JSON.parse(session[0]?._doc?.cart) || [];
-	console.log(123123,cart, typeof cart)
+	let sCart: string = session[0]?._doc?.cart || '[]';
+	let cart: any[] = JSON.parse(sCart);
+	if (typeof cart === "string") cart = [];
 	let indexProduct = -1;
 	for (let i=0; i<cart.length; i++) {
 		if (cart[i][0] === productId) {
@@ -193,11 +178,9 @@ const postEditCart = async (req: Request, res: Response) => {
 	if (indexProduct !== -1) {
 		cart[indexProduct][1]++;
 	} else {
-		console.log(typeof cart)
 		cart.push([productId,1])
 	}
 	console.log("Added the product",productId);
-	console.log()
     try {
 		if (session.length > 0) {
 			await Session.findOneAndUpdate(
