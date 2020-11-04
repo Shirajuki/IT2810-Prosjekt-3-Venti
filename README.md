@@ -22,7 +22,7 @@ To run the cypress tests, enter the frontend folder (in a separae teminal with t
 
     npx cypress open
 
-## Contents
+## Functionality
 
 Our application is a makeup store, where a user can search, sort and filter through the different products in the database. A user can also add and remove products from a cart as they wish. This will be saved so that when the user revisits the site, the cart will contain the products from the previous sessions. To make shopping easier for the user, they can read and write reviews under the different products. This makes the shopping experience better by knowing what products work and what products don't work.
 
@@ -62,11 +62,8 @@ One of the third party components we have decided to implement have been js-cook
 
 ## Testing
 
-The reason that we test is to make sure that the code gives us the expected result that we were hoping to get. There are many different types of testing and in this project we choose to have mock testing, snapshot test, end-to-end tests and unit tests. In this project, the main focus on testing was end-to-end and unit testing. An easy way to make an end-to-end test is by using Cypress. Cypress is a framework that does most of the interactive testing for us. This was used to write end-to-end tests, as it will dynamically test different elements on the webpage. The cypress folder, contains smaller tests to focus on the components for individual interactions, like filtering or searching, and one big end-to-end test that goes through how we think a user would use the application. To make mock tests and snapshot tests we used Jest and react-testing-library. Here we sendt in mock data and use that to make sure that all the different parts of the program work.
+The reason that we test is to make sure that the code gives us the expected result that we were hoping to get. There are many different types of testing and in this project we choose to have mock testing, snapshot test, end-to-end tests and unit tests. In this project, the main focus on testing was end-to-end and unit testing. An easy way to make an end-to-end test is by using Cypress. Cypress is a framework that does most of the interactive testing for us. This was used to write end-to-end tests, as it will dynamically test different elements on the webpage. The cypress folder, contains smaller tests to focus on the components for individual interactions, like filtering or searching, and one big end-to-end test that goes through how we think a user would use the application. You can find this test in the `visitApp` file. To make mock tests and snapshot tests we used Jest and react-testing-library. Here we sendt in mock data and use that to make sure that all the different parts of the program work.
 
-To run the cypress use code …
-
-to run jest test use code …
 
 ## Git
 
