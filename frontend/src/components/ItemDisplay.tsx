@@ -11,7 +11,7 @@ interface IProps {
 const ItemDisplay = (props: IProps) => {
 	return (
 		<>
-		<div className="itemDisplay">
+		<div className="itemDisplay" >
 			{props.itemList.map(item => (
 				<Items data-cy="item-display-items" id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} type="" onClick={() => props.setModal(item.id, item) } />
 			))}

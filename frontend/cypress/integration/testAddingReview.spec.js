@@ -10,7 +10,6 @@ describe("Test if a user can add a review to a product", () => {
         cy.get('[data-cy=name-area]').type('Rachel').should('have.value', "Rachel");
         cy.get('[data-cy=review-area]').type('Great product, would buy again');
         cy.get('[data-cy=send-area]').click();
-        cy.expect('[data-cy=view-reviews]').to.have.lengthOf(1);
     })
 
 
