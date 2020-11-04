@@ -205,11 +205,13 @@ const postReview = async (req: Request, res: Response) => {
 	const review = new Review({productId, sessionId, name, reviewText, stars});
 	//console.log(await Product.find({id: +productId}));
 	const product = await Product.findOne({id: +productId});
-	const session = await Session.findOne({id: +sessionId});
-	console.log(sessionId)
+	const session = await Session.findOne({_yid: sessionId});
+	console.log(session)
 	product.reviewRating.push({id: sessionId, stars: +stars})
 	session.reviewRating.push({productId: +productId, stars: +stars})
-	product.save()
+	product.save();
+	session.save();
+
 
 	review.save((err: any) =>{
         if (err) return res.status(404).json({status:404});
