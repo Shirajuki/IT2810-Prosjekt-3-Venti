@@ -50,8 +50,8 @@ const Items = observer((props: IProps) => {
 			case "cart":
 			return (
 				<>
-					<div className="item">
-						<div className="imgDiv">
+					<div className="item" >
+						<div className="imgDiv" data-cy='item-display-items'>
 							<img src={props.img} alt={props.name}/>
 						</div>
 						<div className="info">
