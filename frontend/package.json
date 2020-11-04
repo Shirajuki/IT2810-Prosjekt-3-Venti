@@ -23,6 +23,7 @@
     "react-scripts": "3.4.3",
     "react-svg-star-rating": "^1.1.5",
     "react-test-renderer": "^17.0.1",
+    "reactjs-popup": "^2.0.4",
     "typescript": "~3.7.2"
   },
   "scripts": {
