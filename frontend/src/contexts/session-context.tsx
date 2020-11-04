@@ -1,26 +1,22 @@
 import Product from "../models/product"
 import { useLocalObservable } from "mobx-react-lite";
-import { toJS } from "mobx";
 
 const SessionContext = () => {
 	const store = useLocalObservable(() => ({
-		/*observables here*/
 		cart: "[]",
 		cartProduct: [],
 		session: { sessionID: "none" },
 		cartActive: false,
-		/*actions here*/
-		setCart(s: string) {
-			this.cart = s;
+		setCart(sessionId: string) {
+			this.cart = sessionId;
 		},
-		setCartProduct(arr: Product[]) {
-			this.cartProduct = arr.concat();
+		setCartProduct(productArr: Product[]) {
+			this.cartProduct = productArr.concat();
 		},
-		setSession(s: string) {
-			this.session.sessionID = s;
+		setSession(sessionId: string) {
+			this.session.sessionID = sessionId;
 		},
 		editCart(productId: number, type: boolean) {
-			console.log("Edited the product",this.cart)
 			for (const map of JSON.parse(this.cart)) {
 				if (Number(map[0]) === productId) {
 					if (type) {
@@ -33,7 +29,6 @@ const SessionContext = () => {
 			}
 		},
 		addCart(productId: number) {
-			console.log("Added the product:", this.cart)
 			fetch('http://localhost:8080/editCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
@@ -55,11 +50,10 @@ const SessionContext = () => {
 			this.setCart(JSON.stringify(nCart));
 		},
 		removeCart(productId: number) {
-			console.log("Removed item",productId);
 			fetch('http://localhost:8080/removeCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
-				credentials: 'include', // Don't forget to specify this if you need cookies
+				credentials: 'include',
 			})
 			const nCart = JSON.parse(this.cart);
 			let exists: boolean = false;
@@ -80,25 +74,24 @@ const SessionContext = () => {
 			fetch('http://localhost:8080/deleteCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
-				credentials: 'include', // Don't forget to specify this if you need cookies
+				credentials: 'include',
 			})
 			this.getCart();
 		},
-		setCartActive(b: boolean) {
-			if (b) this.getCart();
-			this.cartActive = b;
+		setCartActive(active: boolean) {
+			if (active) this.getCart();
+			this.cartActive = active;
 		},
 		getCart() {
-			let url: string = "http://localhost:8080/getCart";
 			const getAPI = async () => {
-				const response = await fetch(url,{
+				const response = await fetch("http://localhost:8080/getCart",{
 					method: 'GET',
 					mode: 'cors',
-					credentials: 'include', // Don't forget to specify this if you need cookies
+					credentials: 'include',
 				});
 				const data = await response.json();
+				console.log(data);
 				try {
-					console.log("got session",data);
 					this.setCart(data[0]);
 					this.setCartProduct(data[1]);
 				} catch (error) {
@@ -108,11 +101,10 @@ const SessionContext = () => {
 			getAPI();
 		},
 		updateCart() {
-			console.log("Updated the cart:",this.cart);
 			fetch('http://localhost:8080/updateCart/'+this.cart,{
 				method: 'POST',
 				mode: 'cors',
-				credentials: 'include', // Don't forget to specify this if you need cookies
+				credentials: 'include',
 			})
 		},
 		productCount(productId: number) {
@@ -124,13 +116,10 @@ const SessionContext = () => {
 			return 0;
 		},
 		get cartTotalPrice() {
-			console.log(999,toJS(this.cartProduct));
 			let sum = 0;
 			const nCart = JSON.parse(this.cart);
-			console.log(nCart)
 			for (const product of this.cartProduct) {
 				for (const map of nCart) {
-					console.log(map,product.id,product.price)
 					if (Number(map[0]) === Number(product.id)) {
 						sum += product.price*Number(map[1]);
 						break;

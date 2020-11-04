@@ -10,29 +10,28 @@ const FetchContext = () => {
 		productsCount: 0,
 		products: [],
 		filterTerm: [],
-		setHidden(b: boolean) {
-			this.hidden = b;
+		setHidden(hidden: boolean) {
+			this.hidden = hidden;
 		},
-		setCurrentPage(n: number) {
-			this.currentPage = n;
+		setCurrentPage(pageNumber: number) {
+			this.currentPage = pageNumber;
 		},
-		setPageCount(n: number) {
-			this.pageCount = n;
+		setPageCount(pageCount: number) {
+			this.pageCount = pageCount;
 		},
-		setProductsCount(n: number) {
-			this.productsCount = n;
+		setProductsCount(productCount: number) {
+			this.productsCount = productCount;
 		},
-		setProducts(p: Product[]) {
-			this.products = p.concat();
+		setProducts(productArr: Product[]) {
+			this.products = productArr.concat();
 		},
-		setFilterTerm(s: String[]) {
-			this.filterTerm = s.concat();
+		setFilterTerm(filterTerms: String[]) {
+			this.filterTerm = filterTerms.concat();
 		},
 		search(sortRefVal: string, searchRefVal: string) {
 			if (this.hidden) {
 				this.setHidden(false);
 			} else {
-				console.log("opened")
 				this.getAPI(sortRefVal, searchRefVal);
 			}
 		},
@@ -50,8 +49,6 @@ const FetchContext = () => {
 			let url: string = `http://localhost:8080/?pageOffset=${this.currentPage}&pageSize=${this.pageSize}&sortTerm=${sortRefVal}`;
 			if (this.filterTerm.length > 0) url += `&filterTerm=${JSON.stringify(this.filterTerm)}`;
 			if (searchRefVal) url += `&searchTerm=${searchRefVal}`;
-			// url += "&cart=true"
-			console.log(312321,this.filterTerm, url);
 			const response = await fetch(url,{
 				method: 'GET',
 				mode: 'cors',
@@ -63,10 +60,8 @@ const FetchContext = () => {
 				this.setProductsCount(count)
 			}
 			const data = await response.json();
-			console.log("got item data", data);
 			countProducts()
 			try {
-				console.log("initialize",data);
 				this.setProducts(data);
 			} catch (error) {
 				console.log(error);

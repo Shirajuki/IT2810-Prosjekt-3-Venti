@@ -2,24 +2,26 @@ import Product from "../models/product";
 import Session from "../models/session";
 import Review from "../models/review";
 import { Request, Response } from 'express';
-import { ProductDoc, ReviewDoc } from "../models/modelDoc";
+import { ProductDoc, ReviewDoc, SessionDoc } from "../models/modelDoc";
 
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
 	const sortTerm: string = req.query.sortTerm as string;
 	const filterTerm: string = req.query.filterTerm as string;
 	const term: any = {}
+	// Get product listing by sortTerm, filterTerm, searchTerm? and amount of products wanted
+	// Sorting
 	if (sortTerm) {
 		const sterm: string[] = sortTerm.split("_");
 		term[sterm[0]] = sterm[1]
 	} else {
 		term["name"] = "asc";
 	}
+	// Filtering
 	let fterm: String[] = []
 	if (filterTerm) {
 		fterm = JSON.parse(filterTerm).map((e: string) => e.split("="));
 	}
-	
 	const filterQuery:any = {};
 	for (let i=0; i<fterm.length; i++) {
 		if (filterQuery[fterm[i][0]]?.$in) {
@@ -28,6 +30,7 @@ const getIndex = async (req: Request, res: Response) => {
 			filterQuery[fterm[i][0]] = {$in: [fterm[i][1]]};
 		}
 	}
+	// Searchs
 	const searchTerm: string = req.query.searchTerm as string;
 	let products: ProductDoc[] = [];
 	let productCount: ProductDoc[] = [];
@@ -39,40 +42,38 @@ const getIndex = async (req: Request, res: Response) => {
 		productCount = await Product.find(filterQuery).sort(term);
 	}
 	let count: string = req.query.count as string;
-    try {
+	try {
 		if (count == "true") {
-			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
 		} else {
 			res.json(products);
 		}
-		console.log(111,products)
-    } catch (error) {
-        console.log(error);
-    }
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const countProducts = async (_: Request, res: Response) => {
 	const count = await Product.countDocuments()
-    try {
-        res.status(200)
-        res.send(JSON.stringify({count}))
-    } catch (error) {
-        console.log(error);
-    }
+	try {
+		res.status(200)
+		res.send(JSON.stringify({count}))
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 const getGetCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find((data) => data);
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	console.log("Hello!",req.sessionID);
+	const session: SessionDoc[] = sessionDB.filter(e => e._id === req.sessionID);
+	// Sends an array of productIds and their total values, and an array of the products
 	let final: any[] = ['[]'];
 	if (session.length > 0) {
-		console.log("Welcome back",req.sessionID);  
-		console.log(session[0]._doc.cart);
+		console.log("Session",req.sessionID, "connected!");
+		// If it's a new session, we initialize an empty cart
 		if (!session[0]._doc?.cart) {
 			await Session.updateOne(
-			    { _id: req.sessionID },
+				{ _id: req.sessionID },
 				{ cart: '[]' },
 				{ multi: true },
 			);
@@ -80,8 +81,8 @@ const getGetCart = async (req: Request, res: Response) => {
 			final = [session[0]._doc.cart];
 		}
 	}
-	console.log(123123,JSON.parse(final[0]));
 	try {
+		// Sends both arrays as a response
 		const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
 		const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
 		final = [...final, products];
@@ -93,14 +94,15 @@ const getGetCart = async (req: Request, res: Response) => {
 	} catch (err){
 		return res.json(['[]',[]]);
 	}
-	
+
 };
 const postDeleteCart = async (req: Request, res: Response) => {
-    const productId = req.params.productId;
+	const productId = req.params.productId;
 	if (!productId) return res.status(202);
 	const sessionDB = await Session.find((data) => data);
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	const cart = JSON.parse(session[0]?._doc?.cart) || [];
+	const session: SessionDoc[] = sessionDB.filter(e => e._id === req.sessionID);
+	const cart: string[] = JSON.parse(session[0]?._doc?.cart) || [];
+	// Parse cart as an array and loops through finding the index to delete product from cart
 	let indexProduct = -1;
 	for (let i=0; i<cart.length; i++) {
 		if (cart[i][0] === productId) {
@@ -113,8 +115,7 @@ const postDeleteCart = async (req: Request, res: Response) => {
 	} else {
 		res.status(201);
 	}
-	console.log("Deleted the product",productId);
-    try {
+	try {
 		if (session.length > 0) {
 			await Session.findOneAndUpdate(
 				{ _id: req.sessionID },
@@ -122,17 +123,18 @@ const postDeleteCart = async (req: Request, res: Response) => {
 				{ new: true },
 			);
 		}
-        res.status(200);
-    } catch (error) {
-        console.log(error);
-    }
+		res.status(200);
+	} catch (error) {
+		console.log(error);
+	}
 };
 const postRemoveCart = async (req: Request, res: Response) => {
-    const productId = req.params.productId;
+	const productId = req.params.productId;
 	if (!productId) return res.status(202);
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	const cart = JSON.parse(session[0]?._doc?.cart) || [];
+	// Parse cart as an array and loops through finding the index to either delete or decrement value in cart
+	const cart: any[] = JSON.parse(session[0]?._doc?.cart) || [];
 	let indexProduct = -1;
 	for (let i=0; i<cart.length; i++) {
 		if (cart[i][0] === productId) {
@@ -146,8 +148,7 @@ const postRemoveCart = async (req: Request, res: Response) => {
 	} else {
 		res.status(201);
 	}
-	console.log("Removed the product",productId);
-    try {
+	try {
 		if (session.length > 0) {
 			await Session.findOneAndUpdate(
 				{ _id: req.sessionID },
@@ -155,19 +156,19 @@ const postRemoveCart = async (req: Request, res: Response) => {
 				{ new: true },
 			);
 		}
-        res.status(200);
-    } catch (error) {
-        console.log(error);
-    }
+		res.status(200);
+	} catch (error) {
+		console.log(error);
+	}
 };
 const postEditCart = async (req: Request, res: Response) => {
 	const productId = req.params.productId;
-	console.log(productId)
 	if (!productId) return res.status(202);
 	const sessionDB = await Session.find({});
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	// console.log(req.sessionID, sessionDB.map(e => e._id), )
+	const session: SessionDoc[] = sessionDB.filter(e => e._id === req.sessionID);
+	// Get cart as string
 	let sCart: string = session[0]?._doc?.cart || '[]';
+	// Parse cart as an array and loops through finding the index to either add as new or increment value in cart
 	let cart: any[] = JSON.parse(sCart);
 	if (typeof cart === "string") cart = [];
 	let indexProduct = -1;
@@ -182,8 +183,7 @@ const postEditCart = async (req: Request, res: Response) => {
 	} else {
 		cart.push([productId,1])
 	}
-	console.log("Added the product",productId);
-    try {
+	try {
 		if (session.length > 0) {
 			await Session.findOneAndUpdate(
 				{ _id: req.sessionID },
@@ -191,15 +191,15 @@ const postEditCart = async (req: Request, res: Response) => {
 				{ new: true },
 			);
 		}
-        res.status(201);
-    } catch (error) {
-        console.log(error);
-    }
+		res.status(201);
+	} catch (error) {
+		console.log(error);
+	}
 };
 const postUpdateCart = async (req: Request, res: Response) => {
+	// Updates the cart given a stringified array
 	const nCart = req.params.cart;
-	console.log("Updated the cart",[nCart]);
-    try {
+	try {
 		if (nCart) {
 			await Session.findOneAndUpdate(
 				{ _id: req.sessionID },
@@ -207,34 +207,31 @@ const postUpdateCart = async (req: Request, res: Response) => {
 				{ new: true },
 			);
 		}
-        res.status(201);
-    } catch (error) {
+		res.status(201);
+	} catch (error) {
 		console.log(error);
 		res.status(202);
-    }
-	
+	}
+
 };
 const getProduct = async (req: Request, res: Response) => {
-    const productId = req.params.productId;
-    const product = await Product.find({id: +productId});
-    try {
-        console.log(product);
-        res.status(200).json(product);
-    } catch (error) {
-        console.log(error);
-    }
+	const productId = req.params.productId;
+	const product: ProductDoc = await Product.findOne({id: +productId});
+	try {
+		res.status(200).json(product);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const getReviews = async (req: Request, res: Response) => {
 	const productId = req.params.productId;
-	console.log(productId);
-    const reviews = await Review.find({productId: +productId});
-    try {
-        console.log(reviews);
-        res.status(200).json(reviews);
-    } catch (error) {
-        console.log(error);
-    }
+	const reviews: ReviewDoc[] = await Review.find({productId: +productId});
+	try {
+		res.status(200).json(reviews);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const postReview = async (req: Request, res: Response) => {
@@ -243,72 +240,32 @@ const postReview = async (req: Request, res: Response) => {
 	const sessionId: string = req.query.sessionId as string;
 	const reviewText: string = req.query.reviewText as string;
 	const stars: string = req.query.stars as string;
-	console.log(productId,name,sessionId, reviewText, stars);
-	const review = new Review({productId, sessionId, name, reviewText, stars});
+	const review: ReviewDoc = new Review({productId, sessionId, name, reviewText, stars});
 	let averageRating: number = Number(stars);
-    const reviews: ReviewDoc[] = await Review.find({productId: +productId});
+	const reviews: ReviewDoc[] = await Review.find({productId: +productId});
+	// Calculate averageRating of product
 	for (const map of reviews) {
 		averageRating += map.stars;
 	}
 	averageRating = averageRating/(reviews.length+1)
+	// Map to [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
 	const floored: number = Math.floor(averageRating);
 	if (averageRating > floored) {
 		averageRating = floored+0.5;
 	} else{ 
 		averageRating = floored;
 	}
+	// Insert new review
 	review.save((err: any) =>{
-        if (err) return res.status(404).json({status:404});
-		console.log("Added review!")
-		})
-	// Update product rating
-	console.log('Product Added to the database', review, averageRating);
+		if (err) return res.status(404).json({status:404});
+	})
+	// Update products averageRating
 	await Product.findOneAndUpdate(
 		{ id: +productId },
 		{ rating: +averageRating },
 		{ new: true },
 	);
-	console.log("Rating averaged", averageRating)
 	return res.status(200).json({status:200});
-};
-
-
-const getEditProduct = async (req: Request, res: Response) => {
-    const productId = req.params.productId;
-    const editMode = req.query.edit;
-    if (!editMode) {
-        return res.redirect('/');
-    }
-    const product = await Product.findById(productId);
-    try {
-        if (!productId) {
-            return res.redirect('/');
-        }
-        console.log(product);
-        res.status(200).render('edit-product', { product, editing: editMode });
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-const postProduct = (req: Request, res: Response) => {
-    const { name, brand, image_link, product_type, description, price } = req.body;
-    const product = new Product({ name, brand, image_link, product_type, description, price });
-    product.save();
-    console.log('Product Added to the database');
-    res.status(201).redirect('http://localhost:3000/');
-};
-
-const postDelete = async (req: Request, res: Response) => {
-    const productId = req.params.productId;
-    const product = await Product.findByIdAndRemove(productId, (data) => data);
-    try {
-        console.log(product);
-        console.log('Item Deleted');
-        res.redirect('/');
-    } catch (error) {
-        console.log(error);
-    }
 };
 
 export default {
@@ -319,10 +276,7 @@ export default {
 	getGetCart,
 	postEditCart,
 	postUpdateCart,
-	postProduct,
 	getProduct,
-	getEditProduct,
-	postDelete,
 	getReviews,
 	postReview,
 };

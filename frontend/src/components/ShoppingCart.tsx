@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext } from "react";
 import Product from "../models/product";
 import Items from './Items';
 import { TiShoppingCart } from "react-icons/ti";
@@ -13,12 +13,12 @@ interface IProps {
 const ShoppingCart = observer((props: IProps) => {
 	const CTX = useContext(RootStoreContext);
 
-	function clearCart() {
+	const clearCart = () => {
 		Swal.fire(
 			'Bought!',
 			'Thank you for the purchase!',
 			'success')
-		CTX.sessionStore.cartProduct.map((item: Product) => {
+		CTX.sessionStore.cartProduct.forEach((item: Product) => {
 			CTX.sessionStore.removeCart(Number(item.id))
 		})
 		CTX.sessionStore.setCartActive(false);

@@ -10,7 +10,6 @@ test('renders learn react link', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-
 describe('Testing for component: <App />', () => {
 	it('renders the component correctly without crashing', () => {
 		const testRenderer = TestRenderer.create(<App />).toJSON();

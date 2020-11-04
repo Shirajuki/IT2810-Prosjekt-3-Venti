@@ -15,7 +15,7 @@ const Modal = observer(( props: IProps ) => {
 	const messageRef = useRef(null);
 	const nameRef = useRef(null);
 	const [stars, setStars] = useState(Number);
-	
+
 	const post = async () => {
 		if (await CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value, stars)) {
 			messageRef.current.value = "";
@@ -23,7 +23,7 @@ const Modal = observer(( props: IProps ) => {
 			setStars(0);
 			setTimeout(() => {
 				document.getElementsByClassName("modalContent")[0].scrollTop = 999999;
-			}, 1000);
+			}, 500);
 		}
 	}
 
@@ -44,7 +44,7 @@ const Modal = observer(( props: IProps ) => {
 				</div>
 				<Items id={props.modal.product?.id} img={product?.image_link} name={product?.name} description={product?.description} rating={Number(product?.rating)} price={product?.price} onClick={() => void(0)} type="modal"/>
 				<div className="star">
-				<StarRating data-cy="star-area" roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
+					<StarRating data-cy="star-area" roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
 				</div>
 				<div className="reviews">
 					<div className="review-input">
@@ -58,7 +58,7 @@ const Modal = observer(( props: IProps ) => {
 							<StarRating size={20} initialRating={review.stars} isReadOnly={true} isHalfRating={true}/>
 							<p className="review-comment">{review.reviewText}</p>
 						</div>
-					))}
+				))}
 				</div>
 			</div>
 		</div>

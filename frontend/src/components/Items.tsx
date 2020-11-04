@@ -1,8 +1,8 @@
-import React, {ReactNode, useContext, useEffect, useState} from "react";
+import React, { ReactNode, useContext } from "react";
 import StarRating from 'react-svg-star-rating'
 import { ImBin } from "react-icons/im";
 import { RootStoreContext } from "../stores/root-store";
-import { observer } from "mobx-react-lite"
+import { observer, useAsObservableSource } from "mobx-react-lite"
 
 //Declares type of title
 interface IProps {
@@ -15,23 +15,22 @@ interface IProps {
 	price: string;
 	type: string;
 }
-
 const starElements: ReactNode[] = []
 for (let i = 0; i <= 5; i+= 0.5) {
 	starElements.push(<StarRating size={20} initialRating={i} isReadOnly={true} isHalfRating={true}/>)
 }
-
 const Items = observer((props: IProps) => {
 	const CTX = useContext(RootStoreContext);
+	const product = useAsObservableSource(props);
 	const stars = Number(props.rating);
-	
+
 	switch (props.type) {
 		case "carousel":
 		return (
 			<>
 				<div className="items" onClick={props.onClick}>
 					<div className="imgDiv">
-						<img src={props.img} alt={`${props.name}`}/>
+						<img src={props.img} alt={`${product.name}`}/>
 						{Number(stars)*2 === 0 ? starElements[Number(stars)*2] : null}
 						{Number(stars)*2 === 1 ? starElements[Number(stars)*2] : null}
 						{Number(stars)*2 === 2 ? starElements[Number(stars)*2] : null}
@@ -51,7 +50,6 @@ const Items = observer((props: IProps) => {
 			</>
 		);
 		case "modal":
-		console.log(props)
 		return (
 			<>
 				<div className="items-modal" onClick={props.onClick}>
@@ -101,8 +99,8 @@ const Items = observer((props: IProps) => {
 			</>
 		);
 		default:
-			return (
-				<>
+		return (
+			<>
 				<div className="items" onClick={props.onClick}>
 					<div className="imgDiv">
 						<img src={props.img} alt={`${props.name}`}/>
@@ -114,8 +112,8 @@ const Items = observer((props: IProps) => {
 						<p className="pris" data-cy="item-price">{props.price}</p>
 					</div>
 				</div>
-				</>
-			);
+			</>
+		);
 	}
 })
 

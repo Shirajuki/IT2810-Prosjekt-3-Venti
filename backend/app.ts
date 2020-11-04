@@ -44,8 +44,8 @@ app.use(session(sess))
 app.use(cors({credentials: true, origin: "http://localhost:3000"}))
 app.use(express.urlencoded({ extended: false }));
 
+// Serves the server on port 8080 as default port
 const port = process.env.PORT || 8080;
-// app.listen(port, () => console.log(`Server and Database running on ${port}, http://localhost:${port}`));
 app.use("/", adminRoute);
 
 mongoose.connect(url, {
@@ -60,10 +60,3 @@ mongoose.connect(url, {
 .catch((err) => {
 	console.log(err);
 });
-
-////////////////////////////////////
-
-// app.use(cors());
-// app.set("view engine", "ejs");
-// app.set("views", "./src/pages");
-// app.use("/static", express.static(path.join(`${__dirname}/public`)));

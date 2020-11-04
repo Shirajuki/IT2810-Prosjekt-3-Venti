@@ -33,12 +33,12 @@ const App: FC = observer(() => {
 	}
 	// Pagination
 	useEffect(() => {
-	  CTX.fetchStore.setPageCount(Math.ceil(CTX.fetchStore.productsCount / CTX.fetchStore.pageSize))
-	  // eslint-disable-next-line react-hooks/exhaustive-deps
+		CTX.fetchStore.setPageCount(Math.ceil(CTX.fetchStore.productsCount / CTX.fetchStore.pageSize))
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [CTX.fetchStore.productsCount, CTX.fetchStore.pageSize])
 
-    useEffect(() => {
-        CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
+	useEffect(() => {
+		CTX.fetchStore.getAPI(sortRef?.current?.value, searchRef?.current?.value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [CTX.fetchStore.currentPage, CTX.fetchStore.pageSize, CTX.fetchStore.filterTerm]);
 
@@ -48,8 +48,8 @@ const App: FC = observer(() => {
 		CTX.sessionStore.setSession(cookie);
 		CTX.reviewStore.setSession(cookie);
 		CTX.sessionStore.getCart();
-		setTimeout(() => CTX.sessionStore.getCart(),500);
-		setTimeout(() => CTX.sessionStore.getCart(),1000);
+		// setTimeout(() => CTX.sessionStore.getCart(),500);
+		// setTimeout(() => CTX.sessionStore.getCart(),1000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
@@ -102,31 +102,31 @@ const App: FC = observer(() => {
 								</select>
 								<div className="itemNavigation">
 									<ReactPaginate  previousLabel={'previous'}
-                                      nextLabel={'next'}
-                                      breakLabel={'...'}
-                                      breakClassName={'break-me'}
-                                      pageCount={CTX.fetchStore.pageCount}
-									  forcePage={CTX.fetchStore.currentPage}
-                                      marginPagesDisplayed={1}
-                                      pageRangeDisplayed={3}
-                                      onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-									  containerClassName={'pagination'}
-									  nextClassName={'next'}
-                                      activeClassName={'active'} />
+										nextLabel={'next'}
+										breakLabel={'...'}
+										breakClassName={'break-me'}
+										pageCount={CTX.fetchStore.pageCount}
+										forcePage={CTX.fetchStore.currentPage}
+										marginPagesDisplayed={1}
+										pageRangeDisplayed={3}
+										onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
+										containerClassName={'pagination'}
+										nextClassName={'next'}
+										activeClassName={'active'} />
 								</div>
 								<ItemDisplay setModal={itemModal} itemList={CTX.fetchStore.products} data-cy="item-display" />
 								<div className="itemNavigation">
 									<ReactPaginate  previousLabel={'previous'}
-                                      nextLabel={'next'}
-                                      breakLabel={'...'}
-                                      breakClassName={'break-me'}
-									  pageCount={CTX.fetchStore.pageCount}
-									  forcePage={CTX.fetchStore.currentPage}
-                                      marginPagesDisplayed={1}
-                                      pageRangeDisplayed={3}
-                                      onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
-                                      containerClassName={'pagination'}
-                                      activeClassName={'active'} />
+										nextLabel={'next'}
+										breakLabel={'...'}
+										breakClassName={'break-me'}
+										pageCount={CTX.fetchStore.pageCount}
+										forcePage={CTX.fetchStore.currentPage}
+										marginPagesDisplayed={1}
+										pageRangeDisplayed={3}
+										onPageChange={({selected}) => CTX.fetchStore.setCurrentPage(selected)}
+										containerClassName={'pagination'}
+										activeClassName={'active'} />
 								</div>
 							</div>
 						</div>
@@ -163,5 +163,4 @@ const App: FC = observer(() => {
 		</>
 	);
 })
-
 export default App;

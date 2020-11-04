@@ -3,7 +3,6 @@ export type HeroStoreSchema = {
 	addHeroes: (n: number) => void;
 	totalHeroes: number;
 }
-
 export type HeroModel = {
 	id: string;
 	firstName: string;

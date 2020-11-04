@@ -10,7 +10,5 @@ const sessionSchema = new mongoose.Schema({
 	}
 }
 );
-
-// module.exports = mongoose.model('session', sessionSchema);
 export default mongoose.model<SessionDoc>("session", sessionSchema);
 

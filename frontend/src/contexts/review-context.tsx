@@ -3,32 +3,27 @@ import { useLocalObservable } from "mobx-react-lite";
 
 const ReviewContext = () => {
 	const store = useLocalObservable(() => ({
-		/*observables here*/
 		reviews: [],
 		session: { sessionID: "none" },
-		/*actions here*/
 		setReviews(reviews: Review[]) {
 			this.reviews = reviews.concat();
 		},
-		setSession(s: string) {
-			this.session.sessionID = s;
+		setSession(sessionId: string) {
+			this.session.sessionID = sessionId;
 		},
 		get sessionId() {
 			return this.session.sessionID;
 		},
 		async postReviews(productId: string, reviewText: string, rndName: string, stars: number) {
-			//console.log(reviewText,this.sessionId,rndName,productId);
 			if (this.sessionId && rndName && reviewText && productId && stars) {
-				console.log("sending...")
 				const getAPI = async () => {
 					const url: string = `http://localhost:8080/post-review/?productId=${productId}&sessionId=${this.sessionId}&name=${rndName}&reviewText=${reviewText}&stars=${stars}`;
 					await fetch(url,{
 						method: 'POST',
 						mode: 'cors',
-						credentials: 'include', // Don't forget to specify this if you need cookies
+						credentials: 'include',
 					})
 					try {
-						console.log("POSTED!");
 						this.getReviews(productId);
 						return true;
 					} catch (error) {
@@ -44,7 +39,7 @@ const ReviewContext = () => {
 				const response = await fetch(`http://localhost:8080/reviews/${productId}`,{
 					method: 'GET',
 					mode: 'cors',
-					credentials: 'include', // Don't forget to specify this if you need cookies
+					credentials: 'include',
 				});
 				const data = await response.json();
 				try {

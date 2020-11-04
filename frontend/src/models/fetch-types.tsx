@@ -7,12 +7,12 @@ export type FetchStoreSchema = {
 	productsCount: number;
 	products: Product[],
 	filterTerm: string[],
-	setHidden: (b: boolean) => void;
-	setCurrentPage: (n: number) => void
-	setPageCount: (n: number) => void;
-	setProductsCount: (n: number) => void;
-	setProducts: (p: Product[]) => void;
-	setFilterTerm: (s: String[]) => void;
+	setHidden: (hidden: boolean) => void;
+	setCurrentPage: (pageNumber: number) => void
+	setPageCount: (pageCount: number) => void;
+	setProductsCount: (productCount: number) => void;
+	setProducts: (productArr: Product[]) => void;
+	setFilterTerm: (filterTerms: String[]) => void;
 	search: (sortRefVal: string, searchRefVal: string) => void;
 	addOrRemoveFilter: (item: String) => void;
 	getAPI: (sortRefVal: string, searchRefVal: string) => Promise<void>,

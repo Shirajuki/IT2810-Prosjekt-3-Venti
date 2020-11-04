@@ -24,7 +24,7 @@ const Slide = observer((props: CarouselProps) => {
 			maxStates: 3,
 			chunk: 5,
 			slides: slides,
-			// actions
+			// Actions
 			setState(data: CarouselState) {
 				this.count = data.count;
 			},
@@ -35,7 +35,7 @@ const Slide = observer((props: CarouselProps) => {
 					this.setState({count: (this.count+n)%this.maxStates});
 				}
 			},
-			// computed values
+			// Computed values
 			get displaySlides() {
 				const nArray: Product[][] = [];
 				let nsplit: Product[] = [];
@@ -60,7 +60,6 @@ const Slide = observer((props: CarouselProps) => {
 			}
 		})
 	)
-
 	return (
 		<div className="carousel">
 			<button className="prev" onClick={() => state.changeSlide(-1)}>&lt;</button>
@@ -84,9 +83,7 @@ const Display = observer((props: {slides: Product[], setModal: (id:string, produ
 const Carousel = observer((props: IProps) => {
 	const [product] = useState(() =>
 		observable({
-			// Observables
 			list: [],
-			// actions
 			setProduct(data: Product[]) {
 				this.list = data.concat();
 			}

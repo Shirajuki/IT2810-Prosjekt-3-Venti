@@ -30,6 +30,5 @@ const productSchema = new mongoose.Schema({
   }
   );
 
-// module.exports = mongoose.model('product', productSchema);
 export default mongoose.model<ProductDoc>('product', productSchema);
 
