@@ -195,21 +195,28 @@ const getReviews = async (req: Request, res: Response) => {
     }
 };
 
-const postReview = (req: Request, res: Response) => {
+const postReview = async (req: Request, res: Response) => {
 	const productId: string = req.query.productId as string;
 	const name: string = req.query.name as string;
 	const sessionId: string = req.query.sessionId as string;
 	const reviewText: string = req.query.reviewText as string;
 	const stars: string = req.query.stars as string;
-	console.log(productId,name,sessionId, reviewText, stars, "hest");
+	console.log(productId,name,sessionId, reviewText, stars);
 	const review = new Review({productId, sessionId, name, reviewText, stars});
+	//console.log(await Product.find({id: +productId}));
+	const product = await Product.findOne({id: +productId});
+	const session = await Session.findOne({id: +sessionId});
+	console.log(sessionId)
+	product.reviewRating.push({id: sessionId, stars: +stars})
+	session.reviewRating.push({productId: +productId, stars: +stars})
+	product.save()
+
 	review.save((err: any) =>{
-        if (err) return res.status(404);
+        if (err) return res.status(404).json({status:404});
         // saved!
 		console.log('Product Added to the database', review);
-		return res.status(200);
-    })
-	res.status(404);
+		return res.status(200).json({status:200});
+		})
 };
 
 

@@ -15,10 +15,14 @@ const Modal = observer(( props: IProps ) => {
 	const nameRef = useRef(null);
 	const [stars, setStars] = useState(Number);
 	
-	const post = () => {
-		if (CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value, stars)) {
+	const post = async () => {
+		if (await CTX.reviewStore.postReviews(props.modal.id, messageRef?.current?.value,  nameRef?.current?.value, stars)) {
 			messageRef.current.value = "";
-			setTimeout(() => document.getElementsByClassName("modalContent")[0].scrollTo(0,document.body.scrollHeight*1000),1000);
+			nameRef.current.value = "";
+			setStars(0);
+			setTimeout(() => {
+				document.getElementsByClassName("modalContent")[0].scrollTop = 999999
+			}, 1000);
 		}
 	}
 
@@ -37,7 +41,7 @@ const Modal = observer(( props: IProps ) => {
 					</div>
 				</div>
 				<Items id={props.modal.product?.id} isCarousel={false} img={props.modal.product?.image_link} name={props.modal.product?.name} description={props.modal.product?.description} price={props.modal.product?.price} onClick={() => void(0)} isModal={false}/>
-				<StarRating roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
+				<StarRating roundedCorner={true} isHalfRating={true} initialRating={0} handleOnClick={(rating:number) => {setStars(rating)}}/>
 				<div className="reviews">
 					<div className="review-input">
 						<textarea ref={nameRef} placeholder="Name"></textarea>

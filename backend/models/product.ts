@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    image: {
+    image_link: {
         type: String,
         required: true,
     },
@@ -19,6 +19,11 @@ const productSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        required: true,
+    },
+    reviewRating: {
+        type: Array,//[{id: Number, stars: Number}],
+        default: [],
         required: true,
     },
     product_colors: Array

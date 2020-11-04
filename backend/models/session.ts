@@ -5,6 +5,11 @@ const sessionSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	reviewRating: {
+        type: Array,//[{id: Number, stars: Number}],
+        default: [],
+        required: true,
+    },
 	cart: {
 		type: String,
 	}
