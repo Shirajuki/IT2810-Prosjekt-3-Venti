@@ -3,6 +3,7 @@ import StarRating from 'react-svg-star-rating'
 import { ImBin } from "react-icons/im";
 import { RootStoreContext } from "../stores/root-store";
 import { observer, useAsObservableSource } from "mobx-react-lite"
+import Swal from 'sweetalert2'
 
 //Declares type of title
 interface IProps {
@@ -70,7 +71,13 @@ const Items = observer((props: IProps) => {
 						{Number(stars)*2 === 8 ? starElements[Number(stars)*2] : null}
 						{Number(stars)*2 === 9 ? starElements[Number(stars)*2] : null}
 						{Number(stars)*2 === 10 ? starElements[Number(stars)*2] : null}
-						<button onClick={() => CTX.sessionStore.addCart(+props.id)}>Add to cart</button>
+						<button onClick={() => {
+							CTX.sessionStore.addCart(+props.id);
+							Swal.fire(
+								'Added to cart!',
+								'The producr was added to cart!',
+								'success');
+						}}>Add to cart</button>
 						<p className="itemDescription">{props.description}</p>
 					</div>
 				</div>
