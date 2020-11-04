@@ -41,7 +41,7 @@ const Items = observer((props: IProps) => {
 						<div className="info-container">
 							<p className="itemName">{props.name}</p>
 							<p className="pris">{props.price}</p>
-							<button onClick={() => CTX.sessionStore.addCart(+props.id)}>Add to cart</button>
+							<button data-cy="buy-button" onClick={() => CTX.sessionStore.addCart(+props.id)}>Add to cart</button>
 							<p className="itemDescription">{props.description}</p>
 						</div>
 					</div>
@@ -63,7 +63,7 @@ const Items = observer((props: IProps) => {
 							</div>
 						</div>
 						<div>
-							<ImBin onClick={() => CTX.sessionStore.removeCart(Number(props.id))}/>
+							<ImBin data-cy="remove-button" onClick={() => CTX.sessionStore.removeCart(Number(props.id))}/>
 							<p className="pris">{props.price}</p>
 						</div>
 					</div>

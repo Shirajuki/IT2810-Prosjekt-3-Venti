@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import Product from "../models/product";
 import Items from './Items';
 import { TiShoppingCart } from "react-icons/ti";
@@ -12,6 +12,7 @@ interface IProps {
 }
 const ShoppingCart = observer((props: IProps) => {
 	const CTX = useContext(RootStoreContext);
+	const [done, setDone] = useState(false);
 
 	useEffect(() => {
 
@@ -20,12 +21,8 @@ const ShoppingCart = observer((props: IProps) => {
 	function clearCart() {
 		CTX.sessionStore.cartProduct.map((item: Product) => {
 			CTX.sessionStore.removeCart(Number(item.id))
+			setDone(true);
 		})
-		return(
-			<Popup trigger={<button> Trigger</button>} position="right center">
-			<div>Popup content here !!</div>
-		  </Popup>
-		)
 	}
 	
 
@@ -42,9 +39,59 @@ const ShoppingCart = observer((props: IProps) => {
 			</div>
 			<div className="cartInfo">
 				<p>Total: {CTX.sessionStore.cartTotalPrice}$</p>
-				<button onClick={() => clearCart()}>BUYBUYBUY</button>
+				<Popup
+    trigger={<button onClick={() => clearCart()} data-cy="purchase-button">BUYBUYBUY</button>}
+    modal
+    nested
+  >
+	  {/*done ? CTX.sessionStore.setCartActive(false): null*/}
+      <div className="modal">
+        <div className="header"> Modal Title </div>
+        <div className="content">
+          {' '}
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque, a nostrum.
+          Dolorem, repellat quidem ut, minima sint vel eveniet quibusdam voluptates
+          delectus doloremque, explicabo tempore dicta adipisci fugit amet dignissimos?
+          <br />
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur sit
+          commodi beatae optio voluptatum sed eius cumque, delectus saepe repudiandae
+          explicabo nemo nam libero ad, doloribus, voluptas rem alias. Vitae?
+        </div>
+        <div className="actions">
+          <Popup
+            trigger={<button className="button"> Trigger </button>}
+            position="top center"
+            nested
+          >
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae
+              magni omnis delectus nemo, maxime molestiae dolorem numquam
+              mollitia, voluptate ea, accusamus excepturi deleniti ratione
+              sapiente! Laudantium, aperiam doloribus. Odit, aut.
+            </span>
+          </Popup>
+          <button
+            className="button"
+            onClick={() => {
+              console.log('modal closed ');
+            }}
+          >
+            close modal
+          </button>
+        </div>
+      </div>
+    
+  </Popup>
+
+				<Popup
+            trigger={<button onClick={() => clearCart()} data-cy="purchase-button">BUYBUYBUY</button>}
+            position="top center"
+            nested
+          >
+			  <p>Thank you for buying our products</p>
+		  </Popup>
 			</div>
-		</div>
+			</div>
 	);
 })
 export default ShoppingCart;
