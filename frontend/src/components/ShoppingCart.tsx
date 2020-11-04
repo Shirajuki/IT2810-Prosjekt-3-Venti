@@ -20,7 +20,10 @@ const ShoppingCart = observer((props: IProps) => {
 		<div className={`shoppingCart ${ CTX.sessionStore.cartActive ? "active" : "inactive"}`}>
 			<div className="cartTitle">
 				<h2><TiShoppingCart/> Handlekurv</h2>
-				<ImCross className="cartExit" onClick={() => CTX.sessionStore.setCartActive(false)}>X</ImCross>
+				<ImCross className="cartExit" onClick={() => {
+					CTX.sessionStore.setCartActive(false);
+					CTX.sessionStore.updateCart();
+				}}>X</ImCross>
 			</div>
 			<div className="cartItems">
 				{ CTX.sessionStore.cartProduct.map((item: Product) => {

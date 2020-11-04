@@ -9,7 +9,11 @@ router.get("/getCart", adminController.getGetCart);
 
 router.post("/editCart/:productId", adminController.postEditCart);
 
-router.post("/removeCart/:productId", adminController.postRemoveProductFromCart);
+router.post("/deleteCart/:productId", adminController.postDeleteCart);
+
+router.post("/removeCart/:productId", adminController.postRemoveCart);
+
+router.post("/updateCart/:cart", adminController.postUpdateCart);
 
 router.get("/reviews/:productId", adminController.getReviews);
 

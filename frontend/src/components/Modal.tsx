@@ -24,6 +24,7 @@ const Modal = observer(( props: IProps ) => {
 		if (!isNaN(Number(props.modal.id))) {
 			CTX.reviewStore.getReviews(props.modal.id);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.modal.id]);
 
 	return (

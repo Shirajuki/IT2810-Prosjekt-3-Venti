@@ -63,7 +63,7 @@ const Items = observer((props: IProps) => {
 							</div>
 						</div>
 						<div>
-							<ImBin onClick={() => CTX.sessionStore.removeCart(Number(props.id))}/>
+							<ImBin onClick={() => CTX.sessionStore.deleteCart(Number(props.id))}/>
 							<p className="pris">{props.price}</p>
 						</div>
 					</div>

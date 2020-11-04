@@ -72,13 +72,10 @@ const Slide = observer((props: CarouselProps) => {
 })
 const Display = observer((props: {slides: Product[], setModal: (id:string, product:Product) => void}) => {
 	const slides = useAsObservableSource(props.slides);
-	useEffect(() => {
-		console.log(props.slides, slides);
-	}, [])
 
 	return (
 		<>
-			{props.slides.map((slide) => {
+			{slides.map((slide) => {
 				return (<Items id={slide.id} img={slide.image_link} name={slide.name} description={slide.description} price={slide.price} type="carousel" onClick={() => props.setModal(slide.id, slide)} />);
 			})}
 		</>
@@ -107,6 +104,7 @@ const Carousel = observer((props: IProps) => {
 			}
 		};
 		getAPI();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<>
