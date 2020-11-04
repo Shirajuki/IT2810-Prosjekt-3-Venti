@@ -39,16 +39,16 @@ const ProductFilters = observer(() => {
 		<h1>Our Products</h1>
 		<h2>Product Type</h2>
 		{product.types.map((item: String[]) => (
-			<label key={`type-${item[0]}`}>
-				<input data-cy="type" type="checkbox" key={item[0]} onClick={()=>CTX.fetchStore.addOrRemoveFilter(`product_type=${item[0]}`)}/>
+			<label>
+				<input data-cy="type" type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`product_type=${item[0]}`)}/>
 				{item[1]}
 			</label>
 		))}
 		<br></br>
 		<h2>Brand</h2>
 		{product.brands.map((item: String[]) => (
-			<label key={`brand-${item[0]}`}>
-				<input data-cy="brand" type="checkbox" key={item[0]} onClick={()=>CTX.fetchStore.addOrRemoveFilter(`brand=${item[0]}`)}/>
+			<label>
+				<input data-cy="brand" type="checkbox" onClick={()=>CTX.fetchStore.addOrRemoveFilter(`brand=${item[0]}`)}/>
 				{item[1]}
 			</label>
 		))}
