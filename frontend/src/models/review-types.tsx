@@ -5,6 +5,6 @@ export type ReviewStoreSchema = {
 	setReviews: (reviews: Review[]) => void,
 	setSession: (s: string) => void,
 	sessionId: string,
-	postReviews: (productId: string, reviewText: string, rndName: string, stars: number) => boolean,
+	postReviews: (productId: string, reviewText: string, rndName: string, stars: number) => Promise<boolean>,
 	getReviews: (productId: string) => void,
 }

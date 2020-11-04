@@ -2,12 +2,7 @@ import Product from "../models/product";
 import Session from "../models/session";
 import Review from "../models/review";
 import { Request, Response } from 'express';
-import { ProductDoc } from "../models/modelDoc";
-
-/*
-db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] },  $text: { $search: "lipliner" } } )
-{{query}, {query}}
-*/
+import { ProductDoc, ReviewDoc } from "../models/modelDoc";
 
 const getIndex = async (req: Request, res: Response) => {
 	const {pageSize = 15, pageOffset = 0} = req.query;
@@ -25,7 +20,6 @@ const getIndex = async (req: Request, res: Response) => {
 		fterm = JSON.parse(filterTerm).map((e: string) => e.split("="));
 	}
 	
-	// if (filterTerm.length < 0) return res.status(200);
 	const filterQuery:any = {};
 	for (let i=0; i<fterm.length; i++) {
 		if (filterQuery[fterm[i][0]]?.$in) {
@@ -34,14 +28,9 @@ const getIndex = async (req: Request, res: Response) => {
 			filterQuery[fterm[i][0]] = {$in: [fterm[i][1]]};
 		}
 	}
-	//console.log("filter:",filterQuery);
-
 	const searchTerm: string = req.query.searchTerm as string;
-	// const filterProducts = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);
 	let products: ProductDoc[] = [];
 	let productCount: ProductDoc[] = [];
-	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
-	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
 	if (searchTerm) {
 		products = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
 		productCount = await Product.find({ $text: { $search: searchTerm }, ...filterQuery}).sort(term);
@@ -49,8 +38,6 @@ const getIndex = async (req: Request, res: Response) => {
 		products = await Product.find(filterQuery).sort(term).skip(+pageOffset*+pageSize).limit(+pageSize);;
 		productCount = await Product.find(filterQuery).sort(term);
 	}
-	console.log(products.length)
-	//const productCount = await Product.find(filterQuery).sort(term); // object
 	let count: string = req.query.count as string;
     try {
 		if (count == "true") {
@@ -76,32 +63,35 @@ const countProducts = async (_: Request, res: Response) => {
 const getGetCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find((data) => data);
 	const session = sessionDB.filter(e => e._id === req.sessionID);
-	let final: any[] = ["[]"];
+	console.log("Hello!",req.sessionID);
+	let final: any[] = ['[]'];
 	if (session.length > 0) {
 		console.log("Welcome back",req.sessionID);  
 		console.log(session[0]._doc.cart);
 		if (!session[0]._doc?.cart) {
 			await Session.updateOne(
 			    { _id: req.sessionID },
-				{ cart: "[]" },
+				{ cart: '[]' },
 				{ multi: true },
 			);
-			//console.log(update);
 		} else {
 			final = [session[0]._doc.cart];
 		}
 	}
-	console.log(final)
-	const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
-	//db.products.find( { "product_type": {$in: ["lipstick"]}, $text: { $search: "lipliner" } } )
-	//db.products.find( { "product_type": { $in: ["lipstick", "lip_liner"] }, "brand": "sante", $text: { $search: "lipliner" } } )
-	const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
-	final = [...final, products];
-    try {
-		res.json(final);
-    } catch (error) {
-        console.log(error);
-    }
+	console.log(123123,JSON.parse(final[0]));
+	try {
+		const productsId: Number[] = JSON.parse(final[0]).map((arr: string[]) => Number(arr[0]));
+		const products: ProductDoc[] = await Product.find({"id": {$in: productsId}});
+		final = [...final, products];
+		try {
+			res.json(final);
+		} catch (error) {
+			console.log(error);
+		}
+	} catch (err){
+		return res.json(['[]',[]]);
+	}
+	
 };
 const postDeleteCart = async (req: Request, res: Response) => {
     const productId = req.params.productId;
@@ -175,7 +165,9 @@ const postEditCart = async (req: Request, res: Response) => {
 	const sessionDB = await Session.find({});
 	const session = sessionDB.filter(e => e._id === req.sessionID);
 	// console.log(req.sessionID, sessionDB.map(e => e._id), )
-	const cart = JSON.parse(session[0]?._doc?.cart) || [];
+	let sCart: string = session[0]?._doc?.cart || '[]';
+	let cart: any[] = JSON.parse(sCart);
+	if (typeof cart === "string") cart = [];
 	let indexProduct = -1;
 	for (let i=0; i<cart.length; i++) {
 		if (cart[i][0] === productId) {
@@ -189,7 +181,6 @@ const postEditCart = async (req: Request, res: Response) => {
 		cart.push([productId,1])
 	}
 	console.log("Added the product",productId);
-	console.log()
     try {
 		if (session.length > 0) {
 			await Session.findOneAndUpdate(
@@ -205,9 +196,7 @@ const postEditCart = async (req: Request, res: Response) => {
 };
 const postUpdateCart = async (req: Request, res: Response) => {
 	const nCart = req.params.cart;
-	const sessionDB = await Session.find({});
-	const session = sessionDB.filter(e => e._id === req.sessionID);
-	console.log("Updated the cart",nCart);
+	console.log("Updated the cart",[nCart]);
     try {
 		if (nCart) {
 			await Session.findOneAndUpdate(
@@ -246,21 +235,40 @@ const getReviews = async (req: Request, res: Response) => {
     }
 };
 
-const postReview = (req: Request, res: Response) => {
+const postReview = async (req: Request, res: Response) => {
 	const productId: string = req.query.productId as string;
 	const name: string = req.query.name as string;
 	const sessionId: string = req.query.sessionId as string;
 	const reviewText: string = req.query.reviewText as string;
 	const stars: string = req.query.stars as string;
-	console.log(productId,name,sessionId, reviewText, stars, "hest");
+	console.log(productId,name,sessionId, reviewText, stars);
 	const review = new Review({productId, sessionId, name, reviewText, stars});
+	let averageRating: number = Number(stars);
+    const reviews: ReviewDoc[] = await Review.find({productId: +productId});
+	for (const map of reviews) {
+		averageRating += map.stars;
+	}
+	averageRating = averageRating/(reviews.length+1)
+	const floored: number = Math.floor(averageRating);
+	if (averageRating > floored) {
+		averageRating = floored+0.5;
+	} else{ 
+		averageRating = floored;
+	}
 	review.save((err: any) =>{
-        if (err) return res.status(404);
+        if (err) return res.status(404).json({status:404});
         // saved!
 		console.log('Product Added to the database', review);
-		return res.status(200);
-    })
-	res.status(404);
+		})
+	// Update product rating
+	const product = await Product.findOne({id: +productId});
+	product.rating = Number(averageRating);
+	product.save((err: any) => {
+        if (err) return res.status(404).json({status:404});
+		console.log("Rating averaged", averageRating)
+		return res.status(200).json({status:200});
+	
+	});
 };
 
 
