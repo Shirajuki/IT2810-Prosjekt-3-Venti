@@ -45,9 +45,11 @@ const App: FC = observer(() => {
 	useEffect(() => {
 		let cookie = Cookies.get("connect.sid")||"none";
 		if (cookie !== "none") cookie = cookie.split(".")[0].substring(2);
-		CTX.sessionStore.getCart();
 		CTX.sessionStore.setSession(cookie);
 		CTX.reviewStore.setSession(cookie);
+		CTX.sessionStore.getCart();
+		setTimeout(() => CTX.sessionStore.getCart(),500);
+		setTimeout(() => CTX.sessionStore.getCart(),1000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return (
@@ -63,7 +65,7 @@ const App: FC = observer(() => {
 								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
 							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><FcSearch/></button></a>
-							<button onClick={() => CTX.sessionStore.setCartActive(true)}><TiShoppingCart /></button>
+							<button data-cy="cart" onClick={() => CTX.sessionStore.setCartActive(true)}><TiShoppingCart /></button>
 						</div>
 					</nav>
 				</header>

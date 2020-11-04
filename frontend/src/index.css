@@ -617,89 +617,89 @@ div.modalContent .review-input > button {
 	transition-duration: 1s;
 }
 .shoppingCart.active {
-	transform: translateX(0);
+  transform: translateX(0);
 }
 .cartTitle {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: #d4bbed;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #d4bbed;
 }
 .cartTitle > .cartExit {
-	position: absolute;
-	right: 30px;
-	cursor: pointer;
-	transition-duration: .5s;
+  position: absolute;
+  right: 30px;
+  cursor: pointer;
+  transition-duration: 0.5s;
 }
 .cartTitle > .cartExit:hover {
-	color: #52307c;
+  color: #52307c;
 }
 .cartItems {
-	background-color: white;
-	overflow-y: auto;
+  background-color: white;
+  overflow-y: auto;
 }
 .cartItems .item {
-	display: grid;
-	height: 100px;
-	grid-template-columns: 30% 50% 20%;
-	grid-gap: 5px;
-	margin: 10px;
-	padding-bottom: 10px;
-	border-bottom: 2px solid rgba(100,100,100,.1);
+  display: grid;
+  height: 100px;
+  grid-template-columns: 30% 50% 20%;
+  grid-gap: 5px;
+  margin: 10px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(100, 100, 100, 0.1);
 }
 .cartItems .item img {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .cartItems .item .itemName {
-	color: #52307c;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+  color: #52307c;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .cartItems .item div.info {
-	color: #52307c;
-	display: flex;
-	justify-content: space-between;
-	flex-direction: column;
+  color: #52307c;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 .cartItems .item div.info .itemAdd {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	width: 110px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 110px;
 }
 .cartItems .item div.info .itemAdd button {
-	color: black;
-	border-radius: 5px;
-	width: 25px;
-	background-color: rgba(90,90,70,.1);
-	transition: background-color .5s;
+  color: black;
+  border-radius: 5px;
+  width: 25px;
+  background-color: rgba(90, 90, 70, 0.1);
+  transition: background-color 0.5s;
 }
 .cartItems .item div.info .itemAdd button:hover {
-	background-color: rgba(90,90,70,.2);
+  background-color: rgba(90, 90, 70, 0.2);
 }
 .cartItems .item div:last-child {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .cartItems .item div:last-child > svg {
-	position: relative;
-	right: -25px;
-	cursor: pointer;
+  position: relative;
+  right: -25px;
+  cursor: pointer;
 }
 .cartItems .item div:last-child > .pris {
-	padding-right: 20px;
-	margin: 0;
+  padding-right: 20px;
+  margin: 0;
 }
 .cartInfo {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	background-color: #d4bbed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #d4bbed;
 }
 .cartInfo > p {
   color: #52307c;
@@ -712,13 +712,50 @@ div.modalContent .review-input > button {
   padding: 15px 20px;
   width: 80%;
   border: 2px solid transparent;
-  transition: color .5s, background-color .4s, border .6s;
+  transition: color 0.5s, background-color 0.4s, border 0.6s;
 }
 .cartInfo button:hover {
   color: #52307c;
   background-color: #dbc9f1;
   border: 2px solid #8364a9;
 }
+
+.modal {
+  font-size: 12px;
+  color: #fff;
+  background-color: #8364a9;
+}
+.modal > .header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+}
+.modal > .content {
+  width: 100%;
+  padding: 10px 5px;
+}
+.modal > .actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+}
+.modal > .close {
+  cursor: pointer;
+  position: absolute;
+  display: block;
+  padding: 2px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #cfcece;
+}
+
 @media only screen and (max-width: 880px) {
   .itemDisplay {
     grid-template-columns: repeat(2, minmax(150px, 1fr));

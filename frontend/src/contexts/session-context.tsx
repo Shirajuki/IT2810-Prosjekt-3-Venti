@@ -49,7 +49,7 @@ const SessionContext = () => {
 				}
 			}
 			if (!exists) {
-				nCart.push([productId,1]);
+				nCart.push([String(productId),1]);
 				this.getCart();
 			}
 			this.setCart(JSON.stringify(nCart));

@@ -1,10 +1,11 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import Product from "../models/product";
 import Items from './Items';
 import { TiShoppingCart } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { RootStoreContext } from "../stores/root-store";
 import { observer } from "mobx-react-lite"
+import Swal from 'sweetalert2'
 
 interface IProps {
 	setModal: (id:string, product: Product) => void;
@@ -12,9 +13,16 @@ interface IProps {
 const ShoppingCart = observer((props: IProps) => {
 	const CTX = useContext(RootStoreContext);
 
-	useEffect(() => {
-
-	}, []);
+	function clearCart() {
+		Swal.fire(
+			'Bought!',
+			'Thank you for the purchase!',
+			'success')
+		CTX.sessionStore.cartProduct.map((item: Product) => {
+			CTX.sessionStore.removeCart(Number(item.id))
+		})
+		CTX.sessionStore.setCartActive(false);
+	}
 
 	return (
 		<div className={`shoppingCart ${ CTX.sessionStore.cartActive ? "active" : "inactive"}`}>
@@ -32,7 +40,7 @@ const ShoppingCart = observer((props: IProps) => {
 			</div>
 			<div className="cartInfo">
 				<p>Total: {CTX.sessionStore.cartTotalPrice}$</p>
-				<button>BUYBUYBUY</button>
+				<button onClick={() => clearCart()} data-cy="purchase-button">BUYBUYBUY</button>
 			</div>
 		</div>
 	);
