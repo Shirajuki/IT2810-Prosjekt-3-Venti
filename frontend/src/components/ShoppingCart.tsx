@@ -5,6 +5,7 @@ import { TiShoppingCart } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { RootStoreContext } from "../stores/root-store";
 import { observer } from "mobx-react-lite"
+import Popup from 'reactjs-popup';
 
 interface IProps {
 	setModal: (id:string, product: Product) => void;
@@ -15,6 +16,18 @@ const ShoppingCart = observer((props: IProps) => {
 	useEffect(() => {
 
 	}, []);
+
+	function clearCart() {
+		CTX.sessionStore.cartProduct.map((item: Product) => {
+			CTX.sessionStore.removeCart(Number(item.id))
+		})
+		return(
+			<Popup trigger={<button> Trigger</button>} position="right center">
+			<div>Popup content here !!</div>
+		  </Popup>
+		)
+	}
+	
 
 	return (
 		<div className={`shoppingCart ${ CTX.sessionStore.cartActive ? "active" : "inactive"}`}>
@@ -29,7 +42,7 @@ const ShoppingCart = observer((props: IProps) => {
 			</div>
 			<div className="cartInfo">
 				<p>Total: {CTX.sessionStore.cartTotalPrice}$</p>
-				<button>BUYBUYBUY</button>
+				<button onClick={() => clearCart()}>BUYBUYBUY</button>
 			</div>
 		</div>
 	);
