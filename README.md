@@ -38,7 +38,7 @@ When first looking at the products on the webpage there is little information ab
 
 React hooks such as UseState, UseEffect and UseRef have been heavily used throughout the application to open and close modals, keep track of data from the api, show and use the search bar etc.
 
-To make the code as easy to read as possible and organized, we decided to divide most of the elements of the page into components such as items, modal and carousel. Items checks the property of the item and returns it to display the way we want it to be displayed. The modal component contains all the different parts of the modal. It is the collecting point of where a modal is put together so it will be featured correctly. The carousel contains the components that are needed to showcase the items as a carousel, this will show feature products so that a user can easily view new products (?).
+To make the code as easy to read as possible and organized, we decided to divide most of the elements of the page into components such as items, modal and carousel. Items checks the property of the item and returns it to display the way we want it to be displayed. The modal component contains all the different parts of the modal. It is the collecting point of where a modal is put together so it will be featured correctly. The carousel contains the components that are needed to showcase the items as a carousel, this will show feature products so that a user can easily view new products.
 
 To make sure that the application looked similar on all different devices, we decided to use the third part component react-icons. This is a better way to display icons as they are more reliable than the usual emojis that can vary between different devices.
 
@@ -58,7 +58,7 @@ To comply with the requirement of having some user generated data we decided to 
 
 ## Third party components
 
-One of the third party components we have decided to implement have been js-cookie that helps us keep track of, and derive information, from cookies. This aids in recognising an earlier customer and providing them with their previous shopping cart.
+One of the third party components we have decided to implement have been js-cookie that helps us keep track of, and derive information, from cookies. This aids in recognising an earlier customer and providing them with their previous shopping cart. Others were React-icons which we used for closing crosses, cart, search and more. For our pop up when exiting the cart we used sweet-alert and for pagination we also used react-pagination.
 
 ## Testing
 
