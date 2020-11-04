@@ -62,8 +62,8 @@ const App: FC = observer(() => {
 							<div className={`searchBar ${CTX.fetchStore.hidden ? "inactive" : "active"}`}>
 								<input type="text" name="search" data-cy="search" ref={searchRef} onKeyPress={handleKeyPress} required />
 							</div>
-							<a href="#itemDisplay"><button onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><span role="img" aria-label="search"><FcSearch/></span></button></a>
-							<button onClick={() => CTX.sessionStore.setCartActive(true)}><span role="img" aria-label="cart"><TiShoppingCart /></span></button>
+							<a href="#itemDisplay"><button data-cy="search-button" onClick={()=>CTX.fetchStore.search(sortRef?.current?.value, searchRef?.current?.value)}><FcSearch/></button></a>
+							<button onClick={() => CTX.sessionStore.setCartActive(true)}><TiShoppingCart /></button>
 						</div>
 					</nav>
 				</header>

@@ -27,7 +27,7 @@ const ShoppingCart = observer((props: IProps) => {
 			</div>
 			<div className="cartItems">
 				{ CTX.sessionStore.cartProduct.map((item: Product) => {
-					return (<Items id={item.id} img={item.image_link} name={item.name} description={item.description} price={item.price} type="cart" onClick={() => props.setModal(item.id, item)} />);
+					return (<Items id={item.id} img={item.image_link} name={item.name} description={item.description} rating={item.rating} price={item.price} type="cart" onClick={() => props.setModal(item.id, item)} />);
 				})}
 			</div>
 			<div className="cartInfo">

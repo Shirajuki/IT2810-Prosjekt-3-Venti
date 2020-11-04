@@ -16,13 +16,13 @@ const ReviewContext = () => {
 		get sessionId() {
 			return this.session.sessionID;
 		},
-		postReviews(productId: string, reviewText: string, rndName: string) {
-			console.log(reviewText,this.sessionId,rndName,productId);
-			if (this.sessionId && rndName && reviewText && productId) {
+		async postReviews(productId: string, reviewText: string, rndName: string, stars: number) {
+			//console.log(reviewText,this.sessionId,rndName,productId);
+			if (this.sessionId && rndName && reviewText && productId && stars) {
 				console.log("sending...")
 				const getAPI = async () => {
-					const url: string = `http://localhost:8080/post-review/?productId=${productId}&sessionId=${this.sessionId}&name=${rndName}&reviewText=${reviewText}`;
-					fetch(url,{
+					const url: string = `http://localhost:8080/post-review/?productId=${productId}&sessionId=${this.sessionId}&name=${rndName}&reviewText=${reviewText}&stars=${stars}`;
+					await fetch(url,{
 						method: 'POST',
 						mode: 'cors',
 						credentials: 'include', // Don't forget to specify this if you need cookies
@@ -35,9 +35,9 @@ const ReviewContext = () => {
 						return false;
 					}
 				};
-				getAPI();
-				return false;
+				return await getAPI();
 			}
+			return false;
 		},
 		getReviews(productId: string) {
 			const getAPI = async () => {

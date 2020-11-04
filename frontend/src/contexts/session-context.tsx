@@ -1,10 +1,11 @@
 import Product from "../models/product"
 import { useLocalObservable } from "mobx-react-lite";
+import { toJS } from "mobx";
 
 const SessionContext = () => {
 	const store = useLocalObservable(() => ({
 		/*observables here*/
-		cart: "[[1,1]]",
+		cart: "[]",
 		cartProduct: [],
 		session: { sessionID: "none" },
 		cartActive: false,
@@ -19,6 +20,7 @@ const SessionContext = () => {
 			this.session.sessionID = s;
 		},
 		editCart(productId: number, type: boolean) {
+			console.log("Edited the product",this.cart)
 			for (const map of JSON.parse(this.cart)) {
 				if (Number(map[0]) === productId) {
 					if (type) {
@@ -31,7 +33,7 @@ const SessionContext = () => {
 			}
 		},
 		addCart(productId: number) {
-			console.log(productId, this.cart||"[]")
+			console.log("Added the product:", this.cart)
 			fetch('http://localhost:8080/editCart/'+productId,{
 				method: 'POST',
 				mode: 'cors',
@@ -47,10 +49,10 @@ const SessionContext = () => {
 				}
 			}
 			if (!exists) {
+				nCart.push([productId,1]);
 				this.getCart();
-			} else {
-				this.setCart(JSON.stringify(nCart));
 			}
+			this.setCart(JSON.stringify(nCart));
 		},
 		removeCart(productId: number) {
 			console.log("Removed item",productId);
@@ -106,6 +108,7 @@ const SessionContext = () => {
 			getAPI();
 		},
 		updateCart() {
+			console.log("Updated the cart:",this.cart);
 			fetch('http://localhost:8080/updateCart/'+this.cart,{
 				method: 'POST',
 				mode: 'cors',
@@ -121,8 +124,10 @@ const SessionContext = () => {
 			return 0;
 		},
 		get cartTotalPrice() {
+			console.log(999,toJS(this.cartProduct));
 			let sum = 0;
 			const nCart = JSON.parse(this.cart);
+			console.log(nCart)
 			for (const product of this.cartProduct) {
 				for (const map of nCart) {
 					console.log(map,product.id,product.price)

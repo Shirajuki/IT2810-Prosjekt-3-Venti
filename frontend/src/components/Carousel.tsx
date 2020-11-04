@@ -66,7 +66,6 @@ const Slide = observer((props: CarouselProps) => {
 			<button className="prev" onClick={() => state.changeSlide(-1)}>&lt;</button>
 			<button className="next" onClick={() => state.changeSlide(1)}>&gt;</button>
 			<Display slides={state.displaySlides} setModal={props.setModal}/>
-			<p style={{position: "absolute", top: 0, right: 0}}>{state.count}</p>
 		</div>
 	);
 })
@@ -76,7 +75,7 @@ const Display = observer((props: {slides: Product[], setModal: (id:string, produ
 	return (
 		<>
 			{slides.map((slide) => {
-				return (<Items id={slide.id} img={slide.image_link} name={slide.name} description={slide.description} price={slide.price} type="carousel" onClick={() => props.setModal(slide.id, slide)} />);
+				return (<Items id={slide.id} img={slide.image_link} name={slide.name} description={slide.description} rating={slide.rating} price={slide.price} type="carousel" onClick={() => props.setModal(slide.id, slide)} />);
 			})}
 		</>
 	);

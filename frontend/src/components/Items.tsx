@@ -1,4 +1,5 @@
 import React, {useContext} from "react";
+import StarRating from 'react-svg-star-rating'
 import { ImBin } from "react-icons/im";
 import { RootStoreContext } from "../stores/root-store";
 import { observer } from "mobx-react-lite"
@@ -10,12 +11,14 @@ interface IProps {
 	img: string;
 	name: string;
 	description: string;
+	rating: number;
 	price: string;
 	type: string;
 }
 
 const Items = observer((props: IProps) => {
 	const CTX = useContext(RootStoreContext);
+	const stars = Number(props.rating);
 	const item = () => {
 		switch (props.type) {
 			case "carousel":
@@ -24,6 +27,7 @@ const Items = observer((props: IProps) => {
 					<div className="items" onClick={props.onClick}>
 						<div className="imgDiv">
 							<img src={props.img} alt={`${props.name}`}/>
+							<StarRating size={15} initialRating={stars} isReadOnly={true} isHalfRating={true}/>
 						</div>
 						<p className="itemName">{props.name}</p>
 						<p className="pris">{props.price}</p>
@@ -41,6 +45,7 @@ const Items = observer((props: IProps) => {
 						<div className="info-container">
 							<p className="itemName">{props.name}</p>
 							<p className="pris">{props.price}</p>
+							<StarRating size={20} initialRating={stars} isReadOnly={true} isHalfRating={true}/>
 							<button onClick={() => CTX.sessionStore.addCart(+props.id)}>Add to cart</button>
 							<p className="itemDescription">{props.description}</p>
 						</div>
@@ -75,10 +80,13 @@ const Items = observer((props: IProps) => {
 					<div className="items" onClick={props.onClick}>
 						<div className="imgDiv">
 							<img src={props.img} alt={`${props.name}`}/>
+							<StarRating size={15} initialRating={stars} isReadOnly={true} isHalfRating={true}/>
 						</div>
 						<p className="itemName" data-cy="item-name">{props.name}</p>
 						<p className="itemDescription">{props.description}</p>
-						<p className="pris" data-cy="item-price">{props.price}</p>
+						<div>
+							<p className="pris" data-cy="item-price">{props.price}</p>
+						</div>
 					</div>
 					</>
 				);
