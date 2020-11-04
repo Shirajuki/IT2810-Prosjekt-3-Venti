@@ -16,7 +16,11 @@ const reviewSchema = new mongoose.Schema({
     reviewText: {
         type: String,
         required: true,
-	}
+    },
+    stars: {
+        type: Number,
+        required: false,
+    }
   }
   );
 

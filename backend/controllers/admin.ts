@@ -251,8 +251,9 @@ const postReview = (req: Request, res: Response) => {
 	const name: string = req.query.name as string;
 	const sessionId: string = req.query.sessionId as string;
 	const reviewText: string = req.query.reviewText as string;
-	console.log(productId,name,sessionId, reviewText);
-	const review = new Review({productId, sessionId, name, reviewText});
+	const stars: string = req.query.stars as string;
+	console.log(productId,name,sessionId, reviewText, stars, "hest");
+	const review = new Review({productId, sessionId, name, reviewText, stars});
 	review.save((err: any) =>{
         if (err) return res.status(404);
         // saved!
