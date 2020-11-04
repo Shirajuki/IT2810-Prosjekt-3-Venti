@@ -44,7 +44,9 @@ const Modal = observer(( props: IProps ) => {
 					</div>
 				</div>
 				<Items id={props.modal.product?.id} img={product?.image_link} name={product?.name} description={product?.description} rating={Number(product?.rating)} price={product?.price} onClick={() => void(0)} type="modal"/>
+				<div className="star">
 				<StarRating data-cy="star-area" roundedCorner={true} isHalfRating={true}  handleOnClick={(rating:number) => {setStars(rating)}}/>
+				</div>
 				<div className="reviews">
 					<div className="review-input">
 						<textarea ref={nameRef} placeholder="Name" data-cy="name-area"></textarea>
