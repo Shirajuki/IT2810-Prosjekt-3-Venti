@@ -11,7 +11,6 @@ interface IProps {
 }
 const Modal = observer(( props: IProps ) => {
 	const product = useAsObservableSource(props.modal.product);
-	console.log(product)
 	const CTX = useContext(RootStoreContext);
 	const messageRef = useRef(null);
 	const nameRef = useRef(null);

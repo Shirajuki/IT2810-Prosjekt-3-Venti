@@ -43,8 +43,10 @@ const getIndex = async (req: Request, res: Response) => {
 		if (count == "true") {
 			console.log("smil",productCount.length);
 			res.json({count: productCount.length});
+		} else {
+			res.json(products);
 		}
-		else{res.json(products);}
+		console.log(111,products)
     } catch (error) {
         console.log(error);
     }
@@ -257,18 +259,17 @@ const postReview = async (req: Request, res: Response) => {
 	}
 	review.save((err: any) =>{
         if (err) return res.status(404).json({status:404});
-        // saved!
-		console.log('Product Added to the database', review);
+		console.log("Added review!")
 		})
 	// Update product rating
-	const product = await Product.findOne({id: +productId});
-	product.rating = Number(averageRating);
-	product.save((err: any) => {
-        if (err) return res.status(404).json({status:404});
-		console.log("Rating averaged", averageRating)
-		return res.status(200).json({status:200});
-	
-	});
+	console.log('Product Added to the database', review, averageRating);
+	await Product.findOneAndUpdate(
+		{ id: +productId },
+		{ rating: +averageRating },
+		{ new: true },
+	);
+	console.log("Rating averaged", averageRating)
+	return res.status(200).json({status:200});
 };
 
 

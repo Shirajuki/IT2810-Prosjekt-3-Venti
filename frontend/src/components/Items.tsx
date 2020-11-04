@@ -32,7 +32,17 @@ const Items = observer((props: IProps) => {
 				<div className="items" onClick={props.onClick}>
 					<div className="imgDiv">
 						<img src={props.img} alt={`${props.name}`}/>
-						<StarRating size={15} initialRating={stars} isReadOnly={true} isHalfRating={true}/>
+						{Number(stars)*2 === 0 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 1 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 2 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 3 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 4 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 5 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 6 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 7 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 8 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 9 ? starElements[Number(stars)*2] : null}
+						{Number(stars)*2 === 10 ? starElements[Number(stars)*2] : null}
 					</div>
 					<p className="itemName">{props.name}</p>
 					<p className="pris">{props.price}</p>
@@ -41,6 +51,7 @@ const Items = observer((props: IProps) => {
 			</>
 		);
 		case "modal":
+		console.log(props)
 		return (
 			<>
 				<div className="items-modal" onClick={props.onClick}>
